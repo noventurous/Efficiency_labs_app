@@ -1,525 +1,491 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Efficiency Labs - Loop Architect</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efficiency Labs | Operational Readiness Diagnostics</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    background-color: #FDFBF7;
+    color: #2D2D2D;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    scroll-behavior: smooth;
+  }
+  .bg-taupe { background-color: #A39B8B; }
+  .text-taupe { color: #A39B8B; }
+  .border-taupe { border-color: #A39B8B; }
+  .bg-olive { background-color: #6B705C; }
+  .text-olive { color: #6B705C; }
+  .border-olive { border-color: #6B705C; }
+  .bg-rose { background-color: #CB997E; }
+  .text-rose { color: #CB997E; }
+  .bg-panel { background-color: #FFFFFF; }
   
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            // Strict Efficiency Labs Palette with the requested Lively Green Accent
-            taupe: { 50: '#faf9f8', 100: '#f5f4f2', 200: '#e0ddd8', 300: '#c2bcb6', 500: '#8c8277', 700: '#5c544d', 900: '#38332f' },
-            olive: { 50: '#f9faf7', 100: '#f1f4ec', 200: '#dbe0d1', 500: '#7a8c53', 700: '#4e5a35', 900: '#2f3720' },
-            rose:  { 50: '#fffcfc', 100: '#fdf7f7', 200: '#f7e6e6', 500: '#c58385', 700: '#945b5d', 900: '#5c3536' },
-            lively: { 400: '#34d399', 500: '#10b981', 600: '#059669', 900: '#064e3b' } // The lively green accent
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
-  
-  <!-- React & ReactDOM -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
-  <style>
-    /* Geometric Minimalism - No rounded corners anywhere */
-    * { border-radius: 0 !important; }
-    
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #f5f4f2; border-left: 2px solid #38332f; }
-    ::-webkit-scrollbar-thumb { background: #38332f; }
-    
-    .brutal-border { border: 2px solid #38332f; }
-    .brutal-border-b { border-bottom: 2px solid #38332f; }
-    .brutal-border-r { border-right: 2px solid #38332f; }
-    .brutal-border-l { border-left: 2px solid #38332f; }
-    .brutal-border-t { border-top: 2px solid #38332f; }
-    
-    .brutal-shadow { box-shadow: 4px 4px 0px 0px #38332f; }
-    .brutal-shadow-green { box-shadow: 4px 4px 0px 0px #064e3b; }
-    
-    .brutal-shadow:active, .brutal-shadow-green:active { 
-      box-shadow: 0px 0px 0px 0px transparent; 
-      transform: translate(4px, 4px); 
-    }
+  .chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 300px;
+    max-height: 350px;
+  }
+  @media (min-width: 768px) {
+    .chart-container { height: 320px; }
+  }
 
-    .bg-grid-pattern {
-      background-image: radial-gradient(#c2bcb6 1px, transparent 1px);
-      background-size: 20px 20px;
-    }
-    
-    /* Disabling text selection on UI elements for a more app-like feel */
-    .no-select { user-select: none; }
-  </style>
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #FDFBF7; }
+  ::-webkit-scrollbar-thumb { background: #A39B8B; border-radius: 4px; }
+
+  .fade-in { animation: fadeIn 0.5s ease-in-out; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 2px; }
+
+  /* Diagram Nodes (No SVG) */
+  .flow-node {
+    padding: 10px;
+    border-radius: 6px;
+    background: #fff;
+    border: 2px solid #E5E7EB;
+    font-size: 11px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    width: 100%;
+  }
+  .flow-node.active { border-color: #A39B8B; box-shadow: 0 4px 6px rgba(163, 155, 139, 0.15); }
+  .flow-line {
+    width: 2px;
+    background-color: #D1D5DB;
+    margin: 0 auto;
+    height: 16px;
+  }
+  
+  /* Code Syntax Highlighting */
+  .syn-key { color: #CB997E; }
+  .syn-val { color: #A39B8B; }
+  .syn-str { color: #6B705C; }
+</style>
 </head>
-<body class="bg-taupe-100 text-taupe-900 font-sans antialiased h-full overflow-hidden">
-  <div id="root" class="h-full"></div>
+<body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+<!-- Sticky Navigation -->
+<nav class="bg-panel border-b border-gray-200 sticky top-0 z-50 shadow-sm w-full">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div>
+      <div class="text-xl font-bold tracking-tight text-olive">Efficiency Labs</div>
+      <div class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Architecture & Diagnostics</div>
+    </div>
+    <div class="hidden md:flex gap-8 items-center">
+      <a href="#diagnostic" class="text-sm font-medium text-gray-600 hover:text-olive transition-colors">The Diagnostic</a>
+      <a href="#solutions" class="text-sm font-medium text-gray-600 hover:text-olive transition-colors">Architecture Solutions</a>
+      <a href="#solutions" class="px-5 py-2 bg-olive text-white text-sm font-bold uppercase tracking-wider rounded hover:bg-opacity-90 transition-all">Get Blueprints</a>
+    </div>
+  </div>
+</nav>
 
-    const INITIAL_LOOPS = [
-      {
-        id: "founder_loop",
-        title: "Founder: Automated Lead Gen",
-        description: "Zero-touch pipeline: Captures Stripe payment, triggers Make.com webhook, delivers asset via MailerLite, and syncs Notion telemetry.",
-        variables: {
-          Stripe_Customer_Email: "investor@venture.io",
-          Checkout_Value: "$0.00 (Lead Magnet)",
-          Target_Database: "Sales Tracker 33d4f39cd73780d2893dd260f00d3cbf.csv"
-        },
-        steps: [
-          { id: "s1", type: "trigger", title: "Stripe Webhook", desc: "Listens for 'checkout.session.completed' from Stripe API.", explainer: "The system waits like a digital receptionist until someone buys your toolkit." },
-          { id: "s2", type: "action", title: "Make.com Routing", desc: "Parses Stripe payload and routes data to marketing stack.", explainer: "A digital traffic cop takes the buyer's info and sends it exactly where it needs to go." },
-          { id: "s3", type: "action", title: "MailerLite Delivery", desc: "Fires the Welcome Email sequence containing the AI Prompt Kit.", explainer: "Automatically sends the welcome email with the download link, so you don't have to." },
-          { id: "s4", type: "action", title: "Notion API Sync", desc: "Appends the new lead telemetry to the central Sales Tracker CSV.", explainer: "Updates your Sales Tracker spreadsheet automatically so your records are perfectly up to date." }
-        ]
-      },
-      {
-        id: "consultant_loop",
-        title: "Consultant: Client Intake & Audit",
-        description: "Automates discovery. Analyzes Typeform intake data via Anthropic Claude AI, drafts a strategy brief, and alerts via Slack.",
-        variables: {
-          Client_Name: "Acme Corp Logistics",
-          Typeform_Intake_ID: "TF-992A-INTAKE",
-          Claude_Model: "claude-3-5-sonnet"
-        },
-        steps: [
-          { id: "s1", type: "trigger", title: "Typeform Submission", desc: "Activates when a new discovery form is submitted by a prospect.", explainer: "Captures the exact answers when a new potential client fills out your questionnaire." },
-          { id: "s2", type: "action", title: "Anthropic Claude Synthesis", desc: "API reads form data and drafts a preliminary strategy brief.", explainer: "AI reads the client's answers and writes a draft strategy document for you in seconds." },
-          { id: "s3", type: "safety", title: "Slack Manager Approval", desc: "Halts workflow. Pings #leadership in Slack. You must review the AI's brief.", explainer: "The AI pauses and sends you a message. It waits for your human 'thumbs up' before sending anything." },
-          { id: "s4", type: "action", title: "Google Workspace API", desc: "Generates a formatted Google Doc brief and emails the client.", explainer: "Takes the approved strategy, turns it into a neat Google Doc, and emails it to the client." }
-        ]
-      },
-      {
-        id: "cto_loop",
-        title: "CTO: Cloud Threat Remediation",
-        description: "Ingests AWS GuardDuty alerts, blocks IPs via Cloudflare WAF, escalates via PagerDuty, and resolves Jira tickets.",
-        variables: {
-          AWS_GuardDuty_Alert: "HIGH (Brute Force)",
-          Source_IP: "192.0.2.144",
-          Datadog_Trace_ID: "prod-db-cluster-02"
-        },
-        steps: [
-          { id: "s1", type: "trigger", title: "AWS EventBridge", desc: "Ingests high-severity alert from AWS network monitoring.", explainer: "Acts as a security camera that alerts you the second someone tries to break into your system." },
-          { id: "s2", type: "action", title: "Cloudflare WAF Injection", desc: "Automatically injects a Cloudflare firewall rule to isolate the IP.", explainer: "Instantly builds a digital wall to block the hacker's computer before they can do damage." },
-          { id: "s3", type: "safety", title: "PagerDuty Escalation", desc: "Halts. SecOps engineer must verify the IP is not a corporate VPN.", explainer: "Pings a human security expert to double-check that we didn't accidentally block a real employee." },
-          { id: "s4", type: "action", title: "Jira API Resolution", desc: "Logs the incident in Jira and closes the active security alert.", explainer: "Logs the whole event in your ticketing system and marks the emergency as 'handled'." }
-        ]
-      }
-    ];
+<!-- Hero Section -->
+<header class="py-20 md:py-32 px-6 border-b border-gray-200 relative overflow-hidden">
+  <div class="max-w-4xl mx-auto text-center relative z-10">
+    <div class="inline-block px-3 py-1 bg-[#FDFBF7] border border-olive text-olive text-xs font-bold uppercase tracking-wider rounded-sm mb-6">
+      Stop buying tools. Diagnose the workflow.
+    </div>
+    <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
+      Map, stress-test, and validate your operational readiness for <span class="text-olive">autonomous AI</span>.
+    </h1>
+    <p class="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed max-w-3xl mx-auto">
+      68% of enterprise teams pay for advanced AI models, yet the vast majority remain stuck at the input layer. We provide the diagnostic testing ground and the strategic blueprints to shift your team from operators to approvers.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a href="#diagnostic" class="px-8 py-4 bg-gray-900 text-white text-sm font-bold uppercase tracking-wider rounded shadow-lg hover:bg-gray-800 transition-all">
+        Explore The Architecture
+      </a>
+      <a href="#solutions" class="px-8 py-4 bg-white text-gray-800 border border-gray-300 text-sm font-bold uppercase tracking-wider rounded shadow-sm hover:bg-gray-50 transition-all">
+        View Pricing Tiers
+      </a>
+    </div>
+  </div>
+</header>
 
-    function App() {
-      // Global Data State
-      const [loops, setLoops] = useState(INITIAL_LOOPS);
-      const [activeLoopId, setActiveLoopId] = useState(INITIAL_LOOPS[0].id);
+<!-- Interactive Diagnostic Section (The CTO Showcase) -->
+<section id="diagnostic" class="py-20 px-6 bg-[#FDFBF7]">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">Interactive Architecture Diagnostic</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">Interact with the modules below to review the exact technical standards, data pipelines, and governance matrices required for production-level AI deployment.</p>
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-6 bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md">
       
-      // Execution & UI State
-      const [status, setStatus] = useState("IDLE"); // IDLE, RUNNING, WAITING, SUCCESS, REJECTED
-      const [activeStepIndex, setActiveStepIndex] = useState(-1);
-      const [selectedStepId, setSelectedStepId] = useState(INITIAL_LOOPS[0].steps[0].id);
-      const [logs, setLogs] = useState([]);
-      const logContainerRef = useRef(null);
+      <!-- Diagnostic Sidebar -->
+      <div class="w-full md:w-64 bg-gray-50 border-r border-gray-200 flex flex-col shrink-0">
+        <div class="p-4 border-b border-gray-200 bg-white">
+          <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Select Module</span>
+        </div>
+        <button data-target="section-gov" class="nav-btn w-full text-left px-5 py-4 text-sm font-medium transition-colors bg-olive text-white border-l-4 border-olive focus:outline-none">
+          1. Governance & Prompts
+        </button>
+        <button data-target="section-scale" class="nav-btn w-full text-left px-5 py-4 text-sm font-medium text-gray-600 hover:bg-white transition-colors border-l-4 border-transparent focus:outline-none">
+          2. Telemetry & Vault
+        </button>
+        <button data-target="section-rbac" class="nav-btn w-full text-left px-5 py-4 text-sm font-medium text-gray-600 hover:bg-white transition-colors border-l-4 border-transparent focus:outline-none">
+          3. Safety & RBAC
+        </button>
+      </div>
 
-      // Derived State
-      const activeLoop = loops.find(l => l.id === activeLoopId);
-      const selectedStep = activeLoop.steps.find(s => s.id === selectedStepId) || activeLoop.steps[0];
-
-      // Auto-scroll narrative feed
-      useEffect(() => {
-        if (logContainerRef.current) {
-          logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-        }
-      }, [logs]);
-
-      const handleTabChange = (loopId) => {
-        setActiveLoopId(loopId);
-        const newLoop = loops.find(l => l.id === loopId);
-        setSelectedStepId(newLoop.steps[0].id);
-        setStatus("IDLE");
-        setActiveStepIndex(-1);
-        setLogs([]);
-      };
-
-      const handleVariableChange = (key, value) => {
-        setLoops(prevLoops => prevLoops.map(loop => {
-          if (loop.id === activeLoopId) {
-            return { ...loop, variables: { ...loop.variables, [key]: value } };
-          }
-          return loop;
-        }));
-      };
-
-      const handleStepEdit = (field, value) => {
-        setLoops(prevLoops => prevLoops.map(loop => {
-          if (loop.id === activeLoopId) {
-            return {
-              ...loop,
-              steps: loop.steps.map(step => 
-                step.id === selectedStepId ? { ...step, [field]: value } : step
-              )
-            };
-          }
-          return loop;
-        }));
-      };
-
-      const writeLog = (type, title, message) => {
-        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-        setLogs(prev => [...prev, { time, type, title, message }]);
-      };
-
-      const runWorkflow = () => {
-        setStatus("RUNNING");
-        setLogs([]);
-        setActiveStepIndex(-1);
+      <!-- Diagnostic Content Area -->
+      <div class="flex-1 p-6 md:p-8 overflow-hidden bg-panel">
         
-        writeLog("SYSTEM", "Pipeline Activated", `Initializing ${activeLoop.title}`);
-        
-        // Output current Sandbox variables to log
-        Object.entries(activeLoop.variables).forEach(([k, v]) => {
-          writeLog("DATA", "Context Loaded", `[${k.replace(/_/g, ' ')}] = ${v}`);
-        });
-
-        let stepIndex = 0;
-
-        const processNextNode = () => {
-          setLoops(currentLoops => {
-            const currentActiveLoop = currentLoops.find(l => l.id === activeLoopId);
-            
-            if (stepIndex >= currentActiveLoop.steps.length) {
-              setStatus("SUCCESS");
-              writeLog("SUCCESS", "Workflow Completed", "All automated operations finished successfully.");
-              setActiveStepIndex(-1);
-              return currentLoops;
-            }
-
-            const step = currentActiveLoop.steps[stepIndex];
-            setActiveStepIndex(stepIndex);
-            setSelectedStepId(step.id); // Auto-focus the running step in the inspector
-
-            if (step.type === "safety") {
-              setStatus("WAITING");
-              writeLog("WARNING", "Execution Halted", `Safety checkpoint reached: ${step.title}. Awaiting human review.`);
-              return currentLoops; // Pause loop for human intervention
-            }
-
-            writeLog("ACTION", `Executing: ${step.title}`, step.desc);
-            
-            stepIndex++;
-            setTimeout(processNextNode, 1500); // 1.5s delay for visual pacing
-            
-            return currentLoops;
-          });
-        };
-
-        setTimeout(processNextNode, 1000);
-      };
-
-      const handleHumanDecision = (approved) => {
-        if (approved) {
-          writeLog("SUCCESS", "Manager Approved", "Human verification passed. Resuming pipeline.");
-          setStatus("RUNNING");
-          
-          let stepIndex = activeStepIndex + 1;
-          const resumeNode = () => {
-            setLoops(currentLoops => {
-              const currentActiveLoop = currentLoops.find(l => l.id === activeLoopId);
-              if (stepIndex >= currentActiveLoop.steps.length) {
-                setStatus("SUCCESS");
-                writeLog("SUCCESS", "Workflow Completed", "Pipeline executed to completion.");
-                setActiveStepIndex(-1);
-                return currentLoops;
-              }
-              const step = currentActiveLoop.steps[stepIndex];
-              setActiveStepIndex(stepIndex);
-              setSelectedStepId(step.id);
-              writeLog("ACTION", `Executing: ${step.title}`, step.desc);
-              stepIndex++;
-              setTimeout(resumeNode, 1500);
-              return currentLoops;
-            });
-          };
-          setTimeout(resumeNode, 1000);
-
-        } else {
-          setStatus("REJECTED");
-          writeLog("ERROR", "Manager Rejected", "Operation aborted by human supervisor. Pipeline terminated.");
-        }
-      };
-
-      return (
-        <div className="flex flex-col h-screen bg-taupe-100 text-taupe-900 overflow-hidden font-sans">
-          
-          {/* Top Header - Executive Briefing */}
-          <header className="bg-taupe-900 text-white brutal-border-b flex flex-col md:flex-row justify-between items-start md:items-center p-6 shrink-0 z-20 relative shadow-lg">
-            <div className="no-select">
-              <h1 className="text-2xl font-bold uppercase tracking-widest mb-1 flex items-center gap-3">
-                <span className="w-5 h-5 bg-lively-500 inline-block brutal-border border-white shadow-[2px_2px_0_0_#fff]"></span>
-                Efficiency Labs
-              </h1>
-              <p className="text-taupe-300 font-mono text-sm max-w-2xl mt-2 border-l-2 border-lively-500 pl-3">
-                Visually map, test, and safely approve automated AI business workflows without writing code.
+        <!-- Tab 1: Governance -->
+        <div id="section-gov" class="content-section fade-in">
+          <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Governance & Prompt Architecture</h3>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="flex flex-col h-full">
+              <h4 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">The Shadow AI Threat</h4>
+              <p class="text-gray-600 text-xs mb-4 leading-relaxed">
+                85% of engineering teams utilize LLMs daily, but less than 15% execute within governed CI/CD pipelines. Unconstrained inputs lead to catastrophic payload failures.
               </p>
-            </div>
-            
-            <div className="mt-4 md:mt-0 flex gap-4">
-              <button 
-                onClick={runWorkflow}
-                disabled={status === "RUNNING" || status === "WAITING"}
-                className={`px-8 py-3 font-bold uppercase tracking-widest brutal-border transition-all flex items-center gap-2 no-select ${
-                  status === "RUNNING" ? "bg-taupe-500 text-white cursor-not-allowed border-taupe-700" 
-                  : "bg-lively-500 text-white border-lively-900 brutal-shadow-green hover:bg-lively-400 hover:translate-y-[-2px] cursor-pointer"
-                }`}
-              >
-                {status === "RUNNING" ? "Running..." : "▶ Run Workflow"}
-              </button>
-            </div>
-          </header>
-
-          {/* Preset Tabs */}
-          <div className="flex bg-taupe-200 brutal-border-b shrink-0 z-10 relative">
-            {loops.map((loop) => (
-              <button
-                key={loop.id}
-                onClick={() => handleTabChange(loop.id)}
-                className={`flex-1 py-3 px-4 text-xs md:text-sm font-bold uppercase tracking-widest brutal-border-r last:border-r-0 transition-colors no-select cursor-pointer ${
-                  activeLoopId === loop.id 
-                    ? "bg-white text-taupe-900 border-b-4 border-b-lively-500" 
-                    : "bg-taupe-200 text-taupe-500 hover:bg-taupe-100"
-                }`}
-              >
-                {loop.title}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
-            
-            {/* Column 1: Visual Map (Interactive) */}
-            <div className="w-full md:w-1/3 brutal-border-r bg-white flex flex-col overflow-y-auto bg-grid-pattern relative">
-              <div className="bg-taupe-900 text-white p-3 brutal-border-b sticky top-0 z-10 no-select">
-                <h2 className="font-bold uppercase tracking-widest text-sm flex items-center justify-between">
-                  Visual Map
-                  <span className="text-[10px] font-normal text-lively-400 normal-case font-mono bg-taupe-900 border border-lively-500 px-2 py-0.5">Click any step to edit</span>
-                </h2>
+              <div class="chart-container mt-auto">
+                <canvas id="govChart"></canvas>
               </div>
-              
-              <div className="p-8 flex flex-col items-center">
-                {activeLoop.steps.map((step, index) => {
-                  const isActive = activeStepIndex === index;
-                  const isSelected = selectedStepId === step.id;
-                  
-                  return (
-                    <div key={step.id} className="flex flex-col items-center w-full max-w-sm">
-                      
-                      {/* Step Card */}
-                      <div 
-                        onClick={() => setSelectedStepId(step.id)}
-                        className={`w-full p-4 brutal-border cursor-pointer transition-all duration-200 relative ${
-                          isActive ? "bg-lively-50 border-lively-900 shadow-[4px_4px_0_0_#064e3b] scale-105 z-10" : 
-                          isSelected ? "bg-taupe-100 brutal-shadow border-taupe-900" : 
-                          "bg-white hover:bg-taupe-50 border-taupe-500 shadow-[2px_2px_0_0_#c2bcb6]"
-                        }`}
-                      >
-                        {/* Active Indicator Line */}
-                        {isActive && <div className="absolute top-0 left-0 w-2 h-full bg-lively-500"></div>}
-                        {isSelected && !isActive && <div className="absolute top-0 left-0 w-2 h-full bg-taupe-900"></div>}
+            </div>
+            <div class="flex flex-col h-full border border-gray-200 rounded bg-gray-50 p-4">
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="text-sm font-bold text-gray-800">Sample: SecOps Prompt</h4>
+                <span class="px-2 py-1 bg-olive text-white text-[9px] font-bold uppercase rounded">Extract</span>
+              </div>
+              <div class="bg-[#1E1E1E] rounded border border-gray-800 overflow-hidden flex-1 flex flex-col">
+                <div class="bg-[#2D2D2D] border-b border-gray-700 px-3 py-1">
+                  <span class="text-[10px] font-mono text-white">sys_prompt.md</span>
+                </div>
+                <div class="p-4 overflow-y-auto custom-scrollbar flex-1 max-h-[250px]">
+                  <pre class="text-gray-300 text-[10px] font-mono leading-relaxed whitespace-pre-wrap">
+<span class="text-rose font-bold"># CORE DIRECTIVE</span>
+You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}`.
 
-                        <div className="flex justify-between items-start mb-2">
-                          <span className={`font-bold uppercase text-sm ${isActive ? 'text-lively-900 pl-2' : isSelected ? 'pl-2' : ''}`}>
-                            {index + 1}. {step.title}
-                          </span>
-                          {step.type === 'safety' && (
-                            <span className="bg-rose-500 text-white text-[10px] px-2 py-1 font-bold uppercase border border-rose-900">
-                              Safety Stop
-                            </span>
-                          )}
-                        </div>
-                        <p className={`text-xs ${isActive ? 'text-lively-900 pl-2 font-medium' : isSelected ? 'pl-2' : 'text-taupe-600'}`}>
-                          {step.desc}
-                        </p>
-                        
-                        {}
-                        <div className={`mt-3 p-2 border-l-2 text-[10px] leading-relaxed transition-colors ${
-                          isActive ? 'bg-lively-50 border-lively-500 text-lively-900' : 
-                          isSelected ? 'bg-taupe-50 border-taupe-500 text-taupe-700' : 
-                          'bg-taupe-50 border-taupe-300 text-taupe-500'
-                        }`}>
-                          <strong className="block uppercase tracking-widest mb-0.5 opacity-80">💡 What it means:</strong>
-                          {step.explainer}
-                        </div>
-                      </div>
+<span class="text-rose font-bold"># ZERO-HALLUCINATION CONSTRAINTS</span>
+1. <span class="text-yellow-400">STRICT GROUNDING:</span> If IP is not in `{{VPN_LOGS}}`, classify as "EXTERNAL".
+2. <span class="text-yellow-400">NO ASSUMPTIONS:</span> Do not guess geographic locations. Return `null`.
 
-                      {/* Connector Arrow */}
-                      {index < activeLoop.steps.length - 1 && (
-                        <div className={`h-8 w-1.5 my-1 ${isActive ? 'bg-lively-500' : 'bg-taupe-300'}`}></div>
-                      )}
-                    </div>
-                  );
-                })}
-
-                {/* Final End Node */}
-                <div className={`h-8 w-1.5 my-1 ${status === 'SUCCESS' ? 'bg-lively-500' : 'bg-taupe-300'}`}></div>
-                <div className={`px-6 py-2 font-bold uppercase tracking-widest text-sm brutal-border transition-colors no-select ${
-                  status === 'SUCCESS' ? 'bg-lively-500 text-white border-lively-900 shadow-[4px_4px_0_0_#064e3b]' : 'bg-taupe-200 text-taupe-500'
-                }`}>
-                  End Process
+<span class="text-rose font-bold"># DETERMINISTIC SCHEMA</span>
+{
+  "incident_id": <span class="syn-str">"string"</span>,
+  "action": <span class="syn-str">"enum: [ISOLATE, BLOCK]"</span>
+}
+                  </pre>
                 </div>
               </div>
             </div>
-
-            {}
-            <div className="w-full md:w-1/3 flex flex-col brutal-border-r bg-white overflow-hidden relative">
-              
-              {/* Step Inspector (Fully Amendable) */}
-              <div className="p-6 brutal-border-b bg-taupe-50 shrink-0 shadow-inner">
-                <div className="flex justify-between items-center mb-4 no-select">
-                  <h2 className="font-bold uppercase tracking-widest text-sm text-taupe-900">Step Inspector</h2>
-                  <span className="text-[10px] bg-white text-taupe-900 px-2 py-1 font-mono uppercase brutal-border">Currently Editing: Step {activeLoop.steps.findIndex(s => s.id === selectedStepId) + 1}</span>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest mb-1 text-taupe-700">Action Title</label>
-                    <input 
-                      type="text" 
-                      value={selectedStep.title}
-                      onChange={(e) => handleStepEdit('title', e.target.value)}
-                      className="w-full p-2.5 text-sm font-bold brutal-border bg-white focus:outline-none focus:ring-2 focus:ring-lively-500 focus:border-transparent transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest mb-1 text-taupe-700">Business Logic Instruction</label>
-                    <textarea 
-                      rows="3"
-                      value={selectedStep.desc}
-                      onChange={(e) => handleStepEdit('desc', e.target.value)}
-                      className="w-full p-2.5 text-sm brutal-border bg-white focus:outline-none focus:ring-2 focus:ring-lively-500 focus:border-transparent transition-all resize-none text-taupe-600"
-                    />
-                  </div>
-                  
-                  {}
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest mb-1 text-taupe-700">Non-Tech Explainer</label>
-                    <textarea 
-                      rows="2"
-                      value={selectedStep.explainer}
-                      onChange={(e) => handleStepEdit('explainer', e.target.value)}
-                      className="w-full p-2.5 text-xs brutal-border bg-lively-50/30 focus:outline-none focus:ring-2 focus:ring-lively-500 focus:border-transparent transition-all resize-none text-taupe-700"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Data Sandbox */}
-              <div className="flex-1 p-6 bg-white overflow-y-auto">
-                <div className="flex justify-between items-center mb-4 no-select">
-                  <h2 className="font-bold uppercase tracking-widest text-sm text-taupe-900">Live Sandbox Variables</h2>
-                  <span className="text-[10px] bg-taupe-900 text-white px-2 py-1 font-mono uppercase brutal-border">Data Inputs</span>
-                </div>
-                <p className="text-xs text-taupe-500 mb-5 leading-relaxed">
-                  Modify the data payload below before clicking "Run Workflow". The AI agent will ingest these exact variables during execution.
-                </p>
-                
-                <div className="space-y-4">
-                  {Object.entries(activeLoop.variables).map(([key, value]) => (
-                    <div key={key}>
-                      <label className="block text-[10px] font-bold uppercase tracking-widest mb-1 text-taupe-600">
-                        {key.replace(/_/g, ' ')}
-                      </label>
-                      <input 
-                        type="text" 
-                        value={value}
-                        onChange={(e) => handleVariableChange(key, e.target.value)}
-                        className={`w-full p-3 text-sm font-mono brutal-border focus:outline-none focus:ring-2 focus:ring-lively-500 focus:border-transparent transition-all ${
-                          value.includes('.csv') ? 'bg-olive-50 text-olive-900 font-bold border-olive-500 border-l-4' : 'bg-taupe-50'
-                        }`}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {}
-            <div className="w-full md:w-1/3 flex flex-col bg-taupe-900 text-white overflow-hidden relative">
-              
-              <div className="p-3 brutal-border-b border-taupe-700 bg-taupe-900 shrink-0 flex justify-between items-center no-select">
-                <h2 className="font-bold uppercase tracking-widest text-sm flex items-center gap-2">
-                  <span className={`w-3 h-3 rounded-none brutal-border border-white ${status === 'RUNNING' ? 'bg-lively-500 animate-pulse' : 'bg-taupe-500'}`}></span>
-                  Narrative Log
-                </h2>
-                <span className="text-[10px] font-mono text-taupe-400">System Output</span>
-              </div>
-
-              {/* Human-in-the-loop Intercept Banner */}
-              {status === "WAITING" && (
-                <div className="bg-rose-900 p-5 brutal-border-b border-rose-500 shrink-0 shadow-lg z-20">
-                  <h3 className="font-bold text-white uppercase tracking-widest text-sm mb-2 flex items-center gap-2">
-                    <span>⚠️</span> Safety Review Required
-                  </h3>
-                  <p className="text-xs text-rose-200 mb-4 font-mono">
-                    The AI has reached a critical node and halted execution. Human manager must verify output before proceeding.
-                  </p>
-                  <div className="flex gap-3">
-                    <button onClick={() => handleHumanDecision(true)} className="flex-1 bg-lively-500 text-white py-2.5 text-xs font-bold uppercase brutal-border border-lively-900 hover:bg-lively-400 transition-colors shadow-[2px_2px_0_0_#064e3b] cursor-pointer">
-                      ✓ Approve
-                    </button>
-                    <button onClick={() => handleHumanDecision(false)} className="flex-1 bg-taupe-800 text-white py-2.5 text-xs font-bold uppercase brutal-border border-taupe-900 hover:bg-taupe-700 transition-colors shadow-[2px_2px_0_0_#1a1715] cursor-pointer">
-                      ✕ Reject
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Logs */}
-              <div ref={logContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#2a2622]">
-                {logs.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-taupe-500 text-xs font-mono text-center p-4 no-select border-2 border-dashed border-taupe-700 m-4">
-                    [ SYSTEM STANDBY ]<br/><br/>Adjust variables in the sandbox and click "Run Workflow" to initiate the agentic loop.
-                  </div>
-                ) : (
-                  logs.map((log, i) => (
-                    <div key={i} className={`p-3 border-l-4 text-xs font-mono bg-[#332f2b] brutal-border border-taupe-800 ${
-                      log.type === 'ERROR' || log.type === 'WARNING' ? 'border-l-rose-500 text-rose-100' :
-                      log.type === 'SUCCESS' ? 'border-l-lively-500 text-lively-100' :
-                      log.type === 'ACTION' ? 'border-l-taupe-300 text-taupe-100' :
-                      'border-l-taupe-600 text-taupe-300'
-                    }`}>
-                      <div className="flex justify-between items-start mb-1">
-                        <strong className={`uppercase tracking-wider ${
-                          log.type === 'SUCCESS' ? 'text-lively-400' : 
-                          log.type === 'ERROR' || log.type === 'WARNING' ? 'text-rose-400' : 'text-taupe-300'
-                        }`}>
-                          {log.title}
-                        </strong>
-                        <span className="text-[9px] opacity-50">{log.time}</span>
-                      </div>
-                      <p className="leading-relaxed opacity-90">{log.message}</p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
           </div>
         </div>
-      );
+
+        <!-- Tab 2: Telemetry -->
+        <div id="section-scale" class="content-section hidden fade-in">
+          <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Telemetry & Vault Blueprints</h3>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="flex flex-col h-full">
+              <h4 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">The API Compute Trap</h4>
+              <p class="text-gray-600 text-xs mb-4 leading-relaxed">
+                SaaS wrappers charge premiums per execution. Deploying logic directly onto existing infrastructure flattens costs to base API token usage.
+              </p>
+              <div class="chart-container mt-auto">
+                <canvas id="scaleChart"></canvas>
+              </div>
+            </div>
+            <div class="flex flex-col h-full border border-gray-200 rounded bg-gray-50 p-4">
+               <div class="flex justify-between items-center mb-3">
+                <h4 class="text-sm font-bold text-gray-800">Telemetry Routing Pipeline</h4>
+                <span class="px-2 py-1 bg-taupe text-white text-[9px] font-bold uppercase rounded">Extract</span>
+              </div>
+              <div class="flex-1 flex items-center justify-center">
+                 <div class="w-full flex flex-col items-center p-2">
+                  <div class="flow-node active"><strong>1. EventBridge</strong><br><span class="text-[9px] text-gray-500">GuardDuty Anomaly</span></div>
+                  <div class="flow-line"></div>
+                  <div class="flow-node"><strong>2. AWS Lambda</strong><br><span class="text-[9px] text-gray-500">Data Scrubber (Strips PII)</span></div>
+                  <div class="flow-line"></div>
+                  <div class="flow-node border-taupe border-2 bg-white"><strong class="text-taupe">3. LLM Agent</strong><br><span class="text-[9px] text-gray-500">Evaluates Payload</span></div>
+                  <div class="flow-line"></div>
+                  <div class="flow-node"><strong>4. Webhook Sync</strong><br><span class="text-[9px] text-gray-500">Jira Ticket Created</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: RBAC -->
+        <div id="section-rbac" class="content-section hidden fade-in">
+          <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Safety & Transition Matrices</h3>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="flex flex-col h-full">
+              <h4 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Action Delegation Profiles</h4>
+              <p class="text-gray-600 text-xs mb-4 leading-relaxed">
+                Higher-risk actions must strictly deny AI execution roles. The agent is a "preparer," shifting humans to "approvers."
+              </p>
+              <div class="chart-container mt-auto">
+                <canvas id="rbacChart"></canvas>
+              </div>
+            </div>
+            <div class="flex flex-col h-full border border-gray-200 rounded bg-gray-50 p-4 overflow-x-auto">
+               <div class="flex justify-between items-center mb-3 min-w-[300px]">
+                <h4 class="text-sm font-bold text-gray-800">SecOps RBAC Matrix</h4>
+                <span class="px-2 py-1 bg-rose text-white text-[9px] font-bold uppercase rounded">Extract</span>
+              </div>
+              <div class="border border-gray-200 rounded overflow-hidden min-w-[300px]">
+                <table class="w-full text-left border-collapse bg-white">
+                  <thead>
+                    <tr class="bg-gray-800 text-white text-[9px] uppercase tracking-wider">
+                      <th class="p-2 border-b border-gray-700">Action</th>
+                      <th class="p-2 border-b border-gray-700">Risk</th>
+                      <th class="p-2 border-b border-gray-700">Governance</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-[10px] text-gray-800">
+                    <tr class="border-b border-gray-100">
+                      <td class="p-2 font-mono text-gray-600">Scan_Logs</td>
+                      <td class="p-2"><span class="px-1 py-0.5 bg-green-100 text-green-800 rounded">LOW</span></td>
+                      <td class="p-2 text-gray-500">Passive Audit</td>
+                    </tr>
+                    <tr class="border-b border-gray-100 bg-[#FDFBF7]">
+                      <td class="p-2 font-mono text-gray-600">Update_Jira</td>
+                      <td class="p-2"><span class="px-1 py-0.5 bg-yellow-100 text-yellow-800 rounded">MED</span></td>
+                      <td class="p-2 text-olive font-bold">Weekly Review</td>
+                    </tr>
+                    <tr class="border-b border-gray-100">
+                      <td class="p-2 font-mono text-gray-600">Block_IP</td>
+                      <td class="p-2"><span class="px-1 py-0.5 bg-orange-100 text-orange-800 rounded">HIGH</span></td>
+                      <td class="p-2 text-orange-600 font-bold">1-Click Approve</td>
+                    </tr>
+                    <tr class="bg-red-50">
+                      <td class="p-2 font-mono text-gray-600">Isolate_EC2</td>
+                      <td class="p-2"><span class="px-1 py-0.5 bg-red-100 text-red-800 rounded">CRIT</span></td>
+                      <td class="p-2 text-red-600 font-bold">CTO Auth Req.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing & Checkout Section -->
+<section id="solutions" class="py-24 px-6 border-t border-gray-200 bg-white">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <div class="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold uppercase tracking-wider rounded-sm mb-4">
+        Strategic Architecture Products
+      </div>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Deploy Without the SaaS Trap</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+        Competitors charge you monthly to rent their infrastructure. We sell the exact architectural blueprints so your internal team can build it right the first time on your own servers.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Tier 1 -->
+      <div class="bg-panel border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow flex flex-col relative">
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Prompt Architecture Suite</h3>
+          <p class="text-sm text-gray-500 min-h-[40px]">Multi-variable reasoning engines for complex enterprise workflows.</p>
+        </div>
+        <div class="mb-6">
+          <span class="text-4xl font-extrabold text-gray-900">$97</span>
+          <span class="text-sm text-gray-500 font-medium">/ one-time</span>
+        </div>
+        <ul class="text-sm text-gray-600 space-y-3 mb-8 flex-1">
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> 15 Production-Ready Prompts</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> PMO Governance Frameworks</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Strict JSON Formatting Rules</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Digital Notion Vault Access</li>
+        </ul>
+        <a href="https://buy.stripe.com/test_YOUR_LINK_1" target="_blank" class="w-full block text-center px-6 py-3 border-2 border-olive text-olive font-bold uppercase tracking-wider rounded hover:bg-olive hover:text-white transition-colors">
+          Purchase Framework
+        </a>
+      </div>
+
+      <!-- Tier 2 (Highlighted) -->
+      <div class="bg-[#FDFBF7] border-2 border-olive rounded-xl p-8 shadow-md transform md:-translate-y-4 flex flex-col relative">
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-olive text-white px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full">
+          Most Critical
+        </div>
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-2">The Data Vault Bridge</h3>
+          <p class="text-sm text-gray-600 min-h-[40px]">Custom integration documentation & API payload mapping.</p>
+        </div>
+        <div class="mb-6">
+          <span class="text-4xl font-extrabold text-gray-900">$249</span>
+          <span class="text-sm text-gray-500 font-medium">/ one-time</span>
+        </div>
+        <ul class="text-sm text-gray-700 space-y-3 mb-8 flex-1">
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> 40-Page Architecture Blueprint</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Stripe & Shopify Webhook Maps</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Automated Error-Handling Arrays</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Lambda PII Sanitization Logic</li>
+        </ul>
+        <a href="https://buy.stripe.com/test_YOUR_LINK_2" target="_blank" class="w-full block text-center px-6 py-3 bg-olive text-white font-bold uppercase tracking-wider rounded hover:bg-opacity-90 shadow-md transition-colors">
+          Purchase Blueprint
+        </a>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="bg-panel border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow flex flex-col relative">
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Complete Architecture Bundle</h3>
+          <p class="text-sm text-gray-500 min-h-[40px]">The ultimate package: Prompts, Blueprints, and the Zero-Manual Playbook.</p>
+        </div>
+        <div class="mb-6">
+          <span class="text-4xl font-extrabold text-gray-900">$497</span>
+          <span class="text-sm text-gray-500 font-medium">/ one-time</span>
+        </div>
+        <ul class="text-sm text-gray-600 space-y-3 mb-8 flex-1">
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Includes Prompt Suite & Vault Blueprint</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Zero-Manual Transition Playbook</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Quantitative Scoring Matrices</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Hardcoded RBAC Governance Rules</li>
+        </ul>
+        <a href="https://buy.stripe.com/test_YOUR_LINK_3" target="_blank" class="w-full block text-center px-6 py-3 border-2 border-olive text-olive font-bold uppercase tracking-wider rounded hover:bg-olive hover:text-white transition-colors">
+          Purchase Bundle
+        </a>
+      </div>
+
+    </div>
+    
+    <div class="mt-12 text-center">
+      <p class="text-sm text-gray-500">
+        Requires enterprise SLA or a dedicated consulting sprint? <a href="mailto:contact@efficiencylabs.com" class="text-olive font-bold hover:underline">Contact us for custom deployment.</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-400 py-12 px-6 border-t border-gray-800">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="text-center md:text-left">
+      <div class="text-lg font-bold text-white tracking-widest uppercase mb-1">Efficiency Labs</div>
+      <p class="text-xs">Translating complex reasoning into autonomous business workflows.</p>
+    </div>
+    <div class="flex gap-6 text-sm">
+      <a href="#" class="hover:text-white transition-colors">Documentation</a>
+      <a href="#" class="hover:text-white transition-colors">Substack</a>
+      <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+    </div>
+    <div class="text-xs">
+      &copy; 2026 Efficiency Labs. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Diagnostic Tab Logic
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const sections = document.querySelectorAll('.content-section');
+
+  let govChartInstance = null;
+  let scaleChartInstance = null;
+  let rbacChartInstance = null;
+
+  function activateTab(targetId) {
+    sections.forEach(s => s.classList.add('hidden'));
+    document.getElementById(targetId).classList.remove('hidden');
+
+    navBtns.forEach(b => {
+      b.classList.remove('bg-olive', 'text-white', 'border-olive');
+      b.classList.add('text-gray-600', 'hover:bg-white', 'border-transparent');
+    });
+    
+    const activeBtn = document.querySelector(`.nav-btn[data-target="${targetId}"]`);
+    if(activeBtn) {
+      activeBtn.classList.remove('text-gray-600', 'hover:bg-white', 'border-transparent');
+      activeBtn.classList.add('bg-olive', 'text-white', 'border-olive');
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+    // Init charts when visible
+    if (targetId === 'section-gov' && !govChartInstance) initGovChart();
+    if (targetId === 'section-scale' && !scaleChartInstance) initScaleChart();
+    if (targetId === 'section-rbac' && !rbacChartInstance) initRbacChart();
+  }
+
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      activateTab(e.target.closest('.nav-btn').getAttribute('data-target'));
+    });
+  });
+
+  // Chart.js Implementations
+  function initGovChart() {
+    const ctx = document.getElementById('govChart').getContext('2d');
+    govChartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Shadow AI Usage', 'Governed Pipelines'],
+        datasets: [{
+          data: [85, 15],
+          backgroundColor: ['#A39B8B', '#6B705C'],
+          borderWidth: 2,
+          borderColor: '#FFFFFF'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '70%',
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } }
+      }
+    });
+  }
+
+  function initScaleChart() {
+    const ctx = document.getElementById('scaleChart').getContext('2d');
+    scaleChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['1M', '5M', '10M', '25M', '50M'],
+        datasets: [
+          { label: 'SaaS Wrapper Cost', data: [500, 2500, 5000, 12500, 25000], borderColor: '#CB997E', backgroundColor: 'rgba(203, 153, 126, 0.1)', fill: true, tension: 0.3 },
+          { label: 'Owned Base API', data: [50, 250, 500, 1250, 2500], borderColor: '#6B705C', borderDash: [5, 5], tension: 0.3 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true, ticks: { font: { size: 9 } } }, x: { ticks: { font: { size: 9 } } } },
+        plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } }
+      }
+    });
+  }
+
+  function initRbacChart() {
+    const ctx = document.getElementById('rbacChart').getContext('2d');
+    rbacChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['T1', 'T2', 'T3', 'T4'],
+        datasets: [
+          { label: 'Auto Execution', data: [100, 100, 0, 0], backgroundColor: '#6B705C', stack: '0' },
+          { label: 'Human-in-Loop', data: [0, 0, 100, 100], backgroundColor: '#CB997E', stack: '0' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { y: { stacked: true, max: 100, ticks: { callback: v => v+'%', font: {size: 9} } }, x: { stacked: true, ticks: { font: {size: 9} } } },
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: {size: 10} } } }
+      }
+    });
+  }
+
+  // Load first tab on start
+  window.onload = () => activateTab('section-gov');
+</script>
 </body>
 </html>
