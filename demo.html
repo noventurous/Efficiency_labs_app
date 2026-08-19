@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Efficiency Labs - Loop Architect</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // Strict Efficiency Labs Palette with the requested Lively Green Accent
+            taupe: { 50: '#faf9f8', 100: '#f5f4f2', 200: '#e0ddd8', 300: '#c2bcb6', 500: '#8c8277', 700: '#5c544d', 900: '#38332f' },
+            olive: { 50: '#f9faf7', 100: '#f1f4ec', 200: '#dbe0d1', 500: '#7a8c53', 700: '#4e5a35', 900: '#2f3720' },
+            rose:  { 50: '#fffcfc', 100: '#fdf7f7', 200: '#f7e6e6', 500: '#c58385', 700: '#945b5d', 900: '#5c3536' },
+            lively: { 400: '#34d399', 500: '#10b981', 600: '#059669', 900: '#064e3b' } // The lively green accent
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <style>
+    /* Geometric Minimalism - No rounded corners anywhere */
+    * { border-radius: 0 !important; }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f5f4f2; border-left: 2px solid #38332f; }
+    ::-webkit-scrollbar-thumb { background: #38332f; }
+    
+    .brutal-border { border: 2px solid #38332f; }
+    .brutal-border-b { border-bottom: 2px solid #38332f; }
+    .brutal-border-r { border-right: 2px solid #38332f; }
+    .brutal-border-l { border-left: 2px solid #38332f; }
+    .brutal-border-t { border-top: 2px solid #38332f; }
+    
+    .brutal-shadow { box-shadow: 4px 4px 0px 0px #38332f; }
+    .brutal-shadow-green { box-shadow: 4px 4px 0px 0px #064e3b; }
+    
+    .brutal-shadow:active, .brutal-shadow-green:active { 
+      box-shadow: 0px 0px 0px 0px transparent; 
+      transform: translate(4px, 4px); 
+    }
+
+    .bg-grid-pattern {
+      background-image: radial-gradient(#c2bcb6 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    
+    /* Disabling text selection on UI elements for a more app-like feel */
+    .no-select { user-select: none; }
+  </style>
+</head>
+<body class="bg-taupe-100 text-taupe-900 font-sans antialiased h-full overflow-hidden">
+  <div id="root" class="h-full"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const INITIAL_LOOPS = [
+      {
+        id: "founder_loop",
+        title: "Founder: Automated Lead Gen",
+        description: "Zero-touch pipeline: Captures Stripe payment, triggers Make.com webhook, delivers asset via MailerLite, and syncs Notion telemetry.",
+        variables: {
+          Stripe_Customer_Email: "investor@venture.io",
+          Checkout_Value: "$0.00 (Lead Magnet)",
+          Target_Database: "Sales Tracker 33d4f39cd73780d2893dd260f00d3cbf.csv"
+        },
+        steps: [
+          { id: "s1", type: "trigger", title: "Stripe Webhook", desc: "Listens for 'checkout.session.completed' from Stripe API.", explainer: "The system waits like a digital receptionist until someone buys your toolkit." },
+          { id: "s2", type: "action", title: "Make.com Routing", desc: "Parses Stripe payload and routes data to marketing stack.", explainer: "A digital traffic cop takes the buyer's info and sends it exactly where it needs to go." },
+          { id: "s3", type: "action", title: "MailerLite Delivery", desc: "Fires the Welcome Email sequence containing the AI Prompt Kit.", explainer: "Automatically sends the welcome email with the download link, so you don't have to." },
+          { id: "s4", type: "action", title: "Notion API Sync", desc: "Appends the new lead telemetry to the central Sales Tracker CSV.", explainer: "Updates your Sales Tracker spreadsheet automatically so your records are perfectly up to date." }
+        ]
+      },
+      {
+        id: "consultant_loop",
+        title: "Consultant: Client Intake & Audit",
+        description: "Automates discovery. Analyzes Typeform intake data via Anthropic Claude AI, drafts a strategy brief, and alerts via Slack.",
+        variables: {
+          Client_Name: "Acme Corp Logistics",
+          Typeform_Intake_ID: "TF-992A-INTAKE",
+          Claude_Model: "claude-3-5-sonnet"
+        },
+        steps: [
+          { id: "s1", type: "trigger", title: "Typeform Submission", desc: "Activates when a new discovery form is submitted by a prospect.", explainer: "Captures the exact answers when a new potential client fills out your questionnaire." },
+          { id: "s2", type: "action", title: "Anthropic Claude Synthesis", desc: "API reads form data and drafts a preliminary strategy brief.", explainer: "AI reads the client's answers and writes a draft strategy document for you in seconds." },
+          { id: "s3", type: "safety", title: "Slack Manager Approval", desc: "Halts workflow. Pings #leadership in Slack. You must review the AI's brief.", explainer: "The AI pauses and sends you a message. It waits for your human 'thumbs up' before sending anything." },
+          { id: "s4", type: "action", title: "Google Workspace API", desc: "Generates a formatted Google Doc brief and emails the client.", explainer: "Takes the approved strategy, turns it into a neat Google Doc, and emails it to the client." }
+        ]
+      },
+      {
+        id: "cto_loop",
+        title: "CTO: Cloud Threat Remediation",
+        description: "Ingests AWS GuardDuty alerts, blocks IPs via Cloudflare WAF, escalates via PagerDuty, and resolves Jira tickets.",
+        variables: {
+          AWS_GuardDuty_Alert: "HIGH (Brute Force)",
+          Source_IP: "192.0.2.144",
+          Datadog_Trace_ID: "prod-db-cluster-02"
+        },
+        steps: [
+          { id: "s1", type: "trigger", title: "AWS EventBridge", desc: "Ingests high-severity alert from AWS network monitoring.", explainer: "Acts as a security camera that alerts you the second someone tries to break into your system." },
+          { id: "s2", type: "action", title: "Cloudflare WAF Injection", desc: "Automatically injects a Cloudflare firewall rule to isolate the IP.", explainer: "Instantly builds a digital wall to block the hacker's computer before they can do damage." },
+          { id: "s3", type: "safety", title: "PagerDuty Escalation", desc: "Halts. SecOps engineer must verify the IP is not a corporate VPN.", explainer: "Pings a human security expert to double-check that we didn't accidentally block a real employee." },
+          { id: "s4", type: "action", title: "Jira API Resolution", desc: "Logs the incident in Jira and closes the active security alert.", explainer: "Logs the whole event in your ticketing system and marks the emergency as 'handled'." }
+        ]
+      }
+    ];
+
+    function App() {
+      // Global Data State
+      const [loops, setLoops] = useState(INITIAL_LOOPS);
+      const [activeLoopId, setActiveLoopId] = useState(INITIAL_LOOPS[0].id);
+      
+      // Execution & UI State
+      const [status, setStatus] = useState("IDLE"); // IDLE, RUNNING, WAITING, SUCCESS, REJECTED
+      const [activeStepIndex, setActiveStepIndex] = useState(-1);
+      const [selectedStepId, setSelectedStepId] = useState(INITIAL_LOOPS[0].steps[0].id);
+      const [logs, setLogs] = useState([]);
+      const logContainerRef = useRef(null);
+
+      // Derived State
+      const activeLoop = loops.find(l => l.id === activeLoopId);
+      const selectedStep = activeLoop.steps.find(s => s.id === selectedStepId) || activeLoop.steps[0];
+
+      // Auto-scroll narrative feed
+      useEffect(() => {
+        if (logContainerRef.current) {
+          logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+        }
+      }, [logs]);
+
+      const handleTabChange = (loopId) => {
+        setActiveLoopId(loopId);
+        const newLoop = loops.find(l => l.id === loopId);
+        setSelectedStepId(newLoop.steps[0].id);
+        setStatus("IDLE");
+        setActiveStepIndex(-1);
+        setLogs([]);
+      };
+
+      const handleVariableChange = (key, value) => {
+        setLoops(prevLoops => prevLoops.map(loop => {
+          if (loop.id === activeLoopId) {
+            return { ...loop, variables: { ...loop.variables, [key]: value } };
+          }
+          return loop;
+        }));
+      };
+
+      const handleStepEdit = (field, value) => {
+        setLoops(prevLoops => prevLoops.map(loop => {
+          if (loop.id === activeLoopId) {
+            return {
+              ...loop,
+              steps: loop.steps.map(step => 
+                step.id === selectedStepId ? { ...step, [field]: value } : step
+              )
+            };
+          }
+          return loop;
+        }));
+      };
+
+      const writeLog = (type, title, message) => {
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        setLogs(prev => [...prev, { time, type, title, message }]);
+      };
+
+      const runWorkflow = () => {
+        setStatus("RUNNING");
+        setLogs([]);
+        setActiveStepIndex(-1);
+        
+        writeLog("SYSTEM", "Pipeline Activated", `Initializing ${activeLoop.title}`);
+        
+        // Output current Sandbox variables to log
+        Object.entries(activeLoop.variables).forEach(([k, v]) => {
+          writeLog("DATA", "Context Loaded", `[${k.replace(/_/g, ' ')}] = ${v}`);
+        });
+
+        let stepIndex = 0;
+
+        const processNextNode = () => {
+          setLoops(currentLoops => {
+            const currentActiveLoop = currentLoops.find(l => l.id === activeLoopId);
+            
+            if (stepIndex >= currentActiveLoop.steps.length) {
+              setStatus("SUCCESS");
+              writeLog("SUCCESS", "Workflow Completed", "All automated operations finished successfully.");
+              setActiveStepIndex(-1);
+              return currentLoops;
+            }
+
+            const step = currentActiveLoop.steps[stepIndex];
+            setActiveStepIndex(stepIndex);
+            setSelectedStepId(step.id); // Auto-focus the running step in the inspector
+
+            if (step.type === "safety") {
+              setStatus("WAITING");
+              writeLog("WARNING", "Execution Halted", `Safety checkpoint reached: ${step.title}. Awaiting human review.`);
+              return currentLoops; // Pause loop for human intervention
+            }
+
+            writeLog("ACTION", `Executing: ${step.title}`, step.desc);
+            
+            stepIndex++;
+            setTimeout(processNextNode, 1500); // 1.5s delay for visual pacing
+            
+            return currentLoops;
+          });
+        };
+
+        setTimeout(processNextNode, 1000);
+      };
+
+      const handleHumanDecision = (approved) => {
+        if (approved) {
+          writeLog("SUCCESS", "Manager Approved", "Human verification passed. Resuming pipeline.");
+          setStatus("RUNNING");
+          
+          let stepIndex = activeStepIndex + 1;
+          const resumeNode = () => {
+            setLoops(currentLoops => {
+              const currentActiveLoop = currentLoops.find(l => l.id === activeLoopId);
+              if (stepIndex >= currentActiveLoop.steps.length) {
+                setStatus("SUCCESS");
+                writeLog("SUCCESS", "Workflow Completed", "Pipeline executed to completion.");
+                setActiveStepIndex(-1);
+                return currentLoops;
+              }
+              const step = currentActiveLoop.steps[stepIndex];
+              setActiveStepIndex(stepIndex);
+              setSelectedStepId(step.id);
+              writeLog("ACTION", `Executing: ${step.title}`, step.desc);
+              stepIndex++;
+              setTimeout(resumeNode, 1500);
+              return currentLoops;
+            });
+          };
+          setTimeout(resumeNode, 1000);
+
+        } else {
+          setStatus("REJECTED");
+          writeLog("ERROR", "Manager Rejected", "Operation aborted by human supervisor. Pipeline terminated.");
+        }
+      };
+
+      return (
+        <div className="flex flex-col h-screen bg-taupe-100 text-taupe-900 overflow-hidden font-sans">
+          
+          {/* Top Header - Executive Briefing */}
+          <header className="bg-taupe-900 text-white brutal-border-b flex flex-col md:flex-row justify-between items-start md:items-center p-6 shrink-0 z-20 relative shadow-lg">
+            <div className="no-select">
+              <h1 className="text-2xl font-bold uppercase tracking-widest mb-1 flex items-center gap-3">
+                <span className="w-5 h-5 bg-lively-500 inline-block brutal-border border-white shadow-[2px_2px_0_0_#fff]"></span>
+                Efficiency Labs
+              </h1>
+              <p className="text-taupe-300 font-mono text-sm max-w-2xl mt-2 border-l-2 border-lively-500 pl-3">
+                Visually map, test, and safely approve automated AI business workflows without writing code.
+              </p>
+            </div>
+            
+            <div className="mt-4 md:mt-0 flex gap-4">
+              <button 
+                onClick={runWorkflow}
+                disabled={status === "RUNNING" || status === "WAITING"}
+                className={`px-8 py-3 font-bold uppercase tracking-widest brutal-border transition-all flex items-center gap-2 no-select ${
+                  status === "RUNNING" ? "bg-taupe-500 text-white cursor-not-allowed border-taupe-700" 
+                  : "bg-lively-500 text-white border-lively-900 brutal-shadow-green hover:bg-lively-400 hover:translate-y-[-2px] cursor-pointer"
+                }`}
+              >
+                {status === "RUNNING" ? "Running..." : "▶ Run Workflow"}
+              </button>
+            </div>
+          </header>
+
+          {/* Preset Tabs */}
+          <div className="flex bg-taupe-200 brutal-border-b shrink-0 z-10 relative">
+            {loops.map((loop) => (
+              <button
+                key={loop.id}
+                onClick={() => handleTabChange(loop.id)}
+                className={`flex-1 py-3 px-4 text-xs md:text-sm font-bold uppercase tracking-widest brutal-border-r last:border-r-0 transition-colors no-select cursor-pointer ${
+                  activeLoopId === loop.id 
+                    ? "bg-white text-taupe-900 border-b-4 border-b-lively-500" 
+                    : "bg-taupe-200 text-taupe-500 hover:bg-taupe-100"
+                }`}
+              >
+                {loop.title}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+            
+            {/* Column 1: Visual Map (Interactive) */}
+            <div className="w-full md:w-1/3 brutal-border-r bg-white flex flex-col overflow-y-auto bg-grid-pattern relative">
+              <div className="bg-taupe-900 text-white p-3 brutal-border-b sticky top-0 z-10 no-select">
+                <h2 className="font-bold uppercase tracking-widest text-sm flex items-center justify-between">
+                  Visual Map
+                  <span className="text-[10px] font-normal text-lively-400 normal-case font-mono bg-taupe-900 border border-lively-500 px-2 py-0.5">Click any step to edit</span>
+                </h2>
+              </div>
+              
+              <div className="p-8 flex flex-col items-center">
+                {activeLoop.steps.map((step, index) => {
+                  const isActive = activeStepIndex === index;
+                  const isSelected = selectedStepId === step.id;
+                  
+                  return (
+                    <div key={step.id} className="flex flex-col items-center w-full max-w-sm">
+                      
+                      {/* Step Card */}
+                      <div 
+                        onClick={() => setSelectedStepId(step.id)}
+                        className={`w-full p-4 brutal-border cursor-pointer transition-all duration-200 relative ${
+                          isActive ? "bg-lively-50 border-lively-900 shadow-[4px_4px_0_0_#064e3b] scale-105 z-10" : 
+                          isSelected ? "bg-taupe-100 brutal-shadow border-taupe-900" : 
+                          "bg-white hover:bg-taupe-50 border-taupe-500 shadow-[2px_2px_0_0_#c2bcb6]"
+                        }`}
+                      >
+                        {/* Active Indicator Line */}
+                        {isActive && <div className="absolute top-0 left-0 w-2 h-full bg-lively-500"></div>}
+                        {isSelected && !isActive && <div className="absolute top-0 left-0 w-2 h-full bg-taupe-900"></div>}
+
+                        <div className="flex justify-between items-start mb-2">
+                          <span className={`font-bold uppercase text-sm ${isActive ? 'text-lively-900 pl-2' : isSelected ? 'pl-2' : ''}`}>
+                            {index + 1}. {step.title}
+                          </span>
+                          {step.type === 'safety' && (
+                            <span className="bg-rose-500 text-white text-[10px] px-2 py-1 font-bold uppercase border border-rose-900">
+                              Safety Stop
+                            </span>
+                          )}
+                        </div>
+                        <p className={`text-xs ${isActive ? 'text-lively-900 pl-2 font-medium' : isSelected ? 'pl-2' : 'text-taupe-600'}`}>
+                          {step.desc}
+                        </p>
+                        
+                        {}
+                        <div className={`mt-3 p-2 border-l-2 text-[10px] leading-relaxed transition-colors ${
+                          isActive ? 'bg-lively-50 border-lively-500 text-lively-900' : 
+                          isSelected ? 'bg-taupe-50 border-taupe-500 text-taupe-700' : 
+                          'bg-taupe-50 border-taupe-300 text-taupe-500'
+                        }`}>
+                          <strong className="block uppercase tracking-widest mb-0.5 opacity-80">💡 What it means:</strong>
+                          {step.explainer}
+                        </div>
+                      </div>
+
+                      {/* Connector Arrow */}
+                      {index < activeLoop.steps.length - 1 && (
+                        <div className={`h-8 w-1.5 my-1 ${isActive ? 'bg-lively-500' : 'bg-taupe-300'}`}></div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Final End Node */}
+                <div className={`h-8 w-1.5 my-1 ${status === 'SUCCESS' ? 'bg-lively-500' : 'bg-taupe-300'}`}></div>
+                <div className={`px-6 py-2 font-bold uppercase tracking-widest text-sm brutal-border transition-colors no-select ${
+                  status === 'SUCCESS' ? 'bg-lively-500 text-white border-lively-900 shadow-[4px_4px_0_0_#064e3b]' : 'bg-taupe-200 text-taupe-500'
+                }`}>
+                  End Process
+                </div>
+              </div>
+            </div>
+
+            {}
+            <div className="w-full md:w-1/3 flex flex-col brutal-border-r bg-white overflow-hidden relative">
+              
+              {/* Step Inspector (Fully Amendable) */}
+              <div className="p-6 brutal-border-b bg-taupe-50 shrink-0 shadow-inner">
+                <div className="flex justify-between items-center mb-4 no-select">
+                  <h2 className="font-bold uppercase tracking-widest text-sm text-taupe-900">Step Inspector</h2>
+                  <span className="text-[10px] bg-white text-taupe-900 px-2 py-1 font-mono uppercase brutal-border">Currently Editing: Step {activeLoop.steps.findIndex(s => s.id === selectedStepId) + 1}</span>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1 text-taupe-700">Action Title</label>
+                    <input 
+                      type="text" 
+                      value={selectedStep.title}
+                      onChange={(e) => handleStepEdit('title', e.target.value)}
+                      className="w-full p-2.5 text-sm font-bold brutal-border bg-white focus:outline-none focus:ring-2 focus:ring-lively-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1 text-taupe-700">Business Logic Instruction</label>
+                    <textarea 
+                      rows="3"
+                      value={selectedStep.desc}
+                      onChange={(e) => handleStepEdit('desc', e.target.value)}
+                      className="w-full p-2.5 text-sm brutal-border bg-white focus:outline-none focus:ring-2 focus:ring-lively-500 focus:border-transparent transition-all resize-none text-taupe-600"
+                    />
+                  </div>
+                  
+                  {}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-widest mb-1 text-taupe-700">Non-Tech Explainer</label>
+                    <textarea 
+                      rows="2"
+                      value={selectedStep.explainer}
+                      onChange={(e) => handleStepEdit('explainer', e.target.value)}
+                      className="w-full p-2.5 text-xs brutal-border bg-lively-50/30 focus:outline-none focus:ring-2 focus:ring-lively-500 focus:border-transparent transition-all resize-none text-taupe-700"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Data Sandbox */}
+              <div className="flex-1 p-6 bg-white overflow-y-auto">
+                <div className="flex justify-between items-center mb-4 no-select">
+                  <h2 className="font-bold uppercase tracking-widest text-sm text-taupe-900">Live Sandbox Variables</h2>
+                  <span className="text-[10px] bg-taupe-900 text-white px-2 py-1 font-mono uppercase brutal-border">Data Inputs</span>
+                </div>
+                <p className="text-xs text-taupe-500 mb-5 leading-relaxed">
+                  Modify the data payload below before clicking "Run Workflow". The AI agent will ingest these exact variables during execution.
+                </p>
+                
+                <div className="space-y-4">
+                  {Object.entries(activeLoop.variables).map(([key, value]) => (
+                    <div key={key}>
+                      <label className="block text-[10px] font-bold uppercase tracking-widest mb-1 text-taupe-600">
+                        {key.replace(/_/g, ' ')}
+                      </label>
+                      <input 
+                        type="text" 
+                        value={value}
+                        onChange={(e) => handleVariableChange(key, e.target.value)}
+                        className={`w-full p-3 text-sm font-mono brutal-border focus:outline-none focus:ring-2 focus:ring-lively-500 focus:border-transparent transition-all ${
+                          value.includes('.csv') ? 'bg-olive-50 text-olive-900 font-bold border-olive-500 border-l-4' : 'bg-taupe-50'
+                        }`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {}
+            <div className="w-full md:w-1/3 flex flex-col bg-taupe-900 text-white overflow-hidden relative">
+              
+              <div className="p-3 brutal-border-b border-taupe-700 bg-taupe-900 shrink-0 flex justify-between items-center no-select">
+                <h2 className="font-bold uppercase tracking-widest text-sm flex items-center gap-2">
+                  <span className={`w-3 h-3 rounded-none brutal-border border-white ${status === 'RUNNING' ? 'bg-lively-500 animate-pulse' : 'bg-taupe-500'}`}></span>
+                  Narrative Log
+                </h2>
+                <span className="text-[10px] font-mono text-taupe-400">System Output</span>
+              </div>
+
+              {/* Human-in-the-loop Intercept Banner */}
+              {status === "WAITING" && (
+                <div className="bg-rose-900 p-5 brutal-border-b border-rose-500 shrink-0 shadow-lg z-20">
+                  <h3 className="font-bold text-white uppercase tracking-widest text-sm mb-2 flex items-center gap-2">
+                    <span>⚠️</span> Safety Review Required
+                  </h3>
+                  <p className="text-xs text-rose-200 mb-4 font-mono">
+                    The AI has reached a critical node and halted execution. Human manager must verify output before proceeding.
+                  </p>
+                  <div className="flex gap-3">
+                    <button onClick={() => handleHumanDecision(true)} className="flex-1 bg-lively-500 text-white py-2.5 text-xs font-bold uppercase brutal-border border-lively-900 hover:bg-lively-400 transition-colors shadow-[2px_2px_0_0_#064e3b] cursor-pointer">
+                      ✓ Approve
+                    </button>
+                    <button onClick={() => handleHumanDecision(false)} className="flex-1 bg-taupe-800 text-white py-2.5 text-xs font-bold uppercase brutal-border border-taupe-900 hover:bg-taupe-700 transition-colors shadow-[2px_2px_0_0_#1a1715] cursor-pointer">
+                      ✕ Reject
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Logs */}
+              <div ref={logContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#2a2622]">
+                {logs.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-taupe-500 text-xs font-mono text-center p-4 no-select border-2 border-dashed border-taupe-700 m-4">
+                    [ SYSTEM STANDBY ]<br/><br/>Adjust variables in the sandbox and click "Run Workflow" to initiate the agentic loop.
+                  </div>
+                ) : (
+                  logs.map((log, i) => (
+                    <div key={i} className={`p-3 border-l-4 text-xs font-mono bg-[#332f2b] brutal-border border-taupe-800 ${
+                      log.type === 'ERROR' || log.type === 'WARNING' ? 'border-l-rose-500 text-rose-100' :
+                      log.type === 'SUCCESS' ? 'border-l-lively-500 text-lively-100' :
+                      log.type === 'ACTION' ? 'border-l-taupe-300 text-taupe-100' :
+                      'border-l-taupe-600 text-taupe-300'
+                    }`}>
+                      <div className="flex justify-between items-start mb-1">
+                        <strong className={`uppercase tracking-wider ${
+                          log.type === 'SUCCESS' ? 'text-lively-400' : 
+                          log.type === 'ERROR' || log.type === 'WARNING' ? 'text-rose-400' : 'text-taupe-300'
+                        }`}>
+                          {log.title}
+                        </strong>
+                        <span className="text-[9px] opacity-50">{log.time}</span>
+                      </div>
+                      <p className="leading-relaxed opacity-90">{log.message}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
