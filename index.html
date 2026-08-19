@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Efficiency Labs | Operational Readiness Diagnostics</title>
+<title>Efficiency Labs | Operational Readiness Diagnostics & Architecture</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
+  html { scroll-behavior: smooth; }
   body {
     background-color: #FDFBF7;
     color: #2D2D2D;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    scroll-behavior: smooth;
   }
   .bg-taupe { background-color: #A39B8B; }
   .text-taupe { color: #A39B8B; }
@@ -21,39 +20,35 @@
   .border-olive { border-color: #6B705C; }
   .bg-rose { background-color: #CB997E; }
   .text-rose { color: #CB997E; }
-  .bg-panel { background-color: #FFFFFF; }
   
-  .chart-container {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    height: 300px;
-    max-height: 350px;
-  }
-  @media (min-width: 768px) {
-    .chart-container { height: 320px; }
+  .brutal-border { border: 2px solid #38332F; }
+  .brutal-border-b { border-bottom: 2px solid #38332F; }
+  .brutal-border-r { border-right: 2px solid #38332F; }
+  .brutal-border-l { border-left: 2px solid #38332F; }
+  .brutal-border-t { border-top: 2px solid #38332F; }
+  
+  .brutal-shadow { box-shadow: 4px 4px 0px 0px #38332F; }
+  .brutal-shadow-green { box-shadow: 4px 4px 0px 0px #064E3B; }
+  
+  .bg-grid-pattern {
+    background-image: radial-gradient(#C2BCB6 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #FDFBF7; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #FDFBF7; border-left: 1px solid #E5E7EB; }
   ::-webkit-scrollbar-thumb { background: #A39B8B; border-radius: 4px; }
 
-  .fade-in { animation: fadeIn 0.5s ease-in-out; }
+  .fade-in { animation: fadeIn 0.3s ease-in-out; }
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 2px; }
-
-  /* Diagram Nodes (No SVG) */
   .flow-node {
     padding: 10px;
     border-radius: 6px;
-    background: #fff;
+    background: #FFF;
     border: 2px solid #E5E7EB;
     font-size: 11px;
     text-align: center;
@@ -69,7 +64,6 @@
     height: 16px;
   }
   
-  /* Code Syntax Highlighting */
   .syn-key { color: #CB997E; }
   .syn-val { color: #A39B8B; }
   .syn-str { color: #6B705C; }
@@ -77,50 +71,322 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
 
-<!-- Sticky Navigation -->
-<nav class="bg-panel border-b border-gray-200 sticky top-0 z-50 shadow-sm w-full">
+<!-- 1. STICKY TOP NAVIGATION -->
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm w-full">
   <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <div>
-      <div class="text-xl font-bold tracking-tight text-olive">Efficiency Labs</div>
-      <div class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Architecture & Diagnostics</div>
+    <div class="flex items-center gap-3">
+      <div class="w-4 h-4 bg-olive border border-gray-900"></div>
+      <div>
+        <a href="#hero" class="text-xl font-bold tracking-tight text-olive hover:opacity-90">Efficiency Labs</a>
+        <div class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Architecture & Diagnostics</div>
+      </div>
     </div>
-    <div class="hidden md:flex gap-8 items-center">
-      <a href="#diagnostic" class="text-sm font-medium text-gray-600 hover:text-olive transition-colors">The Diagnostic</a>
-      <a href="#solutions" class="text-sm font-medium text-gray-600 hover:text-olive transition-colors">Architecture Solutions</a>
-      <a href="#solutions" class="px-5 py-2 bg-olive text-white text-sm font-bold uppercase tracking-wider rounded hover:bg-opacity-90 transition-all">Get Blueprints</a>
+    <div class="hidden md:flex gap-6 items-center">
+      <a href="#simulator" class="flex items-center gap-2 text-sm font-bold text-gray-900 hover:text-emerald-700 transition-colors bg-emerald-50 border border-emerald-300 px-3.5 py-1.5 rounded">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        Interactive Simulator
+      </a>
+      <a href="#diagnostic" class="text-sm font-medium text-gray-700 hover:text-olive transition-colors">
+        Governance Diagnostic
+      </a>
+      <a href="#solutions" class="text-sm font-medium text-gray-700 hover:text-olive transition-colors">
+        Architecture Blueprints
+      </a>
+      <a href="#solutions" class="px-5 py-2.5 bg-olive text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-opacity-90 transition-all shadow-sm">
+        Get Blueprints ($97+)
+      </a>
     </div>
   </div>
 </nav>
 
-<!-- Hero Section -->
-<header class="py-20 md:py-32 px-6 border-b border-gray-200 relative overflow-hidden">
+<!-- 2. HERO SECTION -->
+<header id="hero" class="py-16 md:py-24 px-6 border-b border-gray-200 relative overflow-hidden bg-[#FDFBF7]">
   <div class="max-w-4xl mx-auto text-center relative z-10">
-    <div class="inline-block px-3 py-1 bg-[#FDFBF7] border border-olive text-olive text-xs font-bold uppercase tracking-wider rounded-sm mb-6">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white border border-olive text-olive text-xs font-bold uppercase tracking-wider rounded-sm mb-6 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
       Stop buying tools. Diagnose the workflow.
     </div>
     <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
       Map, stress-test, and validate your operational readiness for <span class="text-olive">autonomous AI</span>.
     </h1>
-    <p class="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed max-w-3xl mx-auto">
-      68% of enterprise teams pay for advanced AI models, yet the vast majority remain stuck at the input layer. We provide the diagnostic testing ground and the strategic blueprints to shift your team from operators to approvers.
+    <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
+      68% of enterprise teams pay for advanced AI models, yet the vast majority remain stuck at the input layer. Test real workflows in our interactive simulator below and deploy production blueprints to shift your team from operators to approvers.
     </p>
-    <div class="flex flex-col sm:flex-row justify-center gap-4">
-      <a href="#diagnostic" class="px-8 py-4 bg-gray-900 text-white text-sm font-bold uppercase tracking-wider rounded shadow-lg hover:bg-gray-800 transition-all">
-        Explore The Architecture
+
+    <!-- Primary Action Buttons -->
+    <div class="flex flex-col sm:flex-row justify-center gap-4 mb-10">
+      <a href="#simulator" class="px-8 py-4 bg-emerald-600 text-white text-sm font-bold uppercase tracking-wider rounded shadow-lg hover:bg-emerald-700 hover:shadow-xl transition-all flex items-center justify-center gap-2">
+        <span>▼</span> Launch Interactive Simulator
       </a>
-      <a href="#solutions" class="px-8 py-4 bg-white text-gray-800 border border-gray-300 text-sm font-bold uppercase tracking-wider rounded shadow-sm hover:bg-gray-50 transition-all">
-        View Pricing Tiers
+      <a href="#diagnostic" class="px-8 py-4 bg-gray-900 text-white text-sm font-bold uppercase tracking-wider rounded shadow-md hover:bg-gray-800 transition-all flex items-center justify-center gap-2">
+        <span>📊</span> View Architecture Diagnostic
       </a>
+      <a href="#solutions" class="px-8 py-4 bg-white text-gray-800 border-2 border-gray-300 text-sm font-bold uppercase tracking-wider rounded shadow-sm hover:bg-gray-50 transition-all">
+        View Pricing Tiers ($97–$497)
+      </a>
+    </div>
+
+    <!-- Feature Pillars -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto text-left">
+      <div class="bg-white border border-gray-200 p-4 rounded shadow-sm">
+        <div class="text-xs font-bold uppercase text-gray-900 mb-1 flex items-center gap-1.5">
+          <span class="text-emerald-600 font-bold">✓</span> Real-Time Simulation
+        </div>
+        <p class="text-xs text-gray-500">Test live payload execution across Founder, Consultant, and CTO workflows.</p>
+      </div>
+      <div class="bg-white border border-gray-200 p-4 rounded shadow-sm">
+        <div class="text-xs font-bold uppercase text-gray-900 mb-1 flex items-center gap-1.5">
+          <span class="text-rose font-bold">🛡️</span> Safety Intercepts
+        </div>
+        <p class="text-xs text-gray-500">Experience automatic safety halts requiring human managerial approval.</p>
+      </div>
+      <div class="bg-white border border-gray-200 p-4 rounded shadow-sm">
+        <div class="text-xs font-bold uppercase text-gray-900 mb-1 flex items-center gap-1.5">
+          <span class="text-olive font-bold">⚙️</span> Live Sandbox Variables
+        </div>
+        <p class="text-xs text-gray-500">Modify business logic instructions and data variables dynamically.</p>
+      </div>
     </div>
   </div>
 </header>
 
-<!-- Interactive Diagnostic Section (The CTO Showcase) -->
-<section id="diagnostic" class="py-20 px-6 bg-[#FDFBF7]">
+<!-- 3. SELF-SERVE INTERACTIVE SIMULATOR -->
+<section id="simulator" class="py-16 px-4 md:px-6 bg-white border-b border-gray-200">
+  <div class="max-w-7xl mx-auto">
+    
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-8 gap-6">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase tracking-widest rounded-full mb-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Self-Serve Autonomous Workflow Lab
+        </div>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900">
+          The Loop Architect Simulator
+        </h2>
+        <p class="text-gray-600 text-sm md:text-base mt-2 leading-relaxed">
+          Test how enterprise AI pipelines automate routine operations and automatically halt when high-risk actions occur. Follow the 3-step guide below to test your own variables in real time.
+        </p>
+      </div>
+      
+      <div class="flex gap-3 w-full sm:w-auto">
+        <button id="sim-run-btn" onclick="runSimulatorWorkflow()" class="flex-1 sm:flex-initial px-8 py-3.5 bg-emerald-600 text-white font-bold uppercase tracking-widest text-sm rounded brutal-border border-emerald-950 hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer">
+          ▶ Run Workflow
+        </button>
+      </div>
+    </div>
+
+    <!-- 3-Step Guidance Banner -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-[#FDFBF7] border border-gray-200 p-5 rounded-lg text-xs text-gray-700">
+      <div class="flex items-start gap-3">
+        <span class="w-6 h-6 rounded bg-olive text-white font-bold flex items-center justify-center shrink-0 text-xs">1</span>
+        <div>
+          <strong class="text-gray-900 block font-bold uppercase tracking-wider mb-0.5">Select a Workflow Preset</strong>
+          <span>Choose between <strong>Founder</strong> (Lead Gen), <strong>Consultant</strong> (Intake), or <strong>CTO</strong> (Threats).</span>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="w-6 h-6 rounded bg-olive text-white font-bold flex items-center justify-center shrink-0 text-xs">2</span>
+        <div>
+          <strong class="text-gray-900 block font-bold uppercase tracking-wider mb-0.5">Customize Payload Inputs</strong>
+          <span>Click any card in the Visual Map to inspect logic, or change data variables in the live Sandbox panel.</span>
+        </div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="w-6 h-6 rounded bg-emerald-600 text-white font-bold flex items-center justify-center shrink-0 text-xs">3</span>
+        <div>
+          <strong class="text-gray-900 block font-bold uppercase tracking-wider mb-0.5">Test Safety Stops</strong>
+          <span>Click <strong>Run Workflow</strong> and watch the system intercept high-risk tasks for human authorization.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulator Workspace Container -->
+    <div class="bg-[#F5F4F2] brutal-border shadow-xl rounded-none overflow-hidden flex flex-col">
+      
+      <!-- Preset Tabs -->
+      <div class="flex bg-[#E0DDD8] brutal-border-b shrink-0 overflow-x-auto">
+        <button id="tab-founder" onclick="switchLoop(0)" class="sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest brutal-border-r transition-colors bg-white text-gray-900 border-b-4 border-b-emerald-600 cursor-pointer">
+          Founder: Lead Gen Loop
+        </button>
+        <button id="tab-consultant" onclick="switchLoop(1)" class="sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest brutal-border-r transition-colors bg-[#E0DDD8] text-gray-600 hover:bg-[#F5F4F2] cursor-pointer">
+          Consultant: Intake & Audit
+        </button>
+        <button id="tab-cto" onclick="switchLoop(2)" class="sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest transition-colors bg-[#E0DDD8] text-gray-600 hover:bg-[#F5F4F2] cursor-pointer">
+          CTO: Threat Remediation
+        </button>
+      </div>
+
+      <!-- 3-Column Workspace -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 min-h-[620px]">
+        
+        <!-- Col 1: Visual Map (Pre-rendered) -->
+        <div class="brutal-border-r bg-white flex flex-col bg-grid-pattern relative">
+          <div class="bg-[#38332F] text-white p-3 brutal-border-b flex justify-between items-center">
+            <h3 class="font-bold uppercase tracking-widest text-xs">Visual Workflow Map</h3>
+            <span class="text-[10px] text-emerald-400 font-mono">Click card to inspect</span>
+          </div>
+          <div id="sim-steps-container" class="p-6 flex flex-col items-center gap-2 overflow-y-auto max-h-[560px]">
+            
+            <!-- Pre-rendered Step 1 -->
+            <div onclick="selectStep(0)" class="w-full p-3.5 brutal-border cursor-pointer transition-all duration-150 relative bg-[#FAF9F8] brutal-shadow border-gray-900">
+              <div class="flex justify-between items-start mb-1.5">
+                <span class="font-bold uppercase text-xs">1. Stripe Webhook</span>
+              </div>
+              <p class="text-[11px] text-gray-600 mb-2">Listens for 'checkout.session.completed' from Stripe API.</p>
+              <div class="p-1.5 border-l-2 bg-gray-50 text-[10px] text-gray-500">
+                <strong>💡 Explainer:</strong> The system waits like a digital receptionist until someone buys your toolkit.
+              </div>
+            </div>
+            <div class="h-4 w-1 my-1 bg-gray-300"></div>
+
+            <!-- Pre-rendered Step 2 -->
+            <div onclick="selectStep(1)" class="w-full p-3.5 brutal-border cursor-pointer transition-all duration-150 relative bg-white hover:bg-gray-50 border-gray-400">
+              <div class="flex justify-between items-start mb-1.5">
+                <span class="font-bold uppercase text-xs">2. Make.com Routing</span>
+              </div>
+              <p class="text-[11px] text-gray-600 mb-2">Parses Stripe payload and routes data to marketing stack.</p>
+              <div class="p-1.5 border-l-2 bg-gray-50 text-[10px] text-gray-500">
+                <strong>💡 Explainer:</strong> A digital traffic cop takes the buyer's info and sends it exactly where it needs to go.
+              </div>
+            </div>
+            <div class="h-4 w-1 my-1 bg-gray-300"></div>
+
+            <!-- Pre-rendered Step 3 -->
+            <div onclick="selectStep(2)" class="w-full p-3.5 brutal-border cursor-pointer transition-all duration-150 relative bg-white hover:bg-gray-50 border-gray-400">
+              <div class="flex justify-between items-start mb-1.5">
+                <span class="font-bold uppercase text-xs">3. MailerLite Delivery</span>
+              </div>
+              <p class="text-[11px] text-gray-600 mb-2">Fires the Welcome Email sequence containing the AI Prompt Kit.</p>
+              <div class="p-1.5 border-l-2 bg-gray-50 text-[10px] text-gray-500">
+                <strong>💡 Explainer:</strong> Automatically sends the welcome email with the download link, so you don't have to.
+              </div>
+            </div>
+            <div class="h-4 w-1 my-1 bg-gray-300"></div>
+
+            <!-- Pre-rendered Step 4 -->
+            <div onclick="selectStep(3)" class="w-full p-3.5 brutal-border cursor-pointer transition-all duration-150 relative bg-white hover:bg-gray-50 border-gray-400">
+              <div class="flex justify-between items-start mb-1.5">
+                <span class="font-bold uppercase text-xs">4. Notion API Sync</span>
+              </div>
+              <p class="text-[11px] text-gray-600 mb-2">Appends the new lead telemetry to the central Sales Tracker CSV.</p>
+              <div class="p-1.5 border-l-2 bg-gray-50 text-[10px] text-gray-500">
+                <strong>💡 Explainer:</strong> Updates your Sales Tracker spreadsheet automatically so your records are perfectly up to date.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Col 2: Step Inspector & Sandbox Variables (Pre-rendered) -->
+        <div class="brutal-border-r bg-white flex flex-col overflow-hidden">
+          
+          <!-- Step Inspector -->
+          <div class="p-5 brutal-border-b bg-[#FAF9F8] shrink-0">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="font-bold uppercase tracking-widest text-xs text-gray-900">Step Inspector</h3>
+              <span id="sim-inspecting-step-badge" class="text-[10px] bg-white text-gray-900 px-2 py-0.5 font-mono uppercase brutal-border">Step 1</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-gray-700">Action Title</label>
+                <input id="sim-input-title" type="text" value="Stripe Webhook" oninput="handleTitleInput(this.value)" class="w-full p-2 text-xs font-bold brutal-border bg-white focus:ring-2 focus:ring-emerald-500 outline-none" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-gray-700">Business Logic</label>
+                <textarea id="sim-input-desc" rows="2" oninput="handleDescInput(this.value)" class="w-full p-2 text-xs brutal-border bg-white focus:ring-2 focus:ring-emerald-500 outline-none resize-none text-gray-600">Listens for 'checkout.session.completed' from Stripe API.</textarea>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-widest mb-1 text-gray-700">Explainer (Non-Tech)</label>
+                <textarea id="sim-input-explainer" rows="2" oninput="handleExplainerInput(this.value)" class="w-full p-2 text-xs brutal-border bg-emerald-50/50 focus:ring-2 focus:ring-emerald-500 outline-none resize-none text-gray-700">The system waits like a digital receptionist until someone buys your toolkit.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sandbox Variables -->
+          <div class="flex-1 p-5 bg-white overflow-y-auto">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-bold uppercase tracking-widest text-xs text-gray-900">Sandbox Variables</h3>
+              <span class="text-[10px] bg-[#38332F] text-white px-2 py-0.5 font-mono uppercase">Live Inputs</span>
+            </div>
+            <p class="text-[11px] text-gray-500 mb-3">Modify values before execution:</p>
+            <div id="sim-variables-container" class="space-y-3">
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-widest mb-0.5 text-gray-600">Stripe Customer Email</label>
+                <input type="text" value="investor@venture.io" onchange="updateSimVariable('Stripe Customer Email', this.value)" class="w-full p-2 text-xs font-mono brutal-border bg-gray-50 focus:bg-white outline-none" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-widest mb-0.5 text-gray-600">Checkout Value</label>
+                <input type="text" value="$0.00 (Lead Magnet)" onchange="updateSimVariable('Checkout Value', this.value)" class="w-full p-2 text-xs font-mono brutal-border bg-gray-50 focus:bg-white outline-none" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase tracking-widest mb-0.5 text-gray-600">Target Database</label>
+                <input type="text" value="Sales Tracker.csv" onchange="updateSimVariable('Target Database', this.value)" class="w-full p-2 text-xs font-mono brutal-border bg-gray-50 focus:bg-white outline-none" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 3: Narrative Log & Safety Stop Intercept -->
+        <div class="bg-[#38332F] text-white flex flex-col overflow-hidden relative">
+          
+          <div class="p-3 brutal-border-b border-gray-700 bg-[#38332F] shrink-0 flex justify-between items-center">
+            <h3 class="font-bold uppercase tracking-widest text-xs flex items-center gap-2">
+              <span id="sim-status-dot" class="w-2.5 h-2.5 bg-gray-500 brutal-border border-white"></span>
+              Execution Narrative
+            </h3>
+            <span id="sim-status-text" class="text-[10px] font-mono text-gray-400">IDLE</span>
+          </div>
+
+          <!-- Human Intercept Warning Banner -->
+          <div id="sim-safety-banner" class="hidden bg-rose-950 p-4 brutal-border-b border-rose-500 shrink-0 shadow-lg">
+            <h4 class="font-bold text-white uppercase tracking-widest text-xs mb-1 flex items-center gap-1.5">
+              <span>⚠️</span> Safety Checkpoint Reached
+            </h4>
+            <p class="text-xs text-rose-200 mb-3 font-mono">
+              The AI has reached a governed threshold. A human supervisor must review and authorize the action before proceeding.
+            </p>
+            <div class="flex gap-2">
+              <button onclick="handleHumanDecision(true)" class="flex-1 bg-emerald-600 text-white py-2 text-xs font-bold uppercase brutal-border border-emerald-950 hover:bg-emerald-500 transition-colors cursor-pointer">
+                ✓ Approve
+              </button>
+              <button onclick="handleHumanDecision(false)" class="flex-1 bg-[#5C544D] text-white py-2 text-xs font-bold uppercase brutal-border border-gray-900 hover:bg-[#38332F] transition-colors cursor-pointer">
+                ✕ Reject
+              </button>
+            </div>
+          </div>
+
+          <!-- Log Feed -->
+          <div id="sim-logs-container" class="flex-1 overflow-y-auto p-4 space-y-2.5 bg-[#2A2622] font-mono text-xs">
+            <div class="h-full flex flex-col items-center justify-center text-gray-500 text-center p-4 border-2 border-dashed border-gray-700">
+              [ SYSTEM STANDBY ]<br/><br/>Click "▶ Run Workflow" above to initiate execution.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="mt-6 flex flex-col sm:flex-row justify-between items-center bg-[#FDFBF7] p-5 rounded border border-gray-200 text-xs text-gray-700 gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-olive font-bold uppercase tracking-wider">Deploy this in production:</span>
+        <span>Get the complete deterministic system prompts, Stripe webhooks, and AWS Lambda templates.</span>
+      </div>
+      <a href="#solutions" class="px-5 py-2.5 bg-olive text-white font-bold uppercase tracking-wider rounded hover:bg-opacity-90 shrink-0 shadow-sm">
+        View Architecture Packages ($97–$497) &rarr;
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- 4. GOVERNANCE & ARCHITECTURE DIAGNOSTIC SECTION -->
+<section id="diagnostic" class="py-20 px-6 bg-[#FDFBF7] border-b border-gray-200">
   <div class="max-w-7xl mx-auto">
     <div class="text-center mb-12">
-      <h2 class="text-3xl font-bold text-gray-900 mb-4">Interactive Architecture Diagnostic</h2>
-      <p class="text-gray-600 max-w-2xl mx-auto">Interact with the modules below to review the exact technical standards, data pipelines, and governance matrices required for production-level AI deployment.</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Architecture & Governance Diagnostic</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">Review the technical standards, data pipelines, and governance matrices required for production-level AI deployment.</p>
     </div>
 
     <div class="flex flex-col md:flex-row gap-6 bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md">
@@ -130,22 +396,22 @@
         <div class="p-4 border-b border-gray-200 bg-white">
           <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Select Module</span>
         </div>
-        <button data-target="section-gov" class="nav-btn w-full text-left px-5 py-4 text-sm font-medium transition-colors bg-olive text-white border-l-4 border-olive focus:outline-none">
+        <button id="btn-diag-gov" onclick="activateDiagTab('section-gov')" class="diag-nav-btn w-full text-left px-5 py-4 text-sm font-medium transition-colors bg-olive text-white border-l-4 border-olive focus:outline-none cursor-pointer">
           1. Governance & Prompts
         </button>
-        <button data-target="section-scale" class="nav-btn w-full text-left px-5 py-4 text-sm font-medium text-gray-600 hover:bg-white transition-colors border-l-4 border-transparent focus:outline-none">
+        <button id="btn-diag-scale" onclick="activateDiagTab('section-scale')" class="diag-nav-btn w-full text-left px-5 py-4 text-sm font-medium text-gray-600 hover:bg-white transition-colors border-l-4 border-transparent focus:outline-none cursor-pointer">
           2. Telemetry & Vault
         </button>
-        <button data-target="section-rbac" class="nav-btn w-full text-left px-5 py-4 text-sm font-medium text-gray-600 hover:bg-white transition-colors border-l-4 border-transparent focus:outline-none">
+        <button id="btn-diag-rbac" onclick="activateDiagTab('section-rbac')" class="diag-nav-btn w-full text-left px-5 py-4 text-sm font-medium text-gray-600 hover:bg-white transition-colors border-l-4 border-transparent focus:outline-none cursor-pointer">
           3. Safety & RBAC
         </button>
       </div>
 
       <!-- Diagnostic Content Area -->
-      <div class="flex-1 p-6 md:p-8 overflow-hidden bg-panel">
+      <div class="flex-1 p-6 md:p-8 overflow-hidden bg-white">
         
         <!-- Tab 1: Governance -->
-        <div id="section-gov" class="content-section fade-in">
+        <div id="section-gov" class="diag-content-section fade-in">
           <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Governance & Prompt Architecture</h3>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="flex flex-col h-full">
@@ -153,10 +419,27 @@
               <p class="text-gray-600 text-xs mb-4 leading-relaxed">
                 85% of engineering teams utilize LLMs daily, but less than 15% execute within governed CI/CD pipelines. Unconstrained inputs lead to catastrophic payload failures.
               </p>
-              <div class="chart-container mt-auto">
-                <canvas id="govChart"></canvas>
+              
+              <div class="bg-gray-50 border border-gray-200 p-4 rounded flex flex-col items-center justify-center my-auto">
+                <div class="text-xs font-bold text-gray-700 uppercase mb-3">Enterprise LLM Adoption Breakdown</div>
+                <div class="w-full flex items-center gap-2 mb-2">
+                  <div class="w-24 text-[10px] text-gray-500 font-mono">Shadow AI:</div>
+                  <div class="flex-1 bg-gray-200 h-4 rounded overflow-hidden">
+                    <div class="bg-[#A39B8B] h-full w-[85%]"></div>
+                  </div>
+                  <div class="w-8 text-[10px] font-bold text-gray-700 font-mono">85%</div>
+                </div>
+                <div class="w-full flex items-center gap-2">
+                  <div class="w-24 text-[10px] text-gray-500 font-mono">Governed:</div>
+                  <div class="flex-1 bg-gray-200 h-4 rounded overflow-hidden">
+                    <div class="bg-[#6B705C] h-full w-[15%]"></div>
+                  </div>
+                  <div class="w-8 text-[10px] font-bold text-olive font-mono">15%</div>
+                </div>
+                <div class="mt-4 text-[10px] text-gray-500 italic">Governed pipelines enforce deterministic RFC schemas and fallback traps.</div>
               </div>
             </div>
+            
             <div class="flex flex-col h-full border border-gray-200 rounded bg-gray-50 p-4">
               <div class="flex justify-between items-center mb-3">
                 <h4 class="text-sm font-bold text-gray-800">Sample: SecOps Prompt</h4>
@@ -188,7 +471,7 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
         </div>
 
         <!-- Tab 2: Telemetry -->
-        <div id="section-scale" class="content-section hidden fade-in">
+        <div id="section-scale" class="diag-content-section hidden fade-in">
           <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Telemetry & Vault Blueprints</h3>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="flex flex-col h-full">
@@ -196,17 +479,40 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
               <p class="text-gray-600 text-xs mb-4 leading-relaxed">
                 SaaS wrappers charge premiums per execution. Deploying logic directly onto existing infrastructure flattens costs to base API token usage.
               </p>
-              <div class="chart-container mt-auto">
-                <canvas id="scaleChart"></canvas>
+              
+              <div class="bg-gray-50 border border-gray-200 p-4 rounded flex flex-col justify-center my-auto">
+                <div class="text-xs font-bold text-gray-700 uppercase mb-3">Cost per 10M API Executions</div>
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex justify-between text-[10px] font-mono mb-1">
+                      <span class="text-rose font-bold">SaaS Wrappers ($5,000/mo)</span>
+                      <span>100% Cost Baseline</span>
+                    </div>
+                    <div class="w-full bg-gray-200 h-3 rounded">
+                      <div class="bg-rose h-full w-full rounded"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-[10px] font-mono mb-1">
+                      <span class="text-olive font-bold">Owned Direct API ($500/mo)</span>
+                      <span class="text-emerald-600 font-bold">90% Cost Reduction</span>
+                    </div>
+                    <div class="w-full bg-gray-200 h-3 rounded">
+                      <div class="bg-olive h-full w-[10%] rounded"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-4 text-[10px] text-gray-500 italic">Direct webhook pipelines eliminate 3rd-party recurring margins.</div>
               </div>
             </div>
+            
             <div class="flex flex-col h-full border border-gray-200 rounded bg-gray-50 p-4">
-               <div class="flex justify-between items-center mb-3">
+              <div class="flex justify-between items-center mb-3">
                 <h4 class="text-sm font-bold text-gray-800">Telemetry Routing Pipeline</h4>
                 <span class="px-2 py-1 bg-taupe text-white text-[9px] font-bold uppercase rounded">Extract</span>
               </div>
               <div class="flex-1 flex items-center justify-center">
-                 <div class="w-full flex flex-col items-center p-2">
+                <div class="w-full flex flex-col items-center p-2">
                   <div class="flow-node active"><strong>1. EventBridge</strong><br><span class="text-[9px] text-gray-500">GuardDuty Anomaly</span></div>
                   <div class="flow-line"></div>
                   <div class="flow-node"><strong>2. AWS Lambda</strong><br><span class="text-[9px] text-gray-500">Data Scrubber (Strips PII)</span></div>
@@ -221,7 +527,7 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
         </div>
 
         <!-- Tab 3: RBAC -->
-        <div id="section-rbac" class="content-section hidden fade-in">
+        <div id="section-rbac" class="diag-content-section hidden fade-in">
           <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Safety & Transition Matrices</h3>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="flex flex-col h-full">
@@ -229,12 +535,19 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
               <p class="text-gray-600 text-xs mb-4 leading-relaxed">
                 Higher-risk actions must strictly deny AI execution roles. The agent is a "preparer," shifting humans to "approvers."
               </p>
-              <div class="chart-container mt-auto">
-                <canvas id="rbacChart"></canvas>
+              <div class="border border-gray-200 rounded overflow-hidden bg-gray-50 p-4">
+                <div class="text-xs font-bold text-gray-800 mb-2 uppercase">Risk Tier Delegation Logic</div>
+                <ul class="text-xs text-gray-600 space-y-2">
+                  <li><strong class="text-green-700">Tier 1 (Read-Only):</strong> Fully Automated (Log scanning, audit parsing).</li>
+                  <li><strong class="text-yellow-700">Tier 2 (Low-Impact):</strong> Automated with async review (Jira updates).</li>
+                  <li><strong class="text-orange-700">Tier 3 (High-Impact):</strong> 1-Click Human Approval required (IP block).</li>
+                  <li><strong class="text-red-700">Tier 4 (Critical):</strong> Multi-factor Officer Auth required (Server isolation).</li>
+                </ul>
               </div>
             </div>
+            
             <div class="flex flex-col h-full border border-gray-200 rounded bg-gray-50 p-4 overflow-x-auto">
-               <div class="flex justify-between items-center mb-3 min-w-[300px]">
+              <div class="flex justify-between items-center mb-3 min-w-[300px]">
                 <h4 class="text-sm font-bold text-gray-800">SecOps RBAC Matrix</h4>
                 <span class="px-2 py-1 bg-rose text-white text-[9px] font-bold uppercase rounded">Extract</span>
               </div>
@@ -280,7 +593,7 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
   </div>
 </section>
 
-<!-- Pricing & Checkout Section -->
+<!-- 5. PRICING & ARCHITECTURE PACKAGES SECTION -->
 <section id="solutions" class="py-24 px-6 border-t border-gray-200 bg-white">
   <div class="max-w-7xl mx-auto">
     <div class="text-center mb-16">
@@ -296,7 +609,7 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       
       <!-- Tier 1 -->
-      <div class="bg-panel border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow flex flex-col relative">
+      <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow flex flex-col relative">
         <div class="mb-6">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Prompt Architecture Suite</h3>
           <p class="text-sm text-gray-500 min-h-[40px]">Multi-variable reasoning engines for complex enterprise workflows.</p>
@@ -306,24 +619,24 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
           <span class="text-sm text-gray-500 font-medium">/ one-time</span>
         </div>
         <ul class="text-sm text-gray-600 space-y-3 mb-8 flex-1">
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> 15 Production-Ready Prompts</li>
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> PMO Governance Frameworks</li>
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Strict JSON Formatting Rules</li>
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Digital Notion Vault Access</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> 5 Production CI/CD System Prompts</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Strict Deterministic JSON Schemas</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Zero-Hallucination Grounding Rules</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Digital Notion & Markdown Vault</li>
         </ul>
-        <a href="https://buy.stripe.com/test_YOUR_LINK_1" target="_blank" class="w-full block text-center px-6 py-3 border-2 border-olive text-olive font-bold uppercase tracking-wider rounded hover:bg-olive hover:text-white transition-colors">
-          Purchase Framework
-        </a>
+        <button onclick="handlePurchase('Prompt Architecture Suite', 97)" class="w-full block text-center px-6 py-3.5 border-2 border-olive text-olive font-bold uppercase tracking-wider rounded hover:bg-olive hover:text-white transition-colors cursor-pointer">
+          Purchase Framework ($97)
+        </button>
       </div>
 
       <!-- Tier 2 (Highlighted) -->
       <div class="bg-[#FDFBF7] border-2 border-olive rounded-xl p-8 shadow-md transform md:-translate-y-4 flex flex-col relative">
-        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-olive text-white px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full">
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-olive text-white px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm">
           Most Critical
         </div>
         <div class="mb-6">
           <h3 class="text-xl font-bold text-gray-900 mb-2">The Data Vault Bridge</h3>
-          <p class="text-sm text-gray-600 min-h-[40px]">Custom integration documentation & API payload mapping.</p>
+          <p class="text-sm text-gray-600 min-h-[40px]">Custom telemetry documentation & API payload mapping.</p>
         </div>
         <div class="mb-6">
           <span class="text-4xl font-extrabold text-gray-900">$249</span>
@@ -331,20 +644,20 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
         </div>
         <ul class="text-sm text-gray-700 space-y-3 mb-8 flex-1">
           <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> 40-Page Architecture Blueprint</li>
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Stripe & Shopify Webhook Maps</li>
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Automated Error-Handling Arrays</li>
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Lambda PII Sanitization Logic</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Stripe Webhook Revenue Pipeline</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> AWS Lambda PII Sanitization Logic</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Dead Letter Queue (DLQ) Protocol</li>
         </ul>
-        <a href="https://buy.stripe.com/test_YOUR_LINK_2" target="_blank" class="w-full block text-center px-6 py-3 bg-olive text-white font-bold uppercase tracking-wider rounded hover:bg-opacity-90 shadow-md transition-colors">
-          Purchase Blueprint
-        </a>
+        <button onclick="handlePurchase('The Data Vault Bridge', 249)" class="w-full block text-center px-6 py-3.5 bg-olive text-white font-bold uppercase tracking-wider rounded hover:bg-opacity-90 shadow-md transition-colors cursor-pointer">
+          Purchase Blueprint ($249)
+        </button>
       </div>
 
       <!-- Tier 3 -->
-      <div class="bg-panel border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow flex flex-col relative">
+      <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg transition-shadow flex flex-col relative">
         <div class="mb-6">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Complete Architecture Bundle</h3>
-          <p class="text-sm text-gray-500 min-h-[40px]">The ultimate package: Prompts, Blueprints, and the Zero-Manual Playbook.</p>
+          <p class="text-sm text-gray-500 min-h-[40px]">The ultimate package: Prompts, Telemetry Blueprints, and the Transition Playbook.</p>
         </div>
         <div class="mb-6">
           <span class="text-4xl font-extrabold text-gray-900">$497</span>
@@ -353,25 +666,25 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
         <ul class="text-sm text-gray-600 space-y-3 mb-8 flex-1">
           <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Includes Prompt Suite & Vault Blueprint</li>
           <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Zero-Manual Transition Playbook</li>
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Quantitative Scoring Matrices</li>
-          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Hardcoded RBAC Governance Rules</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Task Viability Scoring Matrix</li>
+          <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> SecOps RBAC Matrix & Board Deck Outline</li>
         </ul>
-        <a href="https://buy.stripe.com/test_YOUR_LINK_3" target="_blank" class="w-full block text-center px-6 py-3 border-2 border-olive text-olive font-bold uppercase tracking-wider rounded hover:bg-olive hover:text-white transition-colors">
-          Purchase Bundle
-        </a>
+        <button onclick="handlePurchase('Complete Architecture Bundle', 497)" class="w-full block text-center px-6 py-3.5 border-2 border-olive text-olive font-bold uppercase tracking-wider rounded hover:bg-olive hover:text-white transition-colors cursor-pointer">
+          Purchase Bundle ($497)
+        </button>
       </div>
 
     </div>
     
     <div class="mt-12 text-center">
       <p class="text-sm text-gray-500">
-        Requires enterprise SLA or a dedicated consulting sprint? <a href="mailto:contact@efficiencylabs.com" class="text-olive font-bold hover:underline">Contact us for custom deployment.</a>
+        Need enterprise deployment advisory? <a href="mailto:contact@efficiencylabs.com" class="text-olive font-bold hover:underline">Contact us for custom deployment.</a>
       </p>
     </div>
   </div>
 </section>
 
-<!-- Footer -->
+<!-- 6. FOOTER -->
 <footer class="bg-gray-900 text-gray-400 py-12 px-6 border-t border-gray-800">
   <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
     <div class="text-center md:text-left">
@@ -379,9 +692,9 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
       <p class="text-xs">Translating complex reasoning into autonomous business workflows.</p>
     </div>
     <div class="flex gap-6 text-sm">
-      <a href="#" class="hover:text-white transition-colors">Documentation</a>
-      <a href="#" class="hover:text-white transition-colors">Substack</a>
-      <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+      <a href="#simulator" class="text-emerald-400 hover:text-white transition-colors font-medium">Interactive Simulator</a>
+      <a href="#diagnostic" class="hover:text-white transition-colors">Architecture Diagnostic</a>
+      <a href="#solutions" class="hover:text-white transition-colors">Blueprints & Pricing</a>
     </div>
     <div class="text-xs">
       &copy; 2026 Efficiency Labs. All rights reserved.
@@ -389,103 +702,394 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
   </div>
 </footer>
 
+<!-- 7. CHECKOUT MODAL -->
+<div id="checkout-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white brutal-border shadow-2xl max-w-md w-full p-6 relative">
+    <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-lg cursor-pointer">&times;</button>
+    <div class="inline-block px-2.5 py-0.5 bg-olive text-white text-[10px] font-bold uppercase tracking-widest mb-3">
+      Instant Delivery
+    </div>
+    <h3 id="modal-product-title" class="text-xl font-extrabold text-gray-900 mb-1">Prompt Architecture Suite</h3>
+    <p id="modal-product-price" class="text-2xl font-bold text-olive mb-4">$97 one-time</p>
+    
+    <p class="text-xs text-gray-600 mb-4 leading-relaxed">
+      Upon completing payment, your digital Notion vault access links and downloadable Markdown packages will be sent immediately to your email address via Make.com.
+    </p>
+
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-700 mb-1">Work Email</label>
+        <input id="modal-customer-email" type="email" placeholder="you@company.com" class="w-full p-2.5 text-sm brutal-border bg-gray-50 focus:bg-white outline-none" />
+      </div>
+      <button onclick="proceedToStripe()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-wider text-sm brutal-border border-emerald-950 transition-all shadow-md cursor-pointer">
+        Proceed to Secure Checkout &rarr;
+      </button>
+      <p class="text-[10px] text-center text-gray-400">Secured via Stripe 256-bit encryption • Instant Delivery</p>
+    </div>
+  </div>
+</div>
+
 <script>
-  // Diagnostic Tab Logic
-  const navBtns = document.querySelectorAll('.nav-btn');
-  const sections = document.querySelectorAll('.content-section');
+  // 1. DATA DEFINITIONS
+  var SIM_LOOPS = [
+    {
+      id: "founder_loop",
+      title: "Founder: Lead Gen Loop",
+      variables: {
+        "Stripe Customer Email": "investor@venture.io",
+        "Checkout Value": "$0.00 (Lead Magnet)",
+        "Target Database": "Sales Tracker.csv"
+      },
+      steps: [
+        { id: "s1", type: "trigger", title: "Stripe Webhook", desc: "Listens for 'checkout.session.completed' from Stripe API.", explainer: "The system waits like a digital receptionist until someone buys your toolkit." },
+        { id: "s2", type: "action", title: "Make.com Routing", desc: "Parses Stripe payload and routes data to marketing stack.", explainer: "A digital traffic cop takes the buyer's info and sends it exactly where it needs to go." },
+        { id: "s3", type: "action", title: "MailerLite Delivery", desc: "Fires the Welcome Email sequence containing the AI Prompt Kit.", explainer: "Automatically sends the welcome email with the download link, so you don't have to." },
+        { id: "s4", type: "action", title: "Notion API Sync", desc: "Appends the new lead telemetry to the central Sales Tracker CSV.", explainer: "Updates your Sales Tracker spreadsheet automatically so your records are perfectly up to date." }
+      ]
+    },
+    {
+      id: "consultant_loop",
+      title: "Consultant: Intake & Audit",
+      variables: {
+        "Client Name": "Acme Corp Logistics",
+        "Typeform Intake ID": "TF-992A-INTAKE",
+        "Claude Model": "claude-3-5-sonnet"
+      },
+      steps: [
+        { id: "s1", type: "trigger", title: "Typeform Submission", desc: "Activates when a new discovery form is submitted by a prospect.", explainer: "Captures the exact answers when a new potential client fills out your questionnaire." },
+        { id: "s2", type: "action", title: "Anthropic Claude Synthesis", desc: "API reads form data and drafts a preliminary strategy brief.", explainer: "AI reads the client's answers and writes a draft strategy document for you in seconds." },
+        { id: "s3", type: "safety", title: "Slack Manager Approval", desc: "Halts workflow. Pings #leadership in Slack. You must review the AI's brief.", explainer: "The AI pauses and sends you a message. It waits for your human 'thumbs up' before sending anything." },
+        { id: "s4", type: "action", title: "Google Workspace API", desc: "Generates a formatted Google Doc brief and emails the client.", explainer: "Takes the approved strategy, turns it into a neat Google Doc, and emails it to the client." }
+      ]
+    },
+    {
+      id: "cto_loop",
+      title: "CTO: Threat Remediation",
+      variables: {
+        "AWS GuardDuty Alert": "HIGH (Brute Force)",
+        "Source IP": "192.0.2.144",
+        "Datadog Trace ID": "prod-db-cluster-02"
+      },
+      steps: [
+        { id: "s1", type: "trigger", title: "AWS EventBridge", desc: "Ingests high-severity alert from AWS network monitoring.", explainer: "Acts as a security camera that alerts you the second someone tries to break into your system." },
+        { id: "s2", type: "action", title: "Cloudflare WAF Injection", desc: "Automatically injects a Cloudflare firewall rule to isolate the IP.", explainer: "Instantly builds a digital wall to block the hacker's computer before they can do damage." },
+        { id: "s3", type: "safety", title: "PagerDuty Escalation", desc: "Halts. SecOps engineer must verify the IP is not a corporate VPN.", explainer: "Pings a human security expert to double-check that we didn't accidentally block a real employee." },
+        { id: "s4", type: "action", title: "Jira API Resolution", desc: "Logs the incident in Jira and closes the active security alert.", explainer: "Logs the whole event in your ticketing system and marks the emergency as 'handled'." }
+      ]
+    }
+  ];
 
-  let govChartInstance = null;
-  let scaleChartInstance = null;
-  let rbacChartInstance = null;
+  var currentLoopIdx = 0;
+  var currentStepIdx = 0;
+  var currentRunningStep = -1;
+  var simulatorState = "IDLE";
+  var executionTimer = null;
 
-  function activateTab(targetId) {
-    sections.forEach(s => s.classList.add('hidden'));
-    document.getElementById(targetId).classList.remove('hidden');
+  // 2. RENDER LOGIC
+  function renderSimulator() {
+    var loop = SIM_LOOPS[currentLoopIdx];
+    var stepsBox = document.getElementById('sim-steps-container');
+    var varsBox = document.getElementById('sim-variables-container');
+    
+    if (!stepsBox || !varsBox) return;
 
-    navBtns.forEach(b => {
+    var stepsHTML = '';
+    for (var i = 0; i < loop.steps.length; i++) {
+      var step = loop.steps[i];
+      var isSelected = (i === currentStepIdx);
+      var isActive = (i === currentRunningStep);
+      
+      var cardClass = "w-full p-3.5 brutal-border cursor-pointer transition-all duration-150 relative ";
+      if (isActive) {
+        cardClass += "bg-emerald-50 border-emerald-900 shadow-[4px_4px_0_0_#064E3B] scale-102";
+      } else if (isSelected) {
+        cardClass += "bg-[#FAF9F8] brutal-shadow border-gray-900";
+      } else {
+        cardClass += "bg-white hover:bg-gray-50 border-gray-400";
+      }
+
+      stepsHTML += '<div onclick="selectStep(' + i + ')" class="' + cardClass + '">';
+      stepsHTML += '  <div class="flex justify-between items-start mb-1.5">';
+      stepsHTML += '    <span class="font-bold uppercase text-xs ' + (isActive ? 'text-emerald-900' : '') + '">' + (i + 1) + '. ' + step.title + '</span>';
+      if (step.type === 'safety') {
+        stepsHTML += '    <span class="bg-rose-600 text-white text-[9px] px-1.5 py-0.5 font-bold uppercase">Safety Stop</span>';
+      }
+      stepsHTML += '  </div>';
+      stepsHTML += '  <p class="text-[11px] text-gray-600 mb-2">' + step.desc + '</p>';
+      stepsHTML += '  <div class="p-1.5 border-l-2 bg-gray-50 text-[10px] text-gray-500">';
+      stepsHTML += '    <strong>💡 Explainer:</strong> ' + step.explainer;
+      stepsHTML += '  </div>';
+      stepsHTML += '</div>';
+
+      if (i < loop.steps.length - 1) {
+        var lineClass = "h-4 w-1 my-1 " + (isActive ? "bg-emerald-600" : "bg-gray-300");
+        stepsHTML += '<div class="' + lineClass + '"></div>';
+      }
+    }
+    stepsBox.innerHTML = stepsHTML;
+
+    var varsHTML = '';
+    for (var key in loop.variables) {
+      if (loop.variables.hasOwnProperty(key)) {
+        var val = loop.variables[key];
+        varsHTML += '<div>';
+        varsHTML += '  <label class="block text-[10px] font-bold uppercase tracking-widest mb-0.5 text-gray-600">' + key + '</label>';
+        varsHTML += '  <input type="text" value="' + val + '" onchange="updateSimVariable(\'' + key + '\', this.value)" class="w-full p-2 text-xs font-mono brutal-border bg-gray-50 focus:bg-white outline-none" />';
+        varsHTML += '</div>';
+      }
+    }
+    varsBox.innerHTML = varsHTML;
+
+    renderInspector();
+  }
+
+  function renderInspector() {
+    var loop = SIM_LOOPS[currentLoopIdx];
+    var step = loop.steps[currentStepIdx] || loop.steps[0];
+    
+    var badge = document.getElementById('sim-inspecting-step-badge');
+    var inputTitle = document.getElementById('sim-input-title');
+    var inputDesc = document.getElementById('sim-input-desc');
+    var inputExplainer = document.getElementById('sim-input-explainer');
+
+    if (badge) badge.innerText = 'Step ' + (currentStepIdx + 1);
+    if (inputTitle) inputTitle.value = step.title;
+    if (inputDesc) inputDesc.value = step.desc;
+    if (inputExplainer) inputExplainer.value = step.explainer;
+  }
+
+  function selectStep(idx) {
+    currentStepIdx = idx;
+    renderSimulator();
+  }
+
+  function handleTitleInput(val) {
+    SIM_LOOPS[currentLoopIdx].steps[currentStepIdx].title = val;
+    renderSimulator();
+  }
+  function handleDescInput(val) {
+    SIM_LOOPS[currentLoopIdx].steps[currentStepIdx].desc = val;
+  }
+  function handleExplainerInput(val) {
+    SIM_LOOPS[currentLoopIdx].steps[currentStepIdx].explainer = val;
+  }
+  function updateSimVariable(key, val) {
+    SIM_LOOPS[currentLoopIdx].variables[key] = val;
+  }
+
+  function switchLoop(idx) {
+    if (executionTimer) clearTimeout(executionTimer);
+    currentLoopIdx = idx;
+    currentStepIdx = 0;
+    currentRunningStep = -1;
+    simulatorState = "IDLE";
+    
+    var banner = document.getElementById('sim-safety-banner');
+    if (banner) banner.classList.add('hidden');
+
+    var dot = document.getElementById('sim-status-dot');
+    if (dot) dot.className = 'w-2.5 h-2.5 bg-gray-500 brutal-border border-white';
+
+    var statusText = document.getElementById('sim-status-text');
+    if (statusText) statusText.innerText = 'IDLE';
+
+    var runBtn = document.getElementById('sim-run-btn');
+    if (runBtn) runBtn.innerText = '▶ Run Workflow';
+
+    var tabFounder = document.getElementById('tab-founder');
+    var tabConsultant = document.getElementById('tab-consultant');
+    var tabCto = document.getElementById('tab-cto');
+
+    if (tabFounder) tabFounder.className = (idx === 0) ? 'sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest brutal-border-r transition-colors bg-white text-gray-900 border-b-4 border-b-emerald-600 cursor-pointer' : 'sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest brutal-border-r transition-colors bg-[#E0DDD8] text-gray-600 hover:bg-[#F5F4F2] cursor-pointer';
+    if (tabConsultant) tabConsultant.className = (idx === 1) ? 'sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest brutal-border-r transition-colors bg-white text-gray-900 border-b-4 border-b-emerald-600 cursor-pointer' : 'sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest brutal-border-r transition-colors bg-[#E0DDD8] text-gray-600 hover:bg-[#F5F4F2] cursor-pointer';
+    if (tabCto) tabCto.className = (idx === 2) ? 'sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest transition-colors bg-white text-gray-900 border-b-4 border-b-emerald-600 cursor-pointer' : 'sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-widest transition-colors bg-[#E0DDD8] text-gray-600 hover:bg-[#F5F4F2] cursor-pointer';
+
+    var logs = document.getElementById('sim-logs-container');
+    if (logs) {
+      logs.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-gray-500 text-center p-4 border-2 border-dashed border-gray-700">[ SYSTEM STANDBY ]<br/><br/>Click "▶ Run Workflow" above to initiate execution.</div>';
+    }
+
+    renderSimulator();
+  }
+
+  function addLog(type, title, msg) {
+    var container = document.getElementById('sim-logs-container');
+    if (!container) return;
+    
+    var time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+    var item = document.createElement('div');
+    
+    var borderClass = 'border-l-gray-500 text-gray-300';
+    var titleClass = 'text-gray-200';
+    if (type === 'SUCCESS') { borderClass = 'border-l-emerald-400 text-emerald-100'; titleClass = 'text-emerald-400'; }
+    if (type === 'WARN' || type === 'ERROR') { borderClass = 'border-l-rose-500 text-rose-200'; titleClass = 'text-rose-400'; }
+    if (type === 'ACTION') { borderClass = 'border-l-emerald-500 text-gray-100'; titleClass = 'text-gray-100'; }
+
+    item.className = 'p-2.5 border-l-4 text-xs font-mono bg-[#332F2B] brutal-border border-gray-800 ' + borderClass;
+    item.innerHTML = '<div class="flex justify-between items-center mb-0.5"><strong class="' + titleClass + '">' + title + '</strong><span class="text-[9px] opacity-40">' + time + '</span></div><p class="leading-relaxed opacity-90">' + msg + '</p>';
+    
+    container.appendChild(item);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function runSimulatorWorkflow() {
+    if (simulatorState === "RUNNING" || simulatorState === "WAITING") return;
+    
+    simulatorState = "RUNNING";
+    currentRunningStep = -1;
+    
+    var banner = document.getElementById('sim-safety-banner');
+    if (banner) banner.classList.add('hidden');
+
+    var dot = document.getElementById('sim-status-dot');
+    if (dot) dot.className = 'w-2.5 h-2.5 bg-emerald-500 animate-pulse brutal-border border-white';
+
+    var statusText = document.getElementById('sim-status-text');
+    if (statusText) statusText.innerText = 'RUNNING...';
+
+    var runBtn = document.getElementById('sim-run-btn');
+    if (runBtn) runBtn.innerText = 'Running...';
+
+    var logs = document.getElementById('sim-logs-container');
+    if (logs) logs.innerHTML = '';
+
+    var loop = SIM_LOOPS[currentLoopIdx];
+    addLog('SYSTEM', 'Pipeline Activated', 'Executing ' + loop.title);
+    for (var k in loop.variables) {
+      if (loop.variables.hasOwnProperty(k)) {
+        addLog('DATA', 'Context Loaded', '[' + k + '] = ' + loop.variables[k]);
+      }
+    }
+
+    var step = 0;
+    function executeNext() {
+      if (step >= loop.steps.length) {
+        simulatorState = "SUCCESS";
+        currentRunningStep = -1;
+        if (dot) dot.className = 'w-2.5 h-2.5 bg-emerald-500 brutal-border border-white';
+        if (statusText) statusText.innerText = 'SUCCESS';
+        if (runBtn) runBtn.innerText = '▶ Run Workflow';
+        addLog('SUCCESS', 'Execution Completed', 'All pipeline stages finished with zero errors.');
+        renderSimulator();
+        return;
+      }
+
+      currentRunningStep = step;
+      currentStepIdx = step;
+      var cur = loop.steps[step];
+      renderSimulator();
+
+      if (cur.type === 'safety') {
+        simulatorState = "WAITING";
+        if (dot) dot.className = 'w-2.5 h-2.5 bg-rose-500 animate-ping brutal-border border-white';
+        if (statusText) statusText.innerText = 'SAFETY HALT';
+        if (banner) banner.classList.remove('hidden');
+        addLog('WARN', 'Safety Stop Activated', 'Execution halted at: ' + cur.title + '. Awaiting human authorization.');
+        return;
+      }
+
+      addLog('ACTION', 'Executing: ' + cur.title, cur.desc);
+      step++;
+      executionTimer = setTimeout(executeNext, 1200);
+    }
+
+    executionTimer = setTimeout(executeNext, 600);
+  }
+
+  function handleHumanDecision(approved) {
+    var banner = document.getElementById('sim-safety-banner');
+    if (banner) banner.classList.add('hidden');
+
+    var loop = SIM_LOOPS[currentLoopIdx];
+    var dot = document.getElementById('sim-status-dot');
+    var statusText = document.getElementById('sim-status-text');
+    var runBtn = document.getElementById('sim-run-btn');
+
+    if (approved) {
+      addLog('SUCCESS', 'Human Approved', 'Manager authorization verified. Resuming pipeline execution.');
+      simulatorState = "RUNNING";
+      if (dot) dot.className = 'w-2.5 h-2.5 bg-emerald-500 animate-pulse brutal-border border-white';
+      if (statusText) statusText.innerText = 'RUNNING...';
+
+      var step = currentRunningStep + 1;
+      function resumeNext() {
+        if (step >= loop.steps.length) {
+          simulatorState = "SUCCESS";
+          currentRunningStep = -1;
+          if (dot) dot.className = 'w-2.5 h-2.5 bg-emerald-500 brutal-border border-white';
+          if (statusText) statusText.innerText = 'SUCCESS';
+          if (runBtn) runBtn.innerText = '▶ Run Workflow';
+          addLog('SUCCESS', 'Execution Completed', 'Pipeline resolved successfully.');
+          renderSimulator();
+          return;
+        }
+
+        currentRunningStep = step;
+        currentStepIdx = step;
+        var cur = loop.steps[step];
+        renderSimulator();
+
+        addLog('ACTION', 'Executing: ' + cur.title, cur.desc);
+        step++;
+        executionTimer = setTimeout(resumeNext, 1200);
+      }
+
+      executionTimer = setTimeout(resumeNext, 600);
+    } else {
+      simulatorState = "REJECTED";
+      currentRunningStep = -1;
+      if (dot) dot.className = 'w-2.5 h-2.5 bg-rose-600 brutal-border border-white';
+      if (statusText) statusText.innerText = 'REJECTED';
+      if (runBtn) runBtn.innerText = '▶ Run Workflow';
+      addLog('ERROR', 'Execution Terminated', 'Action was rejected by supervisor. Pipeline aborted.');
+      renderSimulator();
+    }
+  }
+
+  // 3. DIAGNOSTIC TABS
+  function activateDiagTab(targetId) {
+    var sections = document.querySelectorAll('.diag-content-section');
+    sections.forEach(function(s) { s.classList.add('hidden'); });
+
+    var targetSec = document.getElementById(targetId);
+    if (targetSec) targetSec.classList.remove('hidden');
+
+    var btns = document.querySelectorAll('.diag-nav-btn');
+    btns.forEach(function(b) {
       b.classList.remove('bg-olive', 'text-white', 'border-olive');
       b.classList.add('text-gray-600', 'hover:bg-white', 'border-transparent');
     });
-    
-    const activeBtn = document.querySelector(`.nav-btn[data-target="${targetId}"]`);
-    if(activeBtn) {
+
+    var activeBtnId = 'btn-diag-gov';
+    if (targetId === 'section-scale') activeBtnId = 'btn-diag-scale';
+    if (targetId === 'section-rbac') activeBtnId = 'btn-diag-rbac';
+
+    var activeBtn = document.getElementById(activeBtnId);
+    if (activeBtn) {
       activeBtn.classList.remove('text-gray-600', 'hover:bg-white', 'border-transparent');
       activeBtn.classList.add('bg-olive', 'text-white', 'border-olive');
     }
-
-    // Init charts when visible
-    if (targetId === 'section-gov' && !govChartInstance) initGovChart();
-    if (targetId === 'section-scale' && !scaleChartInstance) initScaleChart();
-    if (targetId === 'section-rbac' && !rbacChartInstance) initRbacChart();
   }
 
-  navBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      activateTab(e.target.closest('.nav-btn').getAttribute('data-target'));
-    });
-  });
-
-  // Chart.js Implementations
-  function initGovChart() {
-    const ctx = document.getElementById('govChart').getContext('2d');
-    govChartInstance = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Shadow AI Usage', 'Governed Pipelines'],
-        datasets: [{
-          data: [85, 15],
-          backgroundColor: ['#A39B8B', '#6B705C'],
-          borderWidth: 2,
-          borderColor: '#FFFFFF'
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false, cutout: '70%',
-        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } }
-      }
-    });
+  // 4. CHECKOUT MODAL
+  var currentSelectedProduct = { name: '', price: 0 };
+  function handlePurchase(name, price) {
+    currentSelectedProduct = { name: name, price: price };
+    document.getElementById('modal-product-title').innerText = name;
+    document.getElementById('modal-product-price').innerText = '$' + price + ' one-time';
+    document.getElementById('checkout-modal').classList.remove('hidden');
   }
-
-  function initScaleChart() {
-    const ctx = document.getElementById('scaleChart').getContext('2d');
-    scaleChartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['1M', '5M', '10M', '25M', '50M'],
-        datasets: [
-          { label: 'SaaS Wrapper Cost', data: [500, 2500, 5000, 12500, 25000], borderColor: '#CB997E', backgroundColor: 'rgba(203, 153, 126, 0.1)', fill: true, tension: 0.3 },
-          { label: 'Owned Base API', data: [50, 250, 500, 1250, 2500], borderColor: '#6B705C', borderDash: [5, 5], tension: 0.3 }
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: { y: { beginAtZero: true, ticks: { font: { size: 9 } } }, x: { ticks: { font: { size: 9 } } } },
-        plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } }
-      }
-    });
+  function closeModal() {
+    document.getElementById('checkout-modal').classList.add('hidden');
   }
-
-  function initRbacChart() {
-    const ctx = document.getElementById('rbacChart').getContext('2d');
-    rbacChartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['T1', 'T2', 'T3', 'T4'],
-        datasets: [
-          { label: 'Auto Execution', data: [100, 100, 0, 0], backgroundColor: '#6B705C', stack: '0' },
-          { label: 'Human-in-Loop', data: [0, 0, 100, 100], backgroundColor: '#CB997E', stack: '0' }
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: { y: { stacked: true, max: 100, ticks: { callback: v => v+'%', font: {size: 9} } }, x: { stacked: true, ticks: { font: {size: 9} } } },
-        plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: {size: 10} } } }
-      }
-    });
+  function proceedToStripe() {
+    var email = document.getElementById('modal-customer-email').value;
+    if (!email || email.indexOf('@') === -1) {
+      alert('Please enter a valid work email address.');
+      return;
+    }
+    alert('Order initialized for ' + currentSelectedProduct.name + ' ($' + currentSelectedProduct.price + '). Connecting to Stripe Checkout...');
   }
-
-  // Load first tab on start
-  window.onload = () => activateTab('section-gov');
 </script>
 </body>
 </html>
