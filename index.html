@@ -122,7 +122,7 @@
         <span>📊</span> View Architecture Diagnostic
       </a>
       <a href="#solutions" class="px-8 py-4 bg-white text-gray-800 border-2 border-gray-300 text-sm font-bold uppercase tracking-wider rounded shadow-sm hover:bg-gray-50 transition-all">
-        View Pricing Tiers ($97–$497)
+        View Pricing Tiers ($97–$297)
       </a>
     </div>
 
@@ -374,7 +374,7 @@
         <span>Get the complete deterministic system prompts, Stripe webhooks, and AWS Lambda templates.</span>
       </div>
       <a href="#solutions" class="px-5 py-2.5 bg-olive text-white font-bold uppercase tracking-wider rounded hover:bg-opacity-90 shrink-0 shadow-sm">
-        View Architecture Packages ($97–$497) &rarr;
+        View Architecture Packages ($97–$297) &rarr;
       </a>
     </div>
 
@@ -639,7 +639,7 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
           <p class="text-sm text-gray-600 min-h-[40px]">Custom telemetry documentation & API payload mapping.</p>
         </div>
         <div class="mb-6">
-          <span class="text-4xl font-extrabold text-gray-900">$249</span>
+          <span class="text-4xl font-extrabold text-gray-900">$149</span>
           <span class="text-sm text-gray-500 font-medium">/ one-time</span>
         </div>
         <ul class="text-sm text-gray-700 space-y-3 mb-8 flex-1">
@@ -648,8 +648,8 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
           <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> AWS Lambda PII Sanitization Logic</li>
           <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Dead Letter Queue (DLQ) Protocol</li>
         </ul>
-        <button onclick="handlePurchase('The Data Vault Bridge', 249)" class="w-full block text-center px-6 py-3.5 bg-olive text-white font-bold uppercase tracking-wider rounded hover:bg-opacity-90 shadow-md transition-colors cursor-pointer">
-          Purchase Blueprint ($249)
+        <button onclick="handlePurchase('The Data Vault Bridge', 149)" class="w-full block text-center px-6 py-3.5 bg-olive text-white font-bold uppercase tracking-wider rounded hover:bg-opacity-90 shadow-md transition-colors cursor-pointer">
+          Purchase Blueprint ($149)
         </button>
       </div>
 
@@ -660,7 +660,7 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
           <p class="text-sm text-gray-500 min-h-[40px]">The ultimate package: Prompts, Telemetry Blueprints, and the Transition Playbook.</p>
         </div>
         <div class="mb-6">
-          <span class="text-4xl font-extrabold text-gray-900">$497</span>
+          <span class="text-4xl font-extrabold text-gray-900">$297</span>
           <span class="text-sm text-gray-500 font-medium">/ one-time</span>
         </div>
         <ul class="text-sm text-gray-600 space-y-3 mb-8 flex-1">
@@ -669,8 +669,8 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
           <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> Task Viability Scoring Matrix</li>
           <li class="flex items-start"><span class="text-olive mr-2 font-bold">&#10003;</span> SecOps RBAC Matrix & Board Deck Outline</li>
         </ul>
-        <button onclick="handlePurchase('Complete Architecture Bundle', 497)" class="w-full block text-center px-6 py-3.5 border-2 border-olive text-olive font-bold uppercase tracking-wider rounded hover:bg-olive hover:text-white transition-colors cursor-pointer">
-          Purchase Bundle ($497)
+        <button onclick="handlePurchase('Complete Architecture Bundle', 297)" class="w-full block text-center px-6 py-3.5 border-2 border-olive text-olive font-bold uppercase tracking-wider rounded hover:bg-olive hover:text-white transition-colors cursor-pointer">
+          Purchase Bundle ($297)
         </button>
       </div>
 
@@ -713,7 +713,7 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
     <p id="modal-product-price" class="text-2xl font-bold text-olive mb-4">$97 one-time</p>
     
     <p class="text-xs text-gray-600 mb-4 leading-relaxed">
-      Upon completing payment, your digital Notion vault access links and downloadable Markdown packages will be sent immediately to your email address via Make.com.
+      Upon completing payment, your digital Notion vault access links and downloadable Markdown packages will be sent immediately to your email address.
     </p>
 
     <div class="space-y-3">
@@ -1071,26 +1071,6 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
     }
   }
 
-  // 4. CHECKOUT MODAL
-  var currentSelectedProduct = { name: '', price: 0 };
-  function handlePurchase(name, price) {
-    currentSelectedProduct = { name: name, price: price };
-    document.getElementById('modal-product-title').innerText = name;
-    document.getElementById('modal-product-price').innerText = '$' + price + ' one-time';
-    document.getElementById('checkout-modal').classList.remove('hidden');
-  }
-  function closeModal() {
-    document.getElementById('checkout-modal').classList.add('hidden');
-  }
-  function proceedToStripe() {
-    var email = document.getElementById('modal-customer-email').value;
-    if (!email || email.indexOf('@') === -1) {
-      alert('Please enter a valid work email address.');
-      return;
-    }
-    alert('Order initialized for ' + currentSelectedProduct.name + ' ($' + currentSelectedProduct.price + '). Connecting to Stripe Checkout...');
-  }
-</script>
   // 4. STRIPE PAYMENT LINK ROUTING (Direct Redirect)
   var STRIPE_PAYMENT_LINKS = {
     "Prompt Architecture Suite": "https://buy.stripe.com/8x2cN4bAm8fzeFa1xe0sU01",
@@ -1105,7 +1085,7 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
     var targetUrl = STRIPE_PAYMENT_LINKS[name];
     
     // Redirect directly to live Stripe Payment Link
-    if (targetUrl && targetUrl.indexOf('http') === 0 && targetUrl.indexOf('YOUR_TIER') === -1) {
+    if (targetUrl && targetUrl.indexOf('http') === 0) {
       window.location.href = targetUrl;
       return;
     }
@@ -1123,10 +1103,10 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
   function proceedToStripe() {
     var email = document.getElementById('modal-customer-email').value;
     var targetUrl = STRIPE_PAYMENT_LINKS[currentSelectedProduct.name];
-    if (targetUrl && targetUrl.indexOf('http') === 0 && targetUrl.indexOf('YOUR_TIER') === -1) {
+    if (targetUrl && targetUrl.indexOf('http') === 0) {
       window.location.href = targetUrl + (email ? '?prefilled_email=' + encodeURIComponent(email) : '');
     }
   }
-};
+</script>
 </body>
 </html>
