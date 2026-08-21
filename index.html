@@ -1091,10 +1091,42 @@ You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}
     alert('Order initialized for ' + currentSelectedProduct.name + ' ($' + currentSelectedProduct.price + '). Connecting to Stripe Checkout...');
   }
 </script>
+  // 4. STRIPE PAYMENT LINK ROUTING (Direct Redirect)
   var STRIPE_PAYMENT_LINKS = {
-  "Prompt Architecture Suite": "https://buy.stripe.com/8x2cN4bAm8fzeFa1xe0sU01",
-  "The Data Vault Bridge": "https://buy.stripe.com/8x2dR88oafI17cIfo40sU00",
-  "Complete Architecture Bundle": "https://buy.stripe.com/00w3cufQC9jDaoU8ZG0sU02"
+    "Prompt Architecture Suite": "https://buy.stripe.com/8x2cN4bAm8fzeFa1xe0sU01",
+    "The Data Vault Bridge": "https://buy.stripe.com/8x2dR88oafI17cIfo40sU00",
+    "Complete Architecture Bundle": "https://buy.stripe.com/00w3cufQC9jDaoU8ZG0sU02"
+  };
+
+  var currentSelectedProduct = { name: '', price: 0 };
+
+  function handlePurchase(name, price) {
+    currentSelectedProduct = { name: name, price: price };
+    var targetUrl = STRIPE_PAYMENT_LINKS[name];
+    
+    // Redirect directly to live Stripe Payment Link
+    if (targetUrl && targetUrl.indexOf('http') === 0 && targetUrl.indexOf('YOUR_TIER') === -1) {
+      window.location.href = targetUrl;
+      return;
+    }
+
+    // Fallback: Open modal if link is not configured yet
+    document.getElementById('modal-product-title').innerText = name;
+    document.getElementById('modal-product-price').innerText = '$' + price + ' one-time';
+    document.getElementById('checkout-modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('checkout-modal').classList.add('hidden');
+  }
+
+  function proceedToStripe() {
+    var email = document.getElementById('modal-customer-email').value;
+    var targetUrl = STRIPE_PAYMENT_LINKS[currentSelectedProduct.name];
+    if (targetUrl && targetUrl.indexOf('http') === 0 && targetUrl.indexOf('YOUR_TIER') === -1) {
+      window.location.href = targetUrl + (email ? '?prefilled_email=' + encodeURIComponent(email) : '');
+    }
+  }
 };
 </body>
 </html>
