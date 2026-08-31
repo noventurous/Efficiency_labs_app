@@ -3,29 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Efficiency Labs | Operational Readiness Diagnostics & Architecture</title>
-<meta name="description" content="Map, stress-test, and validate your operational readiness for autonomous AI. Free interactive simulator, free governance diagnostic, production blueprints from $97.">
+<title>Efficiency Labs | AI Operations Framework (OpenMAIC)</title>
+<meta name="description" content="OpenMAIC wrapper around Efficiency Labs architecture — interactive AI-driven business operations framework.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script>
 tailwind.config = {
   theme: {
     extend: {
       colors: {
-        ink: '#38332F',
-        coal: '#2A2622',
-        paper: '#FDFBF7',
-        cream: '#F5F4F2',
-        sand: '#E0DDD8',
-        taupe: '#A39B8B',
-        rose: '#CB997E',
-        olive: '#6B705C'
+        ink: '#38332F', coal: '#2A2622', paper: '#FDFBF7',
+        cream: '#F5F4F2', sand: '#E0DDD8', taupe: '#A39B8B',
+        rose: '#CB997E', olive: '#6B705C',
+        emerald: '#5B7A52', amber: '#C68B3F'
       },
       fontFamily: {
         display: ['"Source Serif 4"', 'Georgia', 'serif'],
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
       }
     }
   }
@@ -36,9 +33,8 @@ tailwind.config = {
   body { background-color:#FDFBF7; color:#38332F;
          font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
   ::selection { background:#6B705C; color:#FDFBF7; }
-
   ::-webkit-scrollbar { width:8px; height:8px; }
-  ::-webkit-scrollbar-track { background:#FDFBF7; border-left:1px solid #E5E7EB; }
+  ::-webkit-scrollbar-track { background:#FDFBF7; }
   ::-webkit-scrollbar-thumb { background:#A39B8B; border-radius:4px; }
 
   .hairline { border-color:rgba(56,51,47,.14); }
@@ -50,102 +46,243 @@ tailwind.config = {
             font-weight:600; color:#A39B8B; }
   .kicker::before { content:""; width:28px; height:1px; background:#CB997E; }
 
-  .flow-node { padding:10px; border-radius:6px; background:#FFF;
-               border:1px solid rgba(56,51,47,.18); font-size:11px;
-               text-align:center; box-shadow:0 1px 2px rgba(0,0,0,.04); width:100%; }
-  .flow-node.active { border-color:#6B705C; }
-  .flow-line { width:1px; background-color:rgba(56,51,47,.18); margin:0 auto; height:16px; }
-
-  .syn-k { color:#CB997E; font-weight:700; }
-  .syn-c { color:#E8C468; }
-  .syn-v { color:#A8B89B; }
-
-  .log-ok   { border-left-color:#B9C7A6 !important; } .log-ok-t   { color:#B9C7A6; }
-  .log-warn { border-left-color:#E07856 !important; } .log-warn-t { color:#E8A08A; }
-  .log-act  { border-left-color:#A39B8B !important; } .log-act-t  { color:#FDFBF7; }
-
   .reveal { opacity:0; transform:translateY(18px); transition:opacity .7s ease,transform .7s ease; }
   .reveal.in { opacity:1; transform:none; }
-
   section[id] { scroll-margin-top:96px; }
 
-  /* Brand film */
-  .elf-stage { position:relative; aspect-ratio:16/9; background:#211E1B; border-radius:14px;
-               overflow:hidden; box-shadow:0 24px 60px -24px rgba(56,51,47,.45); }
-  .elf-scene { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
-               justify-content:center; gap:14px; padding:6%; text-align:center;
-               opacity:0; transform:translateY(10px); transition:opacity .7s ease,transform .7s ease; pointer-events:none; }
-  .elf-scene.on { opacity:1; transform:none; pointer-events:auto; }
-  .elf-big { font-family:'Source Serif 4',Georgia,serif; color:#FDFBF7; font-weight:600;
-             letter-spacing:-.02em; line-height:1.1; }
-  .elf-stat { font-family:'Source Serif 4',Georgia,serif; font-weight:700; color:#CB997E; line-height:1; }
-  .elf-cap  { color:rgba(253,251,247,.55); font-size:clamp(10px,1.4vw,14px); text-transform:uppercase; letter-spacing:.2em; }
-  .elf-scene .elf-st { opacity:0; transform:translateY(8px); transition:opacity .5s ease,transform .5s ease; }
-  .elf-scene.on .elf-st { opacity:1; transform:none; }
-  .elf-scene.on .elf-st:nth-child(1){transition-delay:.1s}.elf-scene.on .elf-st:nth-child(2){transition-delay:.55s}
-  .elf-scene.on .elf-st:nth-child(3){transition-delay:1s}.elf-scene.on .elf-st:nth-child(4){transition-delay:1.45s}
-  .elf-nodes { display:flex; align-items:center; gap:clamp(4px,1vw,10px); flex-wrap:wrap; justify-content:center; }
-  .elf-node { padding:8px 14px; border-radius:8px; border:1px solid rgba(253,251,247,.25);
-              color:#EDEAE4; font-size:clamp(9px,1.3vw,13px); font-family:ui-monospace,monospace; background:rgba(253,251,247,.05); }
-  .elf-node.halt { border-color:#E07856; color:#E8A08A; background:rgba(224,120,86,.08); animation:elfPulse 1.4s infinite; }
-  .elf-arrow { color:rgba(253,251,247,.35); font-size:clamp(9px,1.2vw,12px); }
-  @keyframes elfPulse { 0%,100%{box-shadow:0 0 0 0 rgba(224,120,86,.35)} 50%{box-shadow:0 0 0 8px rgba(224,120,86,0)} }
-  .elf-term { width:min(420px,80%); text-align:left; background:#171512; border:1px solid rgba(253,251,247,.12);
-              border-radius:10px; padding:16px; font-family:ui-monospace,monospace; font-size:clamp(9px,1.2vw,12px); }
-  .elf-term div { color:rgba(253,251,247,.6); margin-bottom:5px; }
-  .elf-halt-chip { display:inline-block; margin-top:8px; padding:5px 12px; border-radius:6px;
-                   background:rgba(224,120,86,.12); color:#E8A08A; font-size:clamp(8px,1.1vw,11px);
-                   letter-spacing:.14em; animation:elfPulse 1.4s infinite; }
-  .elf-cards { display:flex; gap:clamp(6px,1.4vw,16px); }
-  .elf-pc { border:1px solid rgba(163,155,139,.4); border-radius:10px; padding:14px clamp(10px,1.6vw,20px); background:rgba(253,251,247,.04); }
-  .elf-pc b { display:block; font-family:'Source Serif 4',serif; color:#FDFBF7; font-size:clamp(14px,2.2vw,26px); font-weight:600; }
-  .elf-pc span { color:rgba(253,251,247,.5); font-size:clamp(8px,1vw,11px); text-transform:uppercase; letter-spacing:.12em; }
-  .elf-play { position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center;
-              background:rgba(33,30,27,.55); backdrop-filter:blur(2px); cursor:pointer; border:none; width:100%; }
-  .elf-btn  { width:76px; height:76px; border-radius:999px; background:#6B705C; color:#FDFBF7; font-size:24px;
-              display:flex; align-items:center; justify-content:center; box-shadow:0 12px 32px rgba(0,0,0,.4); transition:transform .2s; }
-  .elf-play:hover .elf-btn { transform:scale(1.08); }
-  .elf-prog { position:absolute; left:0; bottom:0; height:3px; width:0; background:#CB997E; z-index:4; }
-  .elf-replay { position:absolute; right:12px; bottom:12px; z-index:4; display:none; background:rgba(253,251,247,.1);
-                border:1px solid rgba(253,251,247,.25); color:#FDFBF7; border-radius:8px; padding:7px 14px;
-                font-size:10px; font-weight:700; letter-spacing:.14em; cursor:pointer; text-transform:uppercase; }
-  .elf-cta { display:inline-block; margin-top:6px; padding:11px 22px; background:#6B705C; color:#FDFBF7 !important;
-             border-radius:8px; font-size:clamp(9px,1.2vw,12px); font-weight:700; letter-spacing:.16em;
-             text-transform:uppercase; text-decoration:none; }
-  @media (prefers-reduced-motion: reduce){ .elf-scene,.elf-scene .elf-st{transition:none} }
+  /* ═══════════════ OpenMAIC canvas ═══════════════ */
+  .omaic-stage { background:#1A1714; border-radius:14px; overflow:hidden;
+                 box-shadow:0 24px 60px -24px rgba(56,51,47,.45); position:relative; }
+  .omaic-grid { display:grid; grid-template-columns: 240px 1fr 320px;
+                min-height: 640px; }
+  @media (max-width: 1100px) {
+    .omaic-grid { grid-template-columns: 1fr; }
+    .omaic-side { display:none; }
+  }
 
-  /* Readiness quiz */
+  .omaic-node { padding:10px 12px; border-radius:8px; background:#26221F;
+                border:1px solid rgba(253,251,247,.08); font-size:11px;
+                color:#EDEAE4; transition: all .2s; cursor:pointer;
+                position:relative; }
+  .omaic-node:hover { border-color:#6B705C; background:#2F2A26; }
+  .omaic-node.running { border-color:#6B705C; animation: omaicPulse 1.4s infinite; }
+  @keyframes omaicPulse { 0%,100%{box-shadow:0 0 0 0 rgba(107,112,92,.5)} 50%{box-shadow:0 0 0 6px rgba(107,112,92,0)} }
+
+  .omaic-pill { display:inline-block; padding:3px 8px; border-radius:99px;
+                 font-size:9px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+  .omaic-pill.olive { background:rgba(107,112,92,.18); color:#A8B89B; }
+  .omaic-pill.rose  { background:rgba(203,153,126,.18); color:#E8C4A8; }
+  .omaic-pill.amber { background:rgba(198,139,63,.18); color:#E0B884; }
+  .omaic-pill.ink   { background:rgba(253,251,247,.1); color:#FDFBF7; }
+
+  .omaic-msg { padding:10px 12px; border-radius:8px; font-size:12px;
+                line-height:1.5; margin-bottom:8px; max-width:88%; }
+  .omaic-msg.user { background:#6B705C; color:#FDFBF7; margin-left:auto; border-bottom-right-radius:2px; }
+  .omaic-msg.assistant { background:rgba(253,251,247,.05); color:#EDEAE4;
+                          border:1px solid rgba(253,251,247,.1); border-bottom-left-radius:2px; }
+  .omaic-msg.system { background:rgba(203,153,126,.08); color:#E8C4A8;
+                       border:1px solid rgba(203,153,126,.2); font-style:italic; }
+
+  .omaic-tool-card { background:#26221F; border:1px solid rgba(253,251,247,.1);
+                     border-radius:8px; padding:10px 12px; margin:6px 0; font-size:11px;
+ position:relative; }
+  .omaic-tool-card .name { color:#CB997E; font-family:'JetBrains Mono',monospace; font-weight:600; }
+
+  .omaic-meter { height:6px; background:rgba(253,251,247,.08); border-radius:99px; overflow:hidden; }
+  .omaic-meter > div { height:100%; background:linear-gradient(90deg,#A39B8B,#6B705C);
+    transition:width 1.2s cubic-bezier(.22,.8,.36,1); }
+
+  /* ═══════════════ HOVER TIPS — fixed positioning ═══════════════ */
+  .omaic-hover { position:relative; display:inline-block; }
+  .omaic-hover.block { display:block; }
+
+  .omaic-hover .omaic-tip {
+    position:fixed;
+ width:300px; padding:14px;
+    background:#FFFFFF; color:#38332F;
+    border:1px solid rgba(107,112,92,.3); border-radius:10px;
+    box-shadow:0 18px 44px -12px rgba(56,51,47,.5);
+    font-size:11.5px; line-height:1.45;
+    opacity:0; pointer-events:none;
+    transition:opacity .15s ease;
+    z-index:90; text-align:left;
+  }
+  .omaic-hover .omaic-tip.show { opacity:1; pointer-events:auto; }
+
+  .omaic-tip .t-h { display:flex; align-items:center; gap:6px;
+    font-size:9.5px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:#6B705C; margin-bottom:7px; }
+  .omaic-tip .t-h::before { content:"💡"; }
+  .omaic-tip .t-t { font-weight:600; color:#38332F; margin-bottom:4px; font-size:12px; }
+  .omaic-tip .t-b { color:#666; font-size:11px; margin-bottom:8px; }
+  .omaic-tip .t-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px;
+                       padding-top:8px; border-top:1px dashed rgba(56,51,47,.18); }
+  .omaic-tip .t-grid div { font-size:9.5px; }
+  .omaic-tip .t-grid .lbl { color:#888; text-transform:uppercase; letter-spacing:.1em; font-weight:700; display:block; margin-bottom:2px; }
+  .omaic-tip .t-grid .val { color:#38332F; font-weight:600; }
+
+  .omaic-tip::after { content:""; position:absolute; left:-6px; top:18px;
+    width:10px; height:10px; background:#FFF;
+    border-left:1px solid rgba(107,112,92,.3);
+    border-bottom:1px solid rgba(107,112,92,.3);
+    transform:rotate(45deg); }
+  .omaic-tip.pos-left::after { left:auto; right:-6px;
+    border-left:none; border-bottom:none;
+    border-top:1px solid rgba(107,112,92,.3);
+    border-right:1px solid rgba(107,112,92,.3); }
+
+  /* ═══════════════ TRY-IT EXAMPLE BLOCK inside every tip ═══════════════ */
+  .try-it { margin-top:10px; padding-top:10px;
+ border-top:1px dashed rgba(56,51,47,.18); }
+  .try-it .try-h { display:flex; align-items:center; justify-content:space-between;
+ margin-bottom:6px; }
+  .try-it .try-h .try-lbl { font-size:9px; font-weight:700; letter-spacing:.14em;
+                             text-transform:uppercase; color:#6B705C; }
+  .try-it .try-h .try-lbl::before { content:"▶ "; color:#CB997E; }
+  .try-it .try-copy { font-size:9px; font-weight:700; letter-spacing:.14em;
+                      text-transform:uppercase; color:#A39B8B; cursor:pointer;
+ background:none; border:1px solid rgba(56,51,47,.18); padding:3px 8px;
+                      border-radius:4px; transition:all .15s; }
+  .try-it .try-copy:hover { color:#38332F; border-color:#6B705C; }
+  .try-it .try-copy.copied { color:#5B7A52; border-color:#5B7A52; }
+
+  .try-it .try-prompt { background:#F5F4F2; border:1px solid rgba(56,51,47,.12);
+                        border-radius:6px; padding:7px 9px; font-family:'JetBrains Mono',monospace;
+ font-size:10.5px; color:#38332F; line-height:1.4; margin-bottom:6px;
+ white-space:pre-wrap; word-break:break-word; }
+  .try-it .try-prompt::before { content:"YOU → "; color:#A39B8B; font-weight:700; }
+  .try-it .try-out { background:#26221F; border:1px solid #1A1714;
+ border-radius:6px; padding:7px 9px; font-family:'JetBrains Mono',monospace;
+                     font-size:10px; color:#A8B89B; line-height:1.45;
+                     white-space:pre-wrap; word-break:break-word; }
+  .try-it .try-out::before { content:"TOOL → "; color:#CB997E; font-weight:700; }
+
+  /* ═══════════════ INLINE tool-card explainer (right side of canvas) ═══════════════ */
+  .tc-explainer { margin-top:8px; padding-top:8px;
+ border-top:1px dashed rgba(253,251,247,.15); }
+  .tc-row { display:flex; gap:8px; font-size:10px; line-height:1.4; margin-bottom:5px; }
+  .tc-row .ico { width:18px; height:18px; flex-shrink:0; border-radius:4px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(253,251,247,.06); color:#A39B8B; font-weight:700; }
+  .tc-row .lbl { color:#A39B8B; font-weight:700; text-transform:uppercase;
+    letter-spacing:.1em; font-size:8.5px; display:block; margin-bottom:1px; }
+  .tc-row .txt { color:#C8C2B5; }
+
+  .tc-example { margin-top:8px; padding-top:8px;
+                border-top:1px dashed rgba(253,251,247,.15); }
+  .tc-example .ex-h { font-size:8.5px; font-weight:700; letter-spacing:.14em;
+                      text-transform:uppercase; color:#CB997E; margin-bottom:5px; }
+  .tc-example .ex-prompt { background:rgba(253,251,247,.04); border:1px solid rgba(253,251,247,.08);
+                           border-radius:5px; padding:6px 8px; font-family:'JetBrains Mono',monospace;
+ font-size:10px; color:#EDEAE4; line-height:1.4; margin-bottom:5px;
+                           white-space:pre-wrap; word-break:break-word; }
+  .tc-example .ex-prompt::before { content:"YOU → "; color:#A39B8B; font-weight:700; }
+  .tc-example .ex-out { background:#1A1714; border:1px solid rgba(253,251,247,.05);
+                        border-radius:5px; padding:6px 8px; font-family:'JetBrains Mono',monospace;
+                        font-size:9.5px; color:#A8B89B; line-height:1.4;
+                        white-space:pre-wrap; word-break:break-word; }
+  .tc-example .ex-out::before { content:"TOOL → "; color:#CB997E; font-weight:700; }
+
+  .canvas-help { background:rgba(203,153,126,.06); border:1px solid rgba(203,153,126,.25);
+                 border-radius:8px; padding:8px 12px; margin-bottom:12px;
+                 font-size:11px; color:#E8C4A8; display:flex; align-items:center; gap:8px; }
+  .canvas-help .ch-key { background:#1A1714; color:#CB997E; padding:2px 6px;
+                         border-radius:4px; font-family:'JetBrains Mono',monospace;
+ font-size:10px; font-weight:700; }
+
+  /* ═══════════════ Framework coachmarks (fixed positioning) ═══════════════ */
+  .coach-host { position: relative; }
+  .coach-tip {
+    position:fixed; z-index:90; width:260px;
+    background:#FFFFFF; color:#38332F;
+    border:1px solid rgba(107,112,92,.3);
+    border-radius:10px; padding:14px; box-shadow: 0 18px 44px -12px rgba(56,51,47,.5);
+    font-size:12px; line-height:1.45;
+    opacity:0; transform:translateY(-4px); pointer-events:none;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .coach-tip.show { opacity:1; transform:translateY(0); pointer-events:auto; }
+  .coach-tip .coach-h { display:flex; align-items:center; gap:6px;
+    font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+    color:#6B705C; margin-bottom:6px; }
+  .coach-tip .coach-h::before { content:"💡"; }
+  .coach-tip .coach-t { font-weight:600; color:#38332F; margin-bottom:4px; font-size:12.5px; }
+  .coach-tip .coach-b { color:#666; font-size:11.5px; }
+  .coach-tip .coach-x { position:absolute; top:6px; right:8px; background:none;
+    border:none; color:#A39B8B; font-size:16px; cursor:pointer; line-height:1; padding:2px 6px; }
+
+  .coach-stat { display:flex; gap:14px; margin-top:10px; padding-top:10px;
+    border-top:1px dashed rgba(56,51,47,.18); }
+  .coach-stat .v { font-family:'Source Serif 4',serif; font-weight:600;
+    color:#6B705C; font-size:18px; line-height:1; }
+  .coach-stat .l { font-size:9px; text-transform:uppercase; letter-spacing:.12em;
+    color:#888; margin-top:3px; }
+
+  .coach-dot { position:absolute; top:8px; right:8px; width:10px; height:10px;
+    border-radius:99px; background:#CB997E; z-index:5; cursor:help;
+    box-shadow:0 0 0 0 rgba(203,153,126,.6); animation:coachRing 1.8s infinite; }
+  @keyframes coachRing { 0%,100%{box-shadow:0 0 0 0 rgba(203,153,126,.5)} 50%{box-shadow:0 0 0 6px rgba(203,153,126,0)} }
+
+  .tour-fab { position:fixed; bottom:24px; right:24px; z-index:70;
+    background:#38332F; color:#FDFBF7; padding:10px 16px;
+    border-radius:99px; font-size:11px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase;
+    box-shadow:0 14px 36px -10px rgba(0,0,0,.5); cursor:pointer;
+    display:flex; align-items:center; gap:8px; border:none; font-family:'Inter',sans-serif; }
+  .tour-fab:hover { background:#2A2622; }
+  .tour-fab .dot { width:7px; height:7px; border-radius:99px; background:#CB997E; animation:coachRing 1.8s infinite; }
+  .tour-veil { position:fixed; inset:0; background:rgba(33,30,27,.55);
+    z-index:65; opacity:0; pointer-events:none; transition: opacity .3s; }
+  .tour-veil.on { opacity:1; pointer-events:auto; }
+
+  .orch-card { background:#FFF; border:1px solid rgba(56,51,47,.14); border-radius:10px;
+               padding:16px 16px 14px; transition: all .2s; cursor:pointer;
+               position:relative; text-align:left; width:100%; font-family:inherit;
+ color:inherit; }
+  .orch-card:hover { border-color:#6B705C; transform:translateY(-2px); box-shadow:0 6px 18px rgba(56,51,47,.08); }
+  .orch-card.active { border-color:#CB997E; box-shadow:0 0 0 3px rgba(203,153,126,.15); }
+
+  .toggle-pill { display:inline-flex; align-items:center; gap:6px; padding:5px 10px;
+                 border-radius:99px; font-size:10px; font-weight:600; letter-spacing:.12em;
+                 text-transform:uppercase; cursor:pointer; transition:all .15s;
+                 border:1px solid rgba(56,51,47,.16); background:#FFF; color:#666;
+                 font-family:inherit; }
+  .toggle-pill:hover { border-color:#6B705C; }
+  .toggle-pill.on { background:#6B705C; color:#FDFBF7; border-color:#6B705C; }
+
+  .price-card { background:#FFF; border:1px solid rgba(56,51,47,.14); border-radius:14px;
+                padding:24px; transition: all .25s; position:relative; }
+  .price-card:hover { box-shadow:0 12px 32px rgba(56,51,47,.1); }
+  .price-card.featured { border:2px solid #6B705C; transform:translateY(-12px); }
+
   .elq-opt { display:block; width:100%; text-align:left; padding:14px 18px;
     border:1px solid rgba(56,51,47,.16); border-radius:10px; background:#fff;
-    font-size:14px; color:#444; cursor:pointer; transition:all .18s; }
+    font-size:14px; color:#444; cursor:pointer; transition:all .18s;
+    font-family:inherit; }
   .elq-opt:hover { border-color:#6B705C; background:#FDFBF7; transform:translateX(4px); }
   .elq-opt.picked { border-color:#6B705C; background:#6B705C; color:#fff; }
-  .elq-bar { height:3px; background:rgba(56,51,47,.1); border-radius:99px; overflow:hidden; }
-  .elq-fill { height:100%; background:#6B705C; width:0; transition:width .35s ease; }
-  .elq-meter { height:8px; background:rgba(56,51,47,.08); border-radius:99px; overflow:hidden; }
-  .elq-meter > div { height:100%; width:0; background:linear-gradient(90deg,#A39B8B,#6B705C);
-    transition:width 1.2s cubic-bezier(.22,.8,.36,1); }
+
+  .framework-wrap { overflow:visible !important; }
 </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
 
-<!-- ═══════════════ 1. NAVIGATION ═══════════════ -->
+<!-- NAVIGATION -->
 <nav id="topnav" class="bg-paper/95 backdrop-blur border-b hairline sticky top-0 z-50 w-full transition-shadow">
   <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
     <div class="flex items-center gap-3">
       <div class="w-3.5 h-3.5 bg-olive"></div>
       <div>
         <a href="#hero" class="font-display text-xl font-semibold tracking-tight text-ink">Efficiency Labs</a>
-        <div class="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-semibold mt-0.5">Architecture &amp; Diagnostics</div>
+        <div class="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-semibold mt-0.5">OpenMAIC Operations Framework</div>
       </div>
     </div>
     <div class="hidden md:flex gap-8 items-center">
-      <a href="#simulator" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Simulator</a>
-      <a href="#diagnostic" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Governance Diagnostic</a>
-      <a href="#economics" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Why Blueprints</a>
-      <a href="#solutions" class="px-5 py-2.5 bg-ink text-paper text-[11px] font-bold uppercase tracking-[0.14em] rounded hover:bg-coal transition-all">
-        Get Blueprints · $97+
-      </a>
+      <a href="#framework" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Framework</a>
+      <a href="#canvas" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Live Canvas</a>
+      <a href="#readiness" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Readiness</a>
+      <a href="#pricing" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Pricing</a>
+      <a href="#pricing" class="px-5 py-2.5 bg-ink text-paper text-[11px] font-bold uppercase tracking-[0.14em] rounded hover:bg-coal transition-all">Get Blueprints · $97+</a>
     </div>
     <button id="menuBtn" class="md:hidden p-2" aria-label="Menu">
       <span class="block w-5 h-px bg-ink mb-1.5"></span>
@@ -154,1262 +291,1100 @@ tailwind.config = {
     </button>
   </div>
   <div id="mobileMenu" class="hidden md:hidden bg-paper border-t hairline px-6 py-4 space-y-3">
-    <a href="#simulator" class="block text-sm font-medium text-gray-700">Simulator</a>
-    <a href="#diagnostic" class="block text-sm font-medium text-gray-700">Governance Diagnostic</a>
-    <a href="#economics" class="block text-sm font-medium text-gray-700">Why Blueprints</a>
-    <a href="#solutions" class="block text-sm font-bold text-olive">Get Blueprints · $97+</a>
+    <a href="#framework" class="block text-sm font-medium text-gray-700">Framework</a>
+    <a href="#canvas" class="block text-sm font-medium text-gray-700">Live Canvas</a>
+    <a href="#readiness" class="block text-sm font-medium text-gray-700">Readiness</a>
+    <a href="#pricing" class="block text-sm font-bold text-olive">Get Blueprints · $97+</a>
   </div>
 </nav>
 
-<!-- ═══════════════ 2. HERO ═══════════════ -->
+<!-- HERO -->
 <header id="hero" class="pt-20 pb-16 px-6 border-b hairline relative overflow-hidden">
   <div class="max-w-4xl mx-auto text-center relative z-10">
     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white border border-olive/40 text-olive text-[11px] font-bold uppercase tracking-[0.16em] rounded-sm mb-7">
       <span class="w-1.5 h-1.5 rounded-full bg-olive animate-pulse"></span>
-      Stop buying tools. Diagnose the workflow.
+      OpenMAIC · Interactive Operations Framework
     </div>
     <h1 class="font-display text-4xl md:text-6xl font-semibold text-ink tracking-tight leading-[1.08] mb-7">
-      Map, stress-test, and validate your operational readiness for <em class="not-italic text-olive">autonomous AI</em>.
+      The AI-driven <em class="not-italic text-olive">Business Operations Framework</em> — wrapped around every Efficiency Labs service.
     </h1>
     <p class="text-base md:text-lg text-gray-600 mb-9 leading-relaxed max-w-2xl mx-auto">
-      Senior operational architecture, productized. Test real workflows free in our simulator,
-      audit your governance posture, then deploy production blueprints from <strong class="text-ink">$97 one-time</strong> —
-      the same frameworks consultancies deliver as six-figure engagements.
+      OpenMAIC turns our diagnostics, blueprints, and advisory work into a single, living
+      conversation: a multi-agent operating layer that you can probe, orchestrate, and
+      approve — running on your data, governed by your rules.
     </p>
     <div class="flex flex-col sm:flex-row justify-center gap-3 mb-14">
-      <a href="#simulator" class="px-7 py-3.5 bg-olive text-paper text-[12px] font-bold uppercase tracking-[0.14em] rounded shadow-sm hover:bg-[#5D6350] transition-all">
-        ▶ Launch Interactive Simulator
-      </a>
-      <a href="#diagnostic" class="px-7 py-3.5 bg-ink text-paper text-[12px] font-bold uppercase tracking-[0.14em] rounded shadow-sm hover:bg-coal transition-all">
-        Take the Governance Diagnostic
-      </a>
-      <a href="#solutions" class="px-7 py-3.5 bg-white text-ink border hairline text-[12px] font-bold uppercase tracking-[0.14em] rounded hover:bg-cream transition-all">
-        View Pricing Tiers · $97–$297
-      </a>
+      <a href="#canvas" class="px-7 py-3.5 bg-olive text-paper text-[12px] font-bold uppercase tracking-[0.14em] rounded shadow-sm hover:bg-[#5D6350] transition-all">▶ Open the Live Canvas</a>
+      <a href="#framework" class="px-7 py-3.5 bg-ink text-paper text-[12px] font-bold uppercase tracking-[0.14em] rounded shadow-sm hover:bg-coal transition-all">How the Framework Works</a>
+      <a href="#pricing" class="px-7 py-3.5 bg-white text-ink border hairline text-[12px] font-bold uppercase tracking-[0.14em] rounded hover:bg-cream transition-all">View Pricing · $97–$297</a>
     </div>
-
-    <!-- Evidence bar -->
     <div class="grid grid-cols-2 md:grid-cols-4 border-t hairline max-w-4xl mx-auto text-left">
-      <div class="py-6 pr-6 border-r hairline">
-        <div class="font-display text-3xl text-ink">$97</div>
-        <div class="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">One-time entry price<br>Not a subscription</div>
-      </div>
-      <div class="py-6 px-6 md:border-r hairline">
-        <div class="font-display text-3xl text-ink">85%</div>
-        <div class="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">Of teams run ungoverned<br>"shadow AI" daily</div>
-      </div>
-      <div class="py-6 pr-6 border-r hairline border-t md:border-t-0">
-        <div class="font-display text-3xl text-ink">&lt;15%</div>
-        <div class="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">Execute inside governed<br>CI/CD pipelines</div>
-      </div>
-      <div class="py-6 px-6 border-t md:border-t-0">
-        <div class="font-display text-3xl text-olive">−90%</div>
-        <div class="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">Infrastructure cost vs.<br>SaaS wrapper pricing</div>
-      </div>
+      <div class="py-6 pr-6 border-r hairline"><div class="font-display text-3xl text-ink">6</div><div class="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">Specialist agents in<br>the OpenMAIC mesh</div></div>
+      <div class="py-6 px-6 md:border-r hairline"><div class="font-display text-3xl text-ink">4</div><div class="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">Risk-tier gates with<br>human-in-the-loop</div></div>
+      <div class="py-6 pr-6 border-r hairline border-t md:border-t-0"><div class="font-display text-3xl text-ink">$97</div><div class="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">Entry blueprint,<br>one-time, not a SaaS fee</div></div>
+      <div class="py-6 px-6 border-t md:border-t-0"><div class="font-display text-3xl text-olive">−90%</div><div class="text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">Cost vs. wrapper<br>platforms on your infra</div></div>
     </div>
   </div>
 </header>
 
-<!-- ═══════════════ 3. THESIS ═══════════════ -->
-<section id="thesis" class="py-20 px-6 border-b hairline">
-  <div class="max-w-6xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-      <div class="reveal">
-        <div class="kicker mb-6">01 — Why We Exist</div>
-        <h2 class="font-display text-3xl md:text-4xl text-ink leading-tight mb-6">
-          Operational expertise shouldn't be locked behind billable hours.
-        </h2>
-        <p class="text-gray-600 leading-relaxed mb-4">
-          For decades, the knowledge required to automate a business safely — the prompt
-          architectures, the payload schemas, the governance matrices, the telemetry
-          pipelines — lived inside consulting partnerships and was repackaged as
-          time-and-materials engagements.
-        </p>
-        <p class="text-gray-600 leading-relaxed mb-4">
-          We run the inverse model. Our experts encode judgment directly into
-          <strong class="text-ink">deterministic, deployable artifacts</strong>. Agentic
-          workflows draft and stress-test across thousands of industry scenarios; senior
-          architects verify every schema, every safeguard, every line. You buy the finished
-          architecture — not the hours it took to produce.
-        </p>
-        <p class="text-gray-600 leading-relaxed">
-          Prove it works before you pay: both tools below are free, unlimited, and require no signup.
-        </p>
+<!-- FRAMEWORK -->
+<section id="framework" class="py-20 px-6 border-b hairline bg-cream framework-wrap" style="overflow:visible">
+  <div class="max-w-7xl mx-auto" style="overflow:visible">
+    <div class="text-center mb-14 reveal">
+      <div class="kicker justify-center mb-4" style="justify-content:center">01 — The OpenMAIC Model</div>
+      <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-4 max-w-3xl mx-auto">A business operations framework, not another chatbot.</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">OpenMAIC binds every Efficiency Labs surface into a single multi-agent control plane that runs your operations, with humans approving every irreversible move.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-14" style="overflow:visible">
+      <div class="coach-host bg-white border hairline rounded-xl p-6 reveal" id="pillarMesh">
+        <span class="coach-dot" onclick="toggleTip('tipMesh', event)"></span>
+        <div class="w-10 h-10 rounded bg-olive/10 text-olive flex items-center justify-center font-bold mb-4 font-display">M</div>
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500 mb-1">Mesh</div>
+        <h3 class="font-display text-lg font-semibold text-ink mb-2">Multi-agent, not monolith</h3>
+        <p class="text-xs text-gray-600 leading-relaxed">Six specialist agents coordinate through a shared context layer.</p>
+        <div class="coach-tip" id="tipMesh" data-pos="bottom">
+          <button class="coach-x" onclick="closeTip('tipMesh', event)">×</button>
+          <div class="coach-h">Why this matters</div>
+          <div class="coach-t">One prompt that does everything = one prompt that fails everything.</div>
+          <div class="coach-b">A mesh lets you swap, audit, and improve each role independently.</div>
+          <div class="coach-stat"><div><div class="v">6×</div><div class="l">faster debugging</div></div><div><div class="v">85%</div><div class="l">still use monolith</div></div></div>
+        </div>
       </div>
-      <div class="reveal lg:pl-8 lg:border-l hairline">
-        <blockquote class="font-display text-2xl md:text-[28px] leading-snug text-ink border-l-2 border-olive pl-7">
-          "You shouldn't pay consulting rates for analysis that no longer requires
-          consulting headcount. Pay for the architecture — and nothing else."
-        </blockquote>
-        <div class="mt-5 pl-7 text-[12px] uppercase tracking-[0.16em] text-gray-500">
-          The Efficiency Labs Founding Principle
+      <div class="coach-host bg-white border hairline rounded-xl p-6 reveal" id="pillarAuth">
+        <span class="coach-dot" onclick="toggleTip('tipAuth', event)"></span>
+        <div class="w-10 h-10 rounded bg-olive/10 text-olive flex items-center justify-center font-bold mb-4 font-display">A</div>
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500 mb-1">Authority</div>
+        <h3 class="font-display text-lg font-semibold text-ink mb-2">Risk-tier governance</h3>
+        <p class="text-xs text-gray-600 leading-relaxed">Every action scored against a four-tier RBAC matrix. Halts for human approval above Tier 2.</p>
+        <div class="coach-tip" id="tipAuth" data-pos="bottom">
+          <button class="coach-x" onclick="closeTip('tipAuth', event)">×</button>
+          <div class="coach-h">What you're preventing</div>
+          <div class="coach-t">Agents that email 10,000 customers without asking.</div>
+          <div class="coach-b">You stay the approver — the system is the preparer.</div>
+          <div class="coach-stat"><div><div class="v">4</div><div class="l">risk tiers</div></div><div><div class="v">100%</div><div class="l">T3+ gated</div></div></div>
+        </div>
+      </div>
+      <div class="coach-host bg-white border hairline rounded-xl p-6 reveal" id="pillarIface">
+        <span class="coach-dot" onclick="toggleTip('tipIface', event)"></span>
+        <div class="w-10 h-10 rounded bg-olive/10 text-olive flex items-center justify-center font-bold mb-4 font-display">I</div>
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500 mb-1">Interface</div>
+        <h3 class="font-display text-lg font-semibold text-ink mb-2">Conversational control plane</h3>
+        <p class="text-xs text-gray-600 leading-relaxed">Drive the system in plain English while the canvas shows agent graphs, tool calls, and approvals.</p>
+        <div class="coach-tip" id="tipIface" data-pos="bottom">
+          <button class="coach-x" onclick="closeTip('tipIface', event)">×</button>
+          <div class="coach-h">Who is this for</div>
+          <div class="coach-t">Founders, ops leads, CTOs — not just engineers.</div>
+          <div class="coach-b">You speak plain English; the mesh replies with structured tool calls and audit entries.</div>
+          <div class="coach-stat"><div><div class="v">3</div><div class="l">personas built-in</div></div><div><div class="v">1×</div><div class="l">unified view</div></div></div>
+        </div>
+      </div>
+      <div class="coach-host bg-white border hairline rounded-xl p-6 reveal" id="pillarOwn">
+        <span class="coach-dot" onclick="toggleTip('tipOwn', event)"></span>
+        <div class="w-10 h-10 rounded bg-olive/10 text-olive flex items-center justify-center font-bold mb-4 font-display">C</div>
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500 mb-1">Continuity</div>
+        <h3 class="font-display text-lg font-semibold text-ink mb-2">Owned infrastructure</h3>
+        <p class="text-xs text-gray-600 leading-relaxed">Runs on your Lambda, your webhook endpoints, your vault.</p>
+        <div class="coach-tip" id="tipOwn" data-pos="bottom">
+          <button class="coach-x" onclick="closeTip('tipOwn', event)">×</button>
+          <div class="coach-h">Why you care</div>
+          <div class="coach-t">You pay once. You never re-rent your own automation.</div>
+          <div class="coach-b">SaaS wrappers charge per execution; we ship the blueprint.</div>
+          <div class="coach-stat"><div><div class="v">−90%</div><div class="l">vs. SaaS wrappers</div></div><div><div class="v">$0</div><div class="l">recurring fees</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border hairline rounded-xl p-8 md:p-10 reveal" style="overflow:visible">
+      <div class="flex items-end justify-between mb-8 flex-wrap gap-3">
+        <div>
+          <div class="kicker mb-3">02 — The Agent Mesh</div>
+          <h3 class="font-display text-2xl md:text-3xl font-semibold text-ink">Six specialists, one operating layer</h3>
+        </div>
+        <p class="text-xs text-gray-500 max-w-sm">Hover any card for "what / how / why / for whom / example". Click the pulsing dot for the value-stat.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="agentMesh" style="overflow:visible">
+        <div class="coach-host"><span class="coach-dot" onclick="toggleTip('tipA1', event)"></span>
+          <button class="orch-card text-left" onclick="selectAgent('diagnostician', this)">
+            <div class="flex items-center justify-between mb-3"><div class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">A-01</div><span class="omaic-pill olive">Read-only</span></div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-1">The Diagnostician</h4>
+            <p class="text-xs text-gray-600 leading-relaxed mb-3">Ingests operational signals and produces structured readiness reports.</p>
+            <div class="text-[10px] uppercase tracking-[0.14em] text-gray-500">Maps to: <span class="text-ink font-bold">Free Governance Diagnostic</span></div>
+          </button>
+          <div class="coach-tip" id="tipA1" data-pos="right"><button class="coach-x" onclick="closeTip('tipA1', event)">×</button>
+            <div class="coach-h">What you get free</div><div class="coach-t">Read-only scanner of your actual ops data.</div>
+            <div class="coach-b">It can only read. It can never write back, charge, or email.</div>
+            <div class="coach-stat"><div><div class="v">0</div><div class="l">write actions</div></div><div><div class="v">100%</div><div class="l">safe to run</div></div></div>
+          </div>
+        </div>
+        <div class="coach-host"><span class="coach-dot" onclick="toggleTip('tipA2', event)"></span>
+          <button class="orch-card text-left" onclick="selectAgent('architect', this)">
+            <div class="flex items-center justify-between mb-3"><div class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">A-02</div><span class="omaic-pill rose">Tier 1–2</span></div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-1">The Architect</h4>
+            <p class="text-xs text-gray-600 leading-relaxed mb-3">Generates deterministic system prompts, JSON schemas, and Lambda scaffolding from a one-paragraph brief.</p>
+            <div class="text-[10px] uppercase tracking-[0.14em] text-gray-500">Maps to: <span class="text-ink font-bold">Prompt Architecture Suite · $97</span></div>
+          </button>
+          <div class="coach-tip" id="tipA2" data-pos="right"><button class="coach-x" onclick="closeTip('tipA2', event)">×</button>
+            <div class="coach-h">Why deterministic</div><div class="coach-t">"Make it sound nicer" is not a contract.</div>
+            <div class="coach-b">JSON-validated outputs downstream tools can parse.</div>
+            <div class="coach-stat"><div><div class="v">100%</div><div class="l">schema-validated</div></div><div><div class="v">$97</div><div class="l">one-time</div></div></div>
+          </div>
+        </div>
+        <div class="coach-host"><span class="coach-dot" onclick="toggleTip('tipA3', event)"></span>
+          <button class="orch-card text-left" onclick="selectAgent('vault', this)">
+            <div class="flex items-center justify-between mb-3"><div class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">A-03</div><span class="omaic-pill rose">Tier 1–2</span></div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-1">The Vault Keeper</h4>
+            <p class="text-xs text-gray-600 leading-relaxed mb-3">Strips PII from inbound payloads and enforces schema contracts before any model call.</p>
+            <div class="text-[10px] uppercase tracking-[0.14em] text-gray-500">Maps to: <span class="text-ink font-bold">Data Vault Bridge · $149</span></div>
+          </button>
+          <div class="coach-tip" id="tipA3" data-pos="right"><button class="coach-x" onclick="closeTip('tipA3', event)">×</button>
+            <div class="coach-h">What would happen without this</div><div class="coach-t">Customer SSNs accidentally ending up in LLM prompts.</div>
+            <div class="coach-b">Scrubs every field BEFORE the model sees it.</div>
+            <div class="coach-stat"><div><div class="v">18</div><div class="l">PII fields</div></div><div><div class="v">$149</div><div class="l">one-time</div></div></div>
+          </div>
+        </div>
+        <div class="coach-host"><span class="coach-dot" onclick="toggleTip('tipA4', event)"></span>
+          <button class="orch-card text-left" onclick="selectAgent('operator', this)">
+            <div class="flex items-center justify-between mb-3"><div class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">A-04</div><span class="omaic-pill amber">Tier 2–3</span></div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-1">The Operator</h4>
+            <p class="text-xs text-gray-600 leading-relaxed mb-3">Executes approved workflows across Stripe, Jira, Slack, HubSpot, and your CRM.</p>
+            <div class="text-[10px] uppercase tracking-[0.14em] text-gray-500">Maps to: <span class="text-ink font-bold">Bundle · $297</span></div>
+          </button>
+          <div class="coach-tip" id="tipA4" data-pos="right"><button class="coach-x" onclick="closeTip('tipA4', event)">×</button>
+            <div class="coach-h">The "shift left" principle</div><div class="coach-t">Humans approve, agents execute.</div>
+            <div class="coach-b">Every irreversible API call is gated.</div>
+            <div class="coach-stat"><div><div class="v">0</div><div class="l">ungated writes</div></div><div><div class="v">3×</div><div class="l">faster than manual</div></div></div>
+          </div>
+        </div>
+        <div class="coach-host"><span class="coach-dot" onclick="toggleTip('tipA5', event)"></span>
+          <button class="orch-card text-left" onclick="selectAgent('guardian', this)">
+            <div class="flex items-center justify-between mb-3"><div class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">A-05</div><span class="omaic-pill ink">Always-on</span></div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-1">The Guardian</h4>
+            <p class="text-xs text-gray-600 leading-relaxed mb-3">Scores every tool call against the RBAC matrix and forces a halt when risk exceeds threshold.</p>
+            <div class="text-[10px] uppercase tracking-[0.14em] text-gray-500">Maps to: <span class="text-ink font-bold">Risk-tier RBAC blueprint</span></div>
+          </button>
+          <div class="coach-tip" id="tipA5" data-pos="right"><button class="coach-x" onclick="closeTip('tipA5', event)">×</button>
+            <div class="coach-h">Why it's separate</div><div class="coach-t">No agent polices itself — separation of duties.</div>
+            <div class="coach-b">Different process that scores every call before it runs.</div>
+            <div class="coach-stat"><div><div class="v">&lt;50ms</div><div class="l">overhead</div></div><div><div class="v">100%</div><div class="l">T3+ gated</div></div></div>
+          </div>
+        </div>
+        <div class="coach-host"><span class="coach-dot" onclick="toggleTip('tipA6', event)"></span>
+          <button class="orch-card text-left" onclick="selectAgent('scribe', this)">
+            <div class="flex items-center justify-between mb-3"><div class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">A-06</div><span class="omaic-pill olive">Read-only</span></div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-1">The Scribe</h4>
+            <p class="text-xs text-gray-600 leading-relaxed mb-3">Maintains a tamper-evident audit trail of every prompt, tool call, and approval.</p>
+            <div class="text-[10px] uppercase tracking-[0.14em] text-gray-500">Maps to: <span class="text-ink font-bold">Board deck + transition playbook</span></div>
+          </button>
+          <div class="coach-tip" id="tipA6" data-pos="right"><button class="coach-x" onclick="closeTip('tipA6', event)">×</button>
+            <div class="coach-h">The artifact that closes the deal</div><div class="coach-t">A signed, replayable log of every decision.</div>
+            <div class="coach-b">Hand your auditor a hash-chained log — not a screenshot.</div>
+            <div class="coach-stat"><div><div class="v">SOC-2</div><div class="l">ready format</div></div><div><div class="v">1-click</div><div class="l">board export</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="agentDetail" class="mt-6 p-5 bg-cream border hairline rounded-lg hidden fade-in">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded bg-olive text-paper flex items-center justify-center font-display text-xl shrink-0" id="agentDetailBadge">A</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+              <h4 class="font-display text-lg font-semibold text-ink" id="agentDetailName">—</h4>
+              <span class="omaic-pill olive" id="agentDetailTier">">—</span>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mb-3" id="agentDetailDesc">—</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div><div class="text-[10px] uppercase tracking-[0.14em] text-gray-500 mb-1">Tools</div><div class="font-mono text-ink" id="agentDetailTools">—</div></div>
+              <div><div class="text-[10px] uppercase tracking-[0.14em] text-gray-500 mb-1">Deliverable</div><div class="text-ink" id="agentDetailDeliverable">—</div></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ BRAND FILM (native, 30s) ═══════════════ -->
-<section class="py-20 px-6 bg-white border-b hairline">
-  <div class="max-w-4xl mx-auto reveal">
-    <div class="kicker mb-4">Efficiency Labs in 30 Seconds</div>
-    <div class="elf-stage" id="elfStage">
-
-      <!-- S1 Hook -->
-      <div class="elf-scene" id="elf-s1">
-        <div class="elf-big elf-st" style="font-size:clamp(22px,4.4vw,46px)">AI is already<br>running your business.</div>
-        <div class="elf-cap elf-st">The question is whether anyone is governing it.</div>
-      </div>
-
-      <!-- S2 Stat -->
-      <div class="elf-scene" id="elf-s2">
-        <div class="elf-stat elf-st" style="font-size:clamp(64px,11vw,130px)"><span id="elf-n85">0%</span></div>
-        <div class="elf-cap elf-st">of engineering teams run ungoverned "shadow AI" daily</div>
-      </div>
-
-      <!-- S3 Stat -->
-      <div class="elf-scene" id="elf-s3">
-        <div class="elf-stat elf-st" style="font-size:clamp(48px,8.5vw,100px);color:#E8A08A">&lt;15%</div>
-        <div class="elf-cap elf-st">operate inside governed CI/CD pipelines</div>
-      </div>
-
-      <!-- S4 Flow -->
-      <div class="elf-scene" id="elf-s4">
-        <div class="elf-nodes elf-st">
-          <div class="elf-node">TRIGGER</div><div class="elf-arrow">→</div>
-          <div class="elf-node">AGENT</div><div class="elf-arrow">→</div>
-          <div class="elf-node halt">⚠ HALT</div><div class="elf-arrow">→</div>
-          <div class="elf-node" style="border-color:#B9C7A6;color:#B9C7A6">HUMAN ✓</div>
-        </div>
-        <div class="elf-big elf-st" style="font-size:clamp(20px,3.6vw,38px)">Map. Stress-test. Validate.</div>
-        <div class="elf-cap elf-st">Free interactive simulator — live on this page</div>
-      </div>
-
-      <!-- S5 Terminal -->
-      <div class="elf-scene" id="elf-s5">
-        <div class="elf-term elf-st">
-          <div>&gt; agent.execute( Block_IP ) ……… OK</div>
-          <div>&gt; risk_tier.evaluate() → HIGH</div>
-          <div style="color:#E8A08A">&gt; SAFETY HALT — awaiting human authorization…</div>
-          <span class="elf-halt-chip">HUMAN APPROVAL REQUIRED</span>
-        </div>
-        <div class="elf-cap elf-st">Agents prepare. Humans approve.</div>
-      </div>
-
-      <!-- S6 Products -->
-      <div class="elf-scene" id="elf-s6">
-        <div class="elf-cards elf-st">
-          <div class="elf-pc"><b>$97</b><span>Prompt Suite</span></div>
-          <div class="elf-pc"><b>$149</b><span>Data Vault</span></div>
-          <div class="elf-pc"><b>$297</b><span>Bundle</span></div>
-        </div>
-        <div class="elf-big elf-st" style="font-size:clamp(18px,3vw,32px)">Production blueprints.</div>
-        <div class="elf-cap elf-st">One-time. Yours forever. No SaaS trap.</div>
-      </div>
-
-      <!-- S7 End card -->
-      <div class="elf-scene" id="elf-s7">
-        <div class="elf-big elf-st" style="font-size:clamp(24px,4vw,42px)">Efficiency Labs<span style="color:#CB997E">.</span></div>
-        <div class="elf-cap elf-st">Measure first · Automate second · Approve always</div>
-        <a href="#readiness" class="elf-cta elf-st">Take the Free Readiness Score</a>
-      </div>
-
-      <button class="elf-play" id="elfPlayBtn" aria-label="Play film"><span class="elf-btn">▶</span></button>
-      <div class="elf-prog" id="elfProg"></div>
-      <button class="elf-replay" id="elfReplayBtn">↻ Replay</button>
-    </div>
-  </div>
-</section>
-
-<script>
-(function(){
-  var DUR = 30000;
-  var SCENES = [[0,'elf-s1'],[3600,'elf-s2'],[7600,'elf-s3'],[11400,'elf-s4'],[16600,'elf-s5'],[21600,'elf-s6'],[25600,'elf-s7']];
-  var timers = [], playing = false;
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function clearAll(){ timers.forEach(clearTimeout); timers = []; }
-
-  function countUp(id, target, prefix, ms){
-    var el = document.getElementById(id); if(!el) return;
-    var t0 = performance.now();
-    (function tick(now){
-      var p = Math.min((now-t0)/ms,1), e = 1-Math.pow(1-p,3);
-      el.textContent = prefix + Math.round(target*e) + '%';
-      if(p<1) requestAnimationFrame(tick);
-    })(t0);
-  }
-
-  function show(id){
-    document.querySelectorAll('.elf-scene').forEach(function(s){ s.classList.remove('on'); });
-    var sc = document.getElementById(id); if(sc) sc.classList.add('on');
-  }
-
-  function runAt(t, fn){ timers.push(setTimeout(fn, t)); }
-
-  function play(){
-    if (playing) return;
-    playing = true;
-    clearAll();
-    document.getElementById('elfPlayBtn').style.display = 'none';
-    document.getElementById('elfReplayBtn').style.display = 'none';
-
-    var prog = document.getElementById('elfProg');
-    prog.style.transition = 'none'; prog.style.width = '0%';
-    void prog.offsetWidth;
-    prog.style.transition = 'width '+DUR+'ms linear'; prog.style.width = '100%';
-
-    if (reduced){
-      show('elf-s7'); finish(); return;
-    }
-
-    SCENES.forEach(function(pair){
-      runAt(pair[0], function(){
-        show(pair[1]);
-        if (pair[1]==='elf-s2') countUp('elf-n85', 85, '', 1400);
-      });
-    });
-    runAt(DUR, finish);
-  }
-
-  function finish(){
-    playing = false;
-    document.getElementById('elfReplayBtn').style.display = 'block';
-  }
-
-  document.getElementById('elfPlayBtn').addEventListener('click', play);
-  document.getElementById('elfReplayBtn').addEventListener('click', function(){ playing=false; play(); });
-})();
-</script>
-
-<!-- ═══════════════ 4. FREE TOOL: SIMULATOR ═══════════════ -->
-<section id="simulator" class="py-20 px-4 md:px-6 bg-white border-b hairline">
+<!-- LIVE CANVAS -->
+<section id="canvas" class="py-20 px-4 md:px-6 bg-white border-b hairline">
   <div class="max-w-7xl mx-auto">
 
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-6">
       <div class="max-w-3xl">
-        <div class="kicker mb-4">02 — Free Tool № 1</div>
-        <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight">The Loop Architect Simulator</h2>
-        <p class="text-gray-600 text-sm md:text-base mt-3 leading-relaxed">
-          Watch enterprise AI pipelines execute routine operations autonomously — and halt
-          automatically when high-risk actions demand human authorization. Change any variable.
-          Break it. It's yours to test.
-        </p>
+        <div class="kicker mb-4">03 — Free Tool · Live Canvas</div>
+        <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight">The OpenMAIC Canvas</h2>
+        <p class="text-gray-600 text-sm md:text-base mt-3 leading-relaxed">A simulated OpenMAIC session — six agents, one operator, the governance matrix running underneath.</p>
       </div>
-      <button id="sim-run-btn" onclick="runSimulatorWorkflow()"
-        class="w-full sm:w-auto px-9 py-3.5 bg-olive text-paper font-bold uppercase tracking-[0.16em] text-sm rounded hover:bg-[#5D6350] transition-all shadow-sm cursor-pointer shrink-0">
-        ▶ Run Workflow
-      </button>
+      <div class="flex gap-2 flex-wrap">
+        <span class="omaic-hover">
+          <button onclick="quickPrompt('Run my readiness diagnostic')" class="px-3 py-2 bg-cream border hairline rounded text-[10px] font-bold uppercase tracking-[0.14em] hover:bg-sand">Diagnostic</button>
+          <span class="omaic-tip"><span class="t-h">What this does</span><span class="t-t">Runs The Diagnostician</span><span class="t-b">Scans operational signals and returns a readiness score. No writes.</span><span class="t-grid"><div><span class="lbl">Tier</span><span class="val">1 · Read</span></div><div><span class="lbl">For whom</span><span class="val">Founders</span></div></span>
+            <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span><button class="try-copy" onclick="copyTryIt(this,'Run my readiness diagnostic')">Copy</button></div>
+              <div class="try-prompt">Run my readiness diagnostic</div>
+              <div class="try-out">{score: 11/18, tier: "Emerging Operator",
+ top_gap: "no RBAC matrix"}</div>
+            </div>
+          </span>
+        </span>
+        <span class="omaic-hover">
+          <button onclick="quickPrompt('Draft a SecOps prompt architecture for triage')" class="px-3 py-2 bg-cream border hairline rounded text-[10px] font-bold uppercase tracking-[0.14em] hover:bg-sand">Architect</button>
+          <span class="omaic-tip"><span class="t-h">What this does</span><span class="t-t">Generates a prompt + schema</span><span class="t-b">From one paragraph, drafts a schema-validated system prompt and Lambda handler.</span><span class="t-grid"><div><span class="lbl">Tier</span><span class="val">1–2</span></div><div><span class="lbl">For whom</span><span class="val">CTOs</span></div></span>
+            <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span><button class="try-copy" onclick="copyTryIt(this,'Draft a SecOps prompt architecture for triage')">Copy</button></div>
+              <div class="try-prompt">Draft a SecOps prompt architecture for triage</div>
+              <div class="try-out">sys_prompt.md (4 KB) · schema.json · handler.zip · IAM role attached</div>
+            </div>
+          </span>
+        </span>
+        <span class="omaic-hover">
+          <button onclick="quickPrompt('Block IP 192.0.2.144 — GuardDuty HIGH')" class="px-3 py-2 bg-cream border hairline rounded text-[10px] font-bold uppercase tracking-[0.14em] hover:bg-sand">Operator</button>
+          <span class="omaic-tip"><span class="t-h">What this does</span><span class="t-t">Triggers a high-risk workflow</span><span class="t-b">A Tier-3 action. The Guardian halts and waits for your approval.</span><span class="t-grid"><div><span class="lbl">Tier</span><span class="val">3 · High</span></div><div><span class="lbl">For whom</span><span class="val">SecOps/CTO</span></div></span>
+            <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span><button class="try-copy" onclick="copyTryIt(this,'Block IP 192.0.2.144 — GuardDuty HIGH')">Copy</button></div>
+              <div class="try-prompt">Block IP 192.0.2.144 — GuardDuty HIGH</div>
+              <div class="try-out">⚠ HALT awaiting approval ·
+ on ✓ → Cloudflare rule created · Jira OPS-1487</div>
+            </div>
+          </span>
+        </span>
+        <span class="omaic-hover">
+          <button onclick="quickPrompt('Generate this week\'s board brief')" class="px-3 py-2 bg-cream border hairline rounded text-[10px] font-bold uppercase tracking-[0.14em] hover:bg-sand">Scribe</button>
+          <span class="omaic-tip"><span class="t-h">What this does</span><span class="t-t">Compiles audit → brief</span><span class="t-b">Reads the week's audit log and writes a board-ready summary.</span><span class="t-grid"><div><span class="lbl">Tier</span><span class="val">1 · Read</span></div><div><span class="lbl">For whom</span><span class="val">Boards</span></div></span>
+            <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span><button class="try-copy" onclick="copyTryIt(this,'Generate this week\'s board brief')">Copy</button></div>
+              <div class="try-prompt">Generate this week's board brief</div>
+              <div class="try-out">board_brief_2026_08.pdf ·11 pages · 4 KPI charts</div>
+            </div>
+          </span>
+        </span>
+      </div>
     </div>
 
-    <!-- 3-step guidance -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-paper border hairline p-5 rounded-lg text-xs text-gray-700">
-      <div class="flex items-start gap-3">
-        <span class="w-6 h-6 rounded bg-olive text-paper font-bold flex items-center justify-center shrink-0 text-xs">1</span>
-        <div><strong class="block uppercase tracking-[0.12em] mb-0.5 text-ink">Select a Preset</strong>
-          <span><strong>Founder</strong> (Lead Gen), <strong>Consultant</strong> (Intake), or <strong>CTO</strong> (Threats).</span></div>
-      </div>
-      <div class="flex items-start gap-3">
-        <span class="w-6 h-6 rounded bg-olive text-paper font-bold flex items-center justify-center shrink-0 text-xs">2</span>
-        <div><strong class="block uppercase tracking-[0.12em] mb-0.5 text-ink">Inspect &amp; Modify</strong>
-          <span>Click any card to inspect logic, or edit live variables in the Sandbox panel.</span></div>
-      </div>
-      <div class="flex items-start gap-3">
-        <span class="w-6 h-6 rounded bg-ink text-paper font-bold flex items-center justify-center shrink-0 text-xs">3</span>
-        <div><strong class="block uppercase tracking-[0.12em] mb-0.5 text-ink">Test Safety Stops</strong>
-          <span>Run the workflow and watch governed halts await human approval.</span></div>
-      </div>
-    </div>
-
-    <!-- Workspace -->
-    <div class="bg-cream border hairline shadow-sm overflow-hidden">
-
-      <!-- Preset tabs -->
-      <div class="flex bg-sand border-b hairline overflow-x-auto">
-        <button id="tab-founder" onclick="switchLoop(0)"
-          class="sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-[0.14em] border-r border-r-ink/10 bg-white text-ink border-b-2 border-b-olive cursor-pointer transition-colors">
-          Founder: Lead Gen Loop
-        </button>
-        <button id="tab-consultant" onclick="switchLoop(1)"
-          class="sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-[0.14em] border-r border-r-ink/10 bg-sand text-gray-600 hover:bg-cream cursor-pointer transition-colors">
-          Consultant: Intake &amp; Audit
-        </button>
-        <button id="tab-cto" onclick="switchLoop(2)"
-          class="sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-[0.14em] bg-sand text-gray-600 hover:bg-cream cursor-pointer transition-colors">
-          CTO: Threat Remediation
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 min-h-[620px]">
-
-        <!-- Col 1: Visual map -->
-        <div class="border-r hairline bg-white flex flex-col relative"
-             style="background-image:radial-gradient(rgba(163,155,139,.18) 1px,transparent 1px);background-size:20px 20px;">
-          <div class="bg-ink text-paper px-5 py-3 border-b border-black/20 flex justify-between items-center">
-            <h3 class="font-bold uppercase tracking-[0.18em] text-xs">Visual Workflow Map</h3>
-            <span class="text-[10px] text-taupe font-mono">Click card to inspect</span>
-          </div>
-          <div id="sim-steps-container" class="p-6 flex flex-col items-center gap-2 overflow-y-auto max-h-[560px]"></div>
+    <div class="omaic-stage">
+      <div class="grid grid-cols-3 bg-coal text-paper px-5 py-3 border-b border-black/40 items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 rounded-full bg-olive animate-pulse"></div>
+          <span class="font-mono text-xs uppercase tracking-[0.18em]">openmaic.session</span>
+          <span class="font-mono text-[10px] text-gray-500">v0.6 · governed</span>
         </div>
+        <div class="text-center font-mono text-[10px] text-gray-400 uppercase tracking-[0.18em]"><span id="canvasSessionState">IDLE</span></div>
+        <div class="flex justify-end items-center gap-3 text-[10px] font-mono text-gray-400">
+          <span class="omaic-hover inline-block">audit_log: <span class="text-olive">on</span>
+            <span class="omaic-tip"><span class="t-h">How this works</span><span class="t-t">Every action hash-chained</span><span class="t-b">The Scribe appends each tool call to an immutable ledger.</span><span class="t-grid"><div><span class="lbl">For whom</span><span class="val">Auditors</span></div><div><span class="lbl">Where</span><span class="val">S3 + Glacier</span></div></span></span>
+          </span>
+          <span class="omaic-hover inline-block">rbac: <span class="text-olive">tier-4</span>
+            <span class="omaic-tip"><span class="t-h">Risk-tier matrix</span><span class="t-t">Four tiers, four policies</span><span class="t-b">T1=auto, T2=async, T3=1-click, T4=CTO auth.</span><span class="t-grid"><div><span class="lbl">How</span><span class="val">Sidecar proc</span></div><div><span class="lbl">Why</span><span class="val">Sep. of duties</span></div></span></span>
+          </span>
+        </div>
+      </div>
 
-        <!-- Col 2: Inspector + sandbox -->
-        <div class="border-r hairline bg-white flex flex-col overflow-hidden">
-          <div class="p-5 border-b hairline bg-paper shrink-0">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="font-bold uppercase tracking-[0.18em] text-xs text-ink">Step Inspector</h3>
-              <span id="sim-inspecting-step-badge" class="text-[10px] bg-white text-ink px-2 py-0.5 font-mono uppercase border hairline rounded">Step 1</span>
+      <div class="omaic-grid">
+        <div class="omaic-side bg-[#211E1B] border-r border-black/30 p-5 overflow-y-auto">
+          <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-3">Agent Mesh</div>
+          <div id="canvasAgents" class="space-y-2"></div>
+          <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400 mt-6 mb-3">Risk Tier Gates</div>
+          <div class="space-y-2 text-[10px] font-mono text-gray-400">
+            <div class="omaic-hover flex justify-between"><span>T1 · Read</span><span class="text-emerald-400">AUTO</span>
+              <span class="omaic-tip"><span class="t-h">Tier 1 · Auto</span><span class="t-t">Read-only, no human touch.</span><span class="t-b">Logs, metrics, dashboards.</span>
+                <div class="try-it"><div class="try-h"><span class="try-lbl">Example</span></div>
+ <div class="try-prompt">Scan last24h of CloudWatch logs</div>
+                  <div class="try-out">14,221 events scanned · 2 anomalies flagged</div>
+                </div>
+              </span>
             </div>
-            <div class="space-y-3">
-              <div>
-                <label class="block text-[10px] font-bold uppercase tracking-[0.14em] mb-1 text-gray-500">Action Title</label>
-                <input id="sim-input-title" type="text" value="" oninput="handleTitleInput(this.value)"
-                  class="w-full p-2.5 text-xs font-bold border hairline rounded-md bg-white focus:ring-2 focus:ring-olive/40 outline-none" />
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold uppercase tracking-[0.14em] mb-1 text-gray-500">Business Logic</label>
-                <textarea id="sim-input-desc" rows="2" oninput="handleDescInput(this.value)"
-                  class="w-full p-2.5 text-xs border hairline rounded-md bg-white focus:ring-2 focus:ring-olive/40 outline-none resize-none text-gray-600"></textarea>
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold uppercase tracking-[0.14em] mb-1 text-gray-500">Explainer (Non-Tech)</label>
-                <textarea id="sim-input-explainer" rows="2" oninput="handleExplainerInput(this.value)"
-                  class="w-full p-2.5 text-xs border hairline rounded-md bg-olive/5 focus:ring-2 focus:ring-olive/40 outline-none resize-none text-gray-700"></textarea>
-              </div>
+            <div class="omaic-hover flex justify-between"><span>T2 · Low</span><span class="text-yellow-400">ASYNC</span>
+              <span class="omaic-tip"><span class="t-h">Tier 2 · Async review</span><span class="t-t">Runs, human reviews weekly.</span><span class="t-b">Jira updates, Slack posts.</span>
+                <div class="try-it"><div class="try-h"><span class="try-lbl">Example</span></div>
+                  <div class="try-prompt">Open Jira ticket OPS-1492 for the retry storm</div>
+                  <div class="try-out">OPS-1492 created · assignee: oncall · P2</div>
+                </div>
+              </span>
             </div>
-          </div>
-          <div class="flex-1 p-5 bg-white overflow-y-auto">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-bold uppercase tracking-[0.18em] text-xs text-ink">Sandbox Variables</h3>
-              <span class="text-[10px] bg-ink text-paper px-2 py-0.5 font-mono uppercase rounded">Live Inputs</span>
+            <div class="omaic-hover flex justify-between"><span>T3 · High</span><span class="text-orange-400">1-CLICK</span>
+              <span class="omaic-tip"><span class="t-h">Tier 3 · One-click halt</span><span class="t-t">Stops and asks you.</span><span class="t-b">IP blocks, customer emails.</span>
+                <div class="try-it"><div class="try-h"><span class="try-lbl">Example</span></div>
+                  <div class="try-prompt">Block IP 192.0.2.144 in Cloudflare</div>
+                  <div class="try-out">⚠ HALT · awaiting operator ✓/✕</div>
+                </div>
+              </span>
             </div>
-            <p class="text-[11px] text-gray-500 mb-3">Modify values before execution:</p>
-            <div id="sim-variables-container" class="space-y-3"></div>
+            <div class="omaic-hover flex justify-between"><span>T4 · Critical</span><span class="text-rose-400">CTO AUTH</span>
+              <span class="omaic-tip"><span class="t-h">Tier 4 · CTO + MFA</span><span class="t-t">Multi-factor officer auth.</span><span class="t-b">Server isolation, prod deploys.</span>
+                <div class="try-it"><div class="try-h"><span class="try-lbl">Example</span></div>
+                  <div class="try-prompt">Isolate EC2 prod-db-cluster-02</div>
+                  <div class="try-out">⚠ HALT · requires CTO MFA challenge</div>
+                </div>
+              </span>
+            </div>
           </div>
         </div>
 
-        <!-- Col 3: Narrative log + safety intercept -->
-        <div class="bg-coal text-paper flex flex-col overflow-hidden">
-          <div class="px-4 py-3 border-b border-white/10 bg-coal shrink-0 flex justify-between items-center">
-            <h3 class="font-bold uppercase tracking-[0.18em] text-xs flex items-center gap-2">
-              <span id="sim-status-dot" class="w-2.5 h-2.5 bg-gray-500 rounded-full border border-black/30"></span>
-              Execution Narrative
-            </h3>
-            <span id="sim-status-text" class="text-[10px] font-mono text-gray-400">IDLE</span>
+        <div class="bg-[#1A1714] flex flex-col">
+          <div class="px-5 py-3 border-b border-black/30 flex justify-between items-center">
+            <div class="font-bold uppercase tracking-[0.18em] text-xs text-paper">Operator Conversation</div>
+            <button onclick="clearConversation()" class="text-[10px] font-mono text-gray-400 hover:text-paper uppercase tracking-[0.14em] bg-transparent border-none cursor-pointer">↻ Reset</button>
           </div>
 
-          <div id="sim-safety-banner" class="hidden bg-rose-950 px-4 py-4 border-b border-rose-500/40 shrink-0">
-            <h4 class="font-bold text-paper uppercase tracking-[0.16em] text-xs mb-1">⚠ Safety Checkpoint Reached</h4>
-            <p class="text-xs text-rose-200 mb-3 font-mono leading-relaxed">
-              Governed threshold hit. A human supervisor must authorize before proceeding.
-            </p>
+          <div class="canvas-help"><span class="ch-key">?</span>Hover any tool card for a copyable <strong>Try it</strong> prompt with example input &amp; output.</div>
+
+          <div id="conversationLog" class="flex-1 overflow-y-auto px-5 pb-5" style="min-height:360px; max-height:520px;"></div>
+
+          <div id="approvalBanner" class="hidden bg-[#2A1F1A] border-t border-rose-500/40 px-5 py-4">
+            <div class="flex items-center gap-2 mb-2"><span class="omaic-pill rose">Tier 3 — High Risk</span><span class="font-mono text-[10px] text-gray-400">awaiting human authorization</span></div>
+            <p class="text-sm text-paper mb-3" id="approvalText">—</p>
             <div class="flex gap-2">
-              <button onclick="handleHumanDecision(true)"
-                class="flex-1 bg-olive text-paper py-2 text-xs font-bold uppercase tracking-[0.12em] rounded hover:bg-[#5D6350] transition-colors cursor-pointer">✓ Approve</button>
-              <button onclick="handleHumanDecision(false)"
-                class="flex-1 bg-white/10 text-paper py-2 text-xs font-bold uppercase tracking-[0.12em] rounded hover:bg-white/20 transition-colors cursor-pointer">✕ Reject</button>
+              <button onclick="handleApproval(true)" class="flex-1 bg-olive text-paper py-2 text-xs font-bold uppercase tracking-[0.14em] rounded hover:bg-[#5D6350] cursor-pointer border-none">✓ Approve</button>
+              <button onclick="handleApproval(false)" class="flex-1 bg-white/10 text-paper py-2 text-xs font-bold uppercase tracking-[0.14em] rounded hover:bg-white/20 cursor-pointer border-none">✕ Reject</button>
             </div>
           </div>
 
-          <div id="sim-logs-container" class="flex-1 overflow-y-auto p-4 space-y-2.5 bg-[#211E1B] font-mono text-xs">
-            <div class="h-full flex flex-col items-center justify-center text-gray-500 text-center p-4 border border-dashed border-white/15 rounded">
-              [ SYSTEM STANDBY ]<br/><br/>Click "▶ Run Workflow" to initiate execution.
+          <div class="border-t border-black/30 p-4 bg-[#211E1B]">
+            <div class="flex items-end gap-3">
+              <textarea id="operatorInput" rows="1" placeholder="Try: 'Block IP 192.0.2.144' or 'Draft the lead-gen prompt architecture'…"
+                class="flex-1 bg-[#1A1714] border border-white/10 rounded-lg p-3 text-sm text-paper placeholder-gray-500 resize-none focus:border-olive outline-none font-mono"></textarea>
+              <span class="omaic-hover">
+                <button onclick="sendOperatorMessage()" class="px-5 py-3 bg-olive text-paper text-xs font-bold uppercase tracking-[0.14em] rounded hover:bg-[#5D6350] cursor-pointer shrink-0 border-none">Send →</button>
+                <span class="omaic-tip"><span class="t-h">How sending works</span><span class="t-t">Routes through The Guardian</span><span class="t-b">Your message goes to the router; Tier-3+ halts for your approval.</span><span class="t-grid"><div><span class="lbl">Shortcut</span><span class="val">⌘/Ctrl+Enter</span></div><div><span class="lbl">Latency</span><span class="val">&lt;200ms</span></div></span></span>
+              </span>
             </div>
+            <div class="flex items-center justify-between mt-2 text-[10px] font-mono text-gray-500"><span>All tool calls intercepted by The Guardian · audit_log=on</span><span>⌘+Enter</span></div>
           </div>
         </div>
 
+        <div class="omaic-side bg-[#211E1B] border-l border-black/30 p-5 overflow-y-auto">
+          <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-3">Live Telemetry</div>
+
+          <div class="mb-5 omaic-hover">
+            <div class="flex justify-between text-[10px] font-mono mb-1.5"><span class="text-gray-400">Readiness</span><span class="text-olive font-bold" id="liveReadinessScore">11 / 18</span></div>
+            <div class="omaic-meter"><div id="liveReadinessBar" style="width: 61%"></div></div>
+            <span class="omaic-tip"><span class="t-h">Why this score</span><span class="t-t">Composite of 6 governance Qs</span><span class="t-b">0–6=Shadow Zone · 7–12=Emerging · 13–18=Ready.</span>
+ <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span><button class="try-copy" onclick="copyTryIt(this,'Take my readiness diagnostic')">Copy</button></div>
+                <div class="try-prompt">Take my readiness diagnostic</div>
+                <div class="try-out">Result: 11/18 · "Emerging Operator" · recommended: Vault Bridge</div>
+              </div>
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mb-5 text-center">
+            <div class="omaic-hover bg-[#1A1714] border border-white/5 rounded p-2.5">
+              <div class="font-display text-lg text-paper" id="metricTasks">0</div>
+              <div class="text-[9px] uppercase tracking-[0.14em] text-gray-500">Tasks Routed</div>
+              <span class="omaic-tip"><span class="t-h">Tasks Routed</span><span class="t-t">Total messages handled by the mesh</span><span class="t-b">Each one costs cents. Visible in real time.</span>
+                <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span></div>
+ <div class="try-prompt">How many tasks did we route today?</div>
+                  <div class="try-out">128 tasks · $1.42 API spend · 100% success</div>
+                </div>
+              </span>
+            </div>
+            <div class="omaic-hover bg-[#1A1714] border border-white/5 rounded p-2.5">
+              <div class="font-display text-lg text-olive" id="metricHalts">0</div>
+              <div class="text-[9px] uppercase tracking-[0.14em] text-gray-500">Halts Approved</div>
+              <span class="omaic-tip"><span class="t-h">Halts Approved</span><span class="t-t">Tier-3+ actions you greenlit</span><span class="t-b">Proof you stayed in control.</span>
+                <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span></div>
+                  <div class="try-prompt">Show me every action I approved this week</div>
+                  <div class="try-out">7 halts approved · 0 rejected · avg4.2s response time</div>
+                </div>
+              </span>
+            </div>
+            <div class="omaic-hover bg-[#1A1714] border border-white/5 rounded p-2.5">
+              <div class="font-display text-lg text-paper" id="metricSpend">$0</div>
+              <div class="text-[9px] uppercase tracking-[0.14em] text-gray-500">API Spend</div>
+              <span class="omaic-tip"><span class="t-h">API Spend</span><span class="t-t">Pure token cost, no wrapper markup</span><span class="t-b">Typically90% lower than SaaS wrappers.</span>
+                <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span></div>
+                  <div class="try-prompt">Break down API spend by agent this month</div>
+                  <div class="try-out">Operator42% · Architect 28% · Guardian 12% · other 18%</div>
+                </div>
+              </span>
+            </div>
+            <div class="omaic-hover bg-[#1A1714] border border-white/5 rounded p-2.5">
+              <div class="font-display text-lg text-paper" id="metricUptime">100%</div>
+              <div class="text-[9px] uppercase tracking-[0.14em] text-gray-500">Uptime</div>
+              <span class="omaic-tip"><span class="t-h">Uptime</span><span class="t-t">Mesh availability</span><span class="t-b">Runs on your stack, on your SLAs.</span>
+                <div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span></div>
+                  <div class="try-prompt">Show mesh uptime for last 30 days</div>
+                  <div class="try-out">99.97% · 1 incident · 4 min MTTR · postmortem linked</div>
+                </div>
+              </span>
+            </div>
+          </div>
+
+          <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-2">Capability Toggles</div>
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <button class="toggle-pill on" data-cap="diagnostician" onclick="toggleCap(this)">Diagnostic</button>
+            <button class="toggle-pill on" data-cap="architect" onclick="toggleCap(this)">Architect</button>
+            <button class="toggle-pill on" data-cap="vault" onclick="toggleCap(this)">Vault</button>
+            <button class="toggle-pill on" data-cap="operator" onclick="toggleCap(this)">Operator</button>
+            <button class="toggle-pill on" data-cap="guardian" onclick="toggleCap(this)">Guardian</button>
+            <button class="toggle-pill on" data-cap="scribe" onclick="toggleCap(this)">Scribe</button>
+          </div>
+
+          <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-2">Recent Tool Calls</div>
+          <div id="toolLog" class="space-y-2 text-[11px] font-mono text-gray-300"><div class="text-gray-500 italic">No tool calls yet. Send a message to begin.</div></div>
+        </div>
       </div>
     </div>
 
-    <!-- Bottom action bar -->
     <div class="mt-6 flex flex-col sm:flex-row justify-between items-center bg-paper border hairline p-5 rounded-lg text-xs text-gray-700 gap-4">
-      <div class="flex items-center gap-2">
-        <span class="text-olive font-bold uppercase tracking-[0.12em]">Deploy this in production:</span>
-        <span>Deterministic system prompts, webhook configs, and Lambda templates — included in the blueprints.</span>
-      </div>
-      <a href="#solutions" class="px-5 py-2.5 bg-ink text-paper font-bold uppercase tracking-[0.14em] rounded hover:bg-coal shrink-0">
-        View Packages · $97–$297 →
-      </a>
+      <div class="flex items-center gap-2"><span class="text-olive font-bold uppercase tracking-[0.12em]">Run this on your stack:</span><span>The Agent mesh, RBAC gates, and conversation shell are all included in the Complete Architecture Bundle.</span></div>
+      <a href="#pricing" class="px-5 py-2.5 bg-ink text-paper font-bold uppercase tracking-[0.14em] rounded hover:bg-coal shrink-0">View Packages · $97–$297 →</a>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ 5. FREE TOOL: GOVERNANCE DIAGNOSTIC ═══════════════ -->
-<section id="diagnostic" class="py-20 px-6 border-b hairline">
-  <div class="max-w-7xl mx-auto">
-    <div class="mb-12 reveal">
-      <div class="kicker mb-4">03 — Free Tool № 2</div>
-      <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Architecture &amp; Governance Diagnostic</h2>
-      <p class="text-gray-600 max-w-2xl">Review the technical standards, data pipelines, and governance
-         matrices required for production-level AI deployment — the exact standards our blueprints enforce.</p>
-    </div>
-
-    <div class="flex flex-col md:flex-row gap-0 bg-white border hairline rounded-xl overflow-hidden shadow-sm reveal">
-
-      <!-- Module nav -->
-      <div class="w-full md:w-64 bg-cream border-b md:border-b-0 md:border-r hairline flex md:flex-col shrink-0 overflow-x-auto">
-        <button id="btn-diag-gov" onclick="activateDiagTab('section-gov')"
-          class="diag-nav-btn whitespace-nowrap md:whitespace-normal w-full text-left px-5 py-4 text-sm font-medium transition-colors bg-ink text-paper border-l-2 border-olive cursor-pointer">
-          1. Governance &amp; Prompts
-        </button>
-        <button id="btn-diag-scale" onclick="activateDiagTab('section-scale')"
-          class="diag-nav-btn whitespace-nowrap md:whitespace-normal w-full text-left px-5 py-4 text-sm font-medium text-gray-600 hover:bg-white transition-colors border-l-2 border-transparent cursor-pointer">
-          2. Telemetry &amp; Vault
-        </button>
-        <button id="btn-diag-rbac" onclick="activateDiagTab('section-rbac')"
-          class="diag-nav-btn whitespace-nowrap md:whitespace-normal w-full text-left px-5 py-4 text-sm font-medium text-gray-600 hover:bg-white transition-colors border-l-2 border-transparent cursor-pointer">
-          3. Safety &amp; RBAC
-        </button>
-      </div>
-
-      <!-- Content -->
-      <div class="flex-1 p-6 md:p-10 bg-white">
-
-        <!-- Tab 1: Governance -->
-        <div id="section-gov" class="diag-content-section fade-in">
-          <h3 class="font-display text-2xl font-semibold text-ink mb-8 border-b hairline pb-5">Governance &amp; Prompt Architecture</h3>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div class="flex flex-col h-full">
-              <h4 class="text-sm font-bold text-ink uppercase tracking-[0.12em] mb-2">The Shadow AI Threat</h4>
-              <p class="text-gray-600 text-xs mb-5 leading-relaxed">
-                85% of engineering teams utilize LLMs daily, yet less than 15% execute within
-                governed CI/CD pipelines. Unconstrained inputs lead to catastrophic payload failures.
-              </p>
-              <div class="bg-cream border hairline p-5 rounded-lg flex flex-col justify-center my-auto">
-                <div class="text-xs font-bold text-gray-700 uppercase tracking-[0.12em] mb-4">Enterprise LLM Adoption Breakdown</div>
-                <div class="w-full flex items-center gap-2 mb-2.5">
-                  <div class="w-24 text-[10px] text-gray-500 font-mono">Shadow AI:</div>
-                  <div class="flex-1 bg-ink/10 h-3.5 rounded-full overflow-hidden"><div class="bg-taupe h-full w-[85%] rounded-full"></div></div>
-                  <div class="w-9 text-[10px] font-bold text-gray-700 font-mono">85%</div>
-                </div>
-                <div class="w-full flex items-center gap-2 mb-3">
-                  <div class="w-24 text-[10px] text-gray-500 font-mono">Governed:</div>
-                  <div class="flex-1 bg-ink/10 h-3.5 rounded-full overflow-hidden"><div class="bg-olive h-full w-[15%] rounded-full"></div></div>
-                  <div class="w-9 text-[10px] font-bold text-olive font-mono">15%</div>
-                </div>
-                <div class="text-[10px] text-gray-500 italic">Governed pipelines enforce deterministic RFC schemas and fallback traps.</div>
-              </div>
-            </div>
-            <div class="flex flex-col h-full border hairline rounded-lg bg-cream p-4">
-              <div class="flex justify-between items-center mb-3">
-                <h4 class="text-sm font-bold text-ink">Sample: SecOps Prompt</h4>
-                <span class="px-2 py-1 bg-olive text-paper text-[9px] font-bold uppercase tracking-[0.12em] rounded">Extract</span>
-              </div>
-              <div class="bg-[#1E1E1E] rounded-lg border border-black/40 overflow-hidden flex-1 flex flex-col">
-                <div class="bg-coal border-b border-white/10 px-3 py-1.5">
-                  <span class="text-[10px] font-mono text-gray-400">sys_prompt.md</span>
-                </div>
-                <div class="p-4 overflow-y-auto flex-1 max-h-[250px]">
-<pre class="text-gray-300 text-[10.5px] font-mono leading-relaxed whitespace-pre-wrap"><span class="syn-k"># CORE DIRECTIVE</span>
-You are a Tier 2 SecOps Autonomous Agent. Ingest AWS GuardDuty logs `{{PAYLOAD}}`.
-
-<span class="syn-k"># ZERO-HALLUCINATION CONSTRAINTS</span>
-1. <span class="syn-c">STRICT GROUNDING:</span> If IP is not in `{{VPN_LOGS}}`, classify as "EXTERNAL".
-2. <span class="syn-c">NO ASSUMPTIONS:</span> Do not guess geographic locations. Return `null`.
-
-<span class="syn-k"># DETERMINISTIC SCHEMA</span>
-{
-  "incident_id": <span class="syn-v">"string"</span>,
-  "action": <span class="syn-v">"enum: [ISOLATE, BLOCK]"</span>
-}</pre>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 2: Telemetry -->
-        <div id="section-scale" class="diag-content-section hidden fade-in">
-          <h3 class="font-display text-2xl font-semibold text-ink mb-8 border-b hairline pb-5">Telemetry &amp; Vault Blueprints</h3>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div class="flex flex-col h-full">
-              <h4 class="text-sm font-bold text-ink uppercase tracking-[0.12em] mb-2">The API Compute Trap</h4>
-              <p class="text-gray-600 text-xs mb-5 leading-relaxed">
-                SaaS wrappers charge premiums per execution. Deploying logic directly onto your
-                existing infrastructure flattens costs to base API token usage.
-              </p>
-              <div class="bg-cream border hairline p-5 rounded-lg flex flex-col justify-center my-auto">
-                <div class="text-xs font-bold text-gray-700 uppercase tracking-[0.12em] mb-4">Cost per 10M API Executions</div>
-                <div class="space-y-4">
-                  <div>
-                    <div class="flex justify-between text-[10px] font-mono mb-1.5">
-                      <span class="text-ink font-bold">SaaS Wrappers · $5,000/mo</span><span class="text-gray-500">100% baseline</span>
-                    </div>
-                    <div class="w-full bg-ink/10 h-3 rounded-full"><div class="bg-rose h-full w-full rounded-full"></div></div>
-                  </div>
-                  <div>
-                    <div class="flex justify-between text-[10px] font-mono mb-1.5">
-                      <span class="text-olive font-bold">Owned Direct API · $500/mo</span><span class="text-olive font-bold">−90%</span>
-                    </div>
-                    <div class="w-full bg-ink/10 h-3 rounded-full"><div class="bg-olive h-full w-[10%] rounded-full"></div></div>
-                  </div>
-                </div>
-                <div class="mt-4 text-[10px] text-gray-500 italic">Direct webhook pipelines eliminate third-party recurring margins.</div>
-              </div>
-            </div>
-            <div class="flex flex-col h-full border hairline rounded-lg bg-cream p-4">
-              <div class="flex justify-between items-center mb-3">
-                <h4 class="text-sm font-bold text-ink">Telemetry Routing Pipeline</h4>
-                <span class="px-2 py-1 bg-taupe text-paper text-[9px] font-bold uppercase tracking-[0.12em] rounded">Extract</span>
-              </div>
-              <div class="flex-1 flex items-center justify-center">
-                <div class="w-full max-w-[260px] flex flex-col items-center py-2">
-                  <div class="flow-node active"><strong>1. EventBridge</strong><br><span class="text-[9px] text-gray-500">GuardDuty Anomaly</span></div>
-                  <div class="flow-line"></div>
-                  <div class="flow-node"><strong>2. AWS Lambda</strong><br><span class="text-[9px] text-gray-500">Data Scrubber (Strips PII)</span></div>
-                  <div class="flow-line"></div>
-                  <div class="flow-node" style="border-color:#6B705C"><strong class="text-olive">3. LLM Agent</strong><br><span class="text-[9px] text-gray-500">Evaluates Payload</span></div>
-                  <div class="flow-line"></div>
-                  <div class="flow-node"><strong>4. Webhook Sync</strong><br><span class="text-[9px] text-gray-500">Jira Ticket Created</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 3: RBAC -->
-        <div id="section-rbac" class="diag-content-section hidden fade-in">
-          <h3 class="font-display text-2xl font-semibold text-ink mb-8 border-b hairline pb-5">Safety &amp; Transition Matrices</h3>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div class="flex flex-col h-full">
-              <h4 class="text-sm font-bold text-ink uppercase tracking-[0.12em] mb-2">Action Delegation Profiles</h4>
-              <p class="text-gray-600 text-xs mb-5 leading-relaxed">
-                Higher-risk actions must strictly deny AI execution roles. The agent is a
-                "preparer" — shifting humans from operators to approvers.
-              </p>
-              <div class="border hairline rounded-lg bg-cream p-5">
-                <div class="text-xs font-bold text-ink mb-3 uppercase tracking-[0.12em]">Risk Tier Delegation Logic</div>
-                <ul class="text-xs text-gray-600 space-y-2.5">
-                  <li><strong class="text-green-700">Tier 1 (Read-Only):</strong> Fully automated (log scanning, audit parsing).</li>
-                  <li><strong class="text-yellow-700">Tier 2 (Low-Impact):</strong> Automated with async review (Jira updates).</li>
-                  <li><strong class="text-orange-700">Tier 3 (High-Impact):</strong> 1-click human approval required (IP block).</li>
-                  <li><strong class="text-red-700">Tier 4 (Critical):</strong> Multi-factor officer auth required (server isolation).</li>
-                </ul>
-              </div>
-            </div>
-            <div class="flex flex-col h-full border hairline rounded-lg bg-cream p-5 overflow-x-auto">
-              <div class="flex justify-between items-center mb-3 min-w-[320px]">
-                <h4 class="text-sm font-bold text-ink">SecOps RBAC Matrix</h4>
-                <span class="px-2 py-1 bg-rose text-ink text-[9px] font-bold uppercase tracking-[0.12em] rounded">Extract</span>
-              </div>
-              <div class="border hairline rounded-lg overflow-hidden min-w-[320px]">
-                <table class="w-full text-left border-collapse bg-white">
-                  <thead>
-                    <tr class="bg-ink text-paper text-[9px] uppercase tracking-[0.14em]">
-                      <th class="p-2.5 border-b border-black/20">Action</th>
-                      <th class="p-2.5 border-b border-black/20">Risk</th>
-                      <th class="p-2.5 border-b border-black/20">Governance</th>
-                    </tr>
-                  </thead>
-                  <tbody class="text-[10.5px] text-gray-800">
-                    <tr class="border-b hairline">
-                      <td class="p-2.5 font-mono text-gray-600">Scan_Logs</td>
-                      <td class="p-2.5"><span class="px-1.5 py-0.5 bg-green-100 text-green-800 rounded">LOW</span></td>
-                      <td class="p-2.5 text-gray-500">Passive Audit</td>
-                    </tr>
-                    <tr class="border-b hairline bg-paper">
-                      <td class="p-2.5 font-mono text-gray-600">Update_Jira</td>
-                      <td class="p-2.5"><span class="px-1.5 py-0.5 bg-yellow-100 text-yellow-800 rounded">MED</span></td>
-                      <td class="p-2.5 text-olive font-bold">Weekly Review</td>
-                    </tr>
-                    <tr class="border-b hairline">
-                      <td class="p-2.5 font-mono text-gray-600">Block_IP</td>
-                      <td class="p-2.5"><span class="px-1.5 py-0.5 bg-orange-100 text-orange-800 rounded">HIGH</span></td>
-                      <td class="p-2.5 text-orange-600 font-bold">1-Click Approve</td>
-                    </tr>
-                    <tr class="bg-rose-50/60">
-                      <td class="p-2.5 font-mono text-gray-600">Isolate_EC2</td>
-                      <td class="p-2.5"><span class="px-1.5 py-0.5 bg-red-100 text-red-800 rounded">CRIT</span></td>
-                      <td class="p-2.5 text-red-600 font-bold">CTO Auth Req.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═════════════ FREE TOOL № 3: READINESS SCORE ═════════════ -->
-<style>
-  .elq-opt { display:block; width:100%; text-align:left; padding:14px 18px;
-    border:1px solid rgba(56,51,47,.16); border-radius:10px; background:#fff;
-    font-size:14px; color:#444; cursor:pointer; transition:all .18s; }
-  .elq-opt:hover { border-color:#6B705C; background:#FDFBF7; transform:translateX(4px); }
-  .elq-opt.picked { border-color:#6B705C; background:#6B705C; color:#fff; }
-  .elq-bar { height:3px; background:rgba(56,51,47,.1); border-radius:99px; overflow:hidden; }
-  .elq-fill { height:100%; background:#6B705C; width:0; transition:width .35s ease; }
-  .elq-meter { height:8px; background:rgba(56,51,47,.08); border-radius:99px; overflow:hidden; }
-  .elq-meter > div { height:100%; width:0; background:linear-gradient(90deg,#A39B8B,#6B705C);
-    transition:width 1.2s cubic-bezier(.22,.8,.36,1); }
-</style>
-
-<section id="readiness" class="py-20 px-6 bg-white border-b hairline">
+<!-- READINESS -->
+<section id="readiness" class="py-20 px-6 border-b hairline">
   <div class="max-w-3xl mx-auto reveal">
-    <div class="kicker mb-4">04 — Free Tool № 3</div>
-    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">The Operational Readiness Score</h2>
-    <p class="text-gray-600 mb-10">Six questions. Ninety seconds. An honest verdict on how close your
-       organization is to safe autonomous operation — mapped directly to the blueprint that closes your gap.</p>
-
+    <div class="kicker mb-4">04 — Free Tool · Readiness Score</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Operational Readiness Score</h2>
+    <p class="text-gray-600 mb-10">Six questions. Ninety seconds. An honest verdict on how close your organization is to safe autonomous operation.</p>
     <div class="bg-paper border hairline rounded-xl shadow-sm overflow-hidden">
-      <div class="flex justify-between items-center px-6 py-3.5 bg-ink text-paper">
-        <span class="text-[10px] font-bold uppercase tracking-[0.18em]">Governance Diagnostic</span>
-        <span id="elq-progress-text" class="text-[10px] font-mono text-taupe">QUESTION 1 / 6</span>
-      </div>
-      <div class="elq-bar rounded-none"><div id="elq-progress" class="elq-fill"></div></div>
-
+      <div class="flex justify-between items-center px-6 py-3.5 bg-ink text-paper"><span class="text-[10px] font-bold uppercase tracking-[0.18em]">OpenMAIC Readiness Diagnostic</span><span id="elq-progress-text" class="text-[10px] font-mono text-taupe">QUESTION 1 / 6</span></div>
+      <div class="h-[3px] bg-white/10 rounded-none"><div id="elq-progress" style="height:100%;background:#6B705C;width:0;transition:width .35s ease"></div></div>
       <div id="elq-body" class="p-7 md:p-9 min-h-[380px]"></div>
     </div>
   </div>
 </section>
 
-<script>
-var ELQ_QUESTIONS = [
-  { q:"Where does most of your team's LLM work happen today?",
-    o:[["Personal chat windows and ad-hoc accounts",0],
-       ["Shared prompt docs — no versions, no review",1],
-       ["Some approved templates, loosely enforced",2],
-       ["A governed CI/CD pipeline with reviewed prompts",3]]},
-  { q:"How are model outputs constrained?",
-    o:[["Free-form — we read them and hope",0],
-       ["Basic written instructions",1],
-       ["Structured JSON on some workflows",2],
-       ["Deterministic schemas with grounding rules, every call",3]]},
-  { q:"An agent is about to take a high-risk action (block an IP, email a client). What happens?",
-    o:[["It just happens",0],
-       ["We find out later from the logs",1],
-       ["Manual spot-checks catch most of it",2],
-       ["Automatic halt — a human approves before execution",3]]},
-  { q:"How does your operational data reach the model?",
-    o:[["Copy-pasted manually, per task",0],
-       ["Loose integrations — scope is unclear",1],
-       ["Centralized store with partial scrubbing",2],
-       ["Documented vault with an automated PII-sanitization pipeline",3]]},
-  { q:"What does your automation cost structure look like?",
-    o:[["Monthly SaaS wrapper fees, and rising",0],
-       ["A mix of rented platforms and owned scripts",1],
-       ["Mostly our own infrastructure",2],
-       ["Direct API calls on our own stack",3]]},
-  { q:"Who decides what agents are allowed to do?",
-    o:[["Nobody, formally",0],
-       ["Informal team norms",1],
-       ["A documented policy nobody enforces",2],
-       ["A risk-tiered RBAC matrix (Tier 1–4)",3]]}
-];
-
-var ELQ_TIER = [
-  { min:0,  max:6,  label:"The Shadow Zone",
-    desc:"High autonomy risk. Ungoverned usage is already inside your org — the priority is installing deterministic constraints before an incident installs them for you.",
-    product:"Prompt Architecture Suite", price:97 },
-  { min:7,  max:12, label:"Emerging Operator",
-    desc:"You have momentum but leaks: undocumented data paths, uneven oversight, rented infrastructure margins. The fastest lift is telemetry and vault discipline.",
-    product:"The Data Vault Bridge", price:149 },
-  { min:13, max:18, label:"Governance-Ready",
-    desc:"Strong foundations. What separates you from full autonomous deployment is the formal layer — transition playbook, viability scoring, and RBAC enforcement.",
-    product:"Complete Architecture Bundle", price:297 }
-];
-
-var ELQ_ANSWERS = [], ELQ_IDX = 0;
-
-function elqStart(){ ELQ_ANSWERS = []; ELQ_IDX = 0; elqRender(); }
-
-function elqScore(){
-  var s = 0; for (var i=0;i<ELQ_ANSWERS.length;i++){ if(ELQ_ANSWERS[i]!==undefined) s += ELQ_QUESTIONS[i].o[ELQ_ANSWERS[i]][1]; }
-  return s;
-}
-
-function elqRender(){
-  var body = document.getElementById('elq-body');
-  var Q = ELQ_QUESTIONS[ELQ_IDX];
-  document.getElementById('elq-progress-text').innerText = 'QUESTION ' + (ELQ_IDX+1) + ' / 6';
-  document.getElementById('elq-progress').style.width = ((ELQ_IDX)/6*100) + '%';
-
-  var h = '<h3 class="font-display text-xl md:text-2xl font-semibold text-ink mb-1">' + (ELQ_IDX+1) + '. ' + Q.q + '</h3>';
-  h += '<div class="text-[11px] uppercase tracking-[0.14em] text-gray-400 mb-6">' + (6-(ELQ_IDX+1)) + ' questions remaining</div><div class="space-y-3">';
-  for (var i=0;i<Q.o.length;i++){
-    var picked = ELQ_ANSWERS[ELQ_IDX]===i ? ' picked' : '';
-    h += '<button class="elq-opt'+picked+'" onclick="elqPick('+i+')"><span class="font-mono text-[11px] mr-3 '+(picked?'text-white':'text-gray-400')+'">'+String.fromCharCode(65+i)+'.</span>'+Q.o[i][0]+'</button>';
-  }
-  h += '</div>';
-  if (ELQ_IDX>0) h += '<button onclick="elqBack()" class="mt-6 text-xs font-bold uppercase tracking-[0.14em] text-gray-500 hover:text-ink transition-colors">&#8592; Previous question</button>';
-  body.innerHTML = h;
-}
-
-function elqPick(i){
-  var buttons = document.querySelectorAll('#elq-body .elq-opt');
-  for (var b=0;b<buttons.length;b++) buttons[b].classList.remove('picked');
-  buttons[i].classList.add('picked');
-  ELQ_ANSWERS[ELQ_IDX] = i;
-  setTimeout(function(){
-    if (ELQ_IDX < ELQ_QUESTIONS.length-1){ ELQ_IDX++; elqRender(); }
-    else elqResult();
-  }, 260);
-}
-
-function elqBack(){ if(ELQ_IDX>0){ ELQ_IDX--; elqRender(); } }
-
-function elqResult(){
-  var s = elqScore();
-  document.getElementById('elq-progress').style.width = '100%';
-  document.getElementById('elq-progress-text').innerText = 'COMPLETE';
-  var tier = ELQ_TIER[0];
-  for (var t=0;t<ELQ_TIER.length;t++){ if (s>=ELQ_TIER[t].min && s<=ELQ_TIER[t].max) tier = ELQ_TIER[t]; }
-
-  var h = '<div class="text-center">';
-  h += '<div class="font-display text-6xl md:text-7xl font-semibold text-ink">'+s+'<span class="text-2xl text-gray-400">/18</span></div>';
-  h += '<div class="text-[11px] font-bold uppercase tracking-[0.22em] text-olive mt-2 mb-1">Your Readiness Tier</div>';
-  h += '<h3 class="font-display text-2xl md:text-3xl font-semibold text-ink">'+tier.label+'</h3>';
-  h += '<p class="text-sm text-gray-600 max-w-lg mx-auto mt-3 leading-relaxed">'+tier.desc+'</p>';
-  h += '<div class="elq-meter max-w-md mx-auto mt-6"><div id="elq-meter-fill"></div></div>';
-
-  h += '<div class="mt-9 max-w-sm mx-auto bg-white border hairline rounded-xl p-6 text-left shadow-sm">';
-  h += '<div class="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500 mb-1">Recommended Blueprint</div>';
-  h += '<div class="font-display text-lg font-semibold text-ink">'+tier.product+'</div>';
-  h += '<div class="font-display text-3xl font-semibold text-olive mt-1">$'+tier.price+' <span class="text-xs text-gray-500 font-sans font-medium">one-time</span></div>';
-  h += '<button onclick="handlePurchase(\''+tier.product+'\', '+tier.price+')" class="w-full mt-5 px-5 py-3 bg-olive text-paper text-xs font-bold uppercase tracking-[0.14em] rounded hover:bg-[#5D6350] transition-colors cursor-pointer">Get the Blueprint →</button>';
-  h += '<a href="#solutions" class="block text-center mt-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500 hover:text-ink transition-colors">Compare all packages</a>';
-  h += '</div>';
-  h += '<button onclick="elqStart()" class="mt-7 text-xs font-bold uppercase tracking-[0.14em] text-gray-400 hover:text-ink transition-colors">&#8635; Retake the assessment</button>';
-  h += '</div>';
-
-  document.getElementById('elq-body').innerHTML = h;
-  setTimeout(function(){ var m=document.getElementById('elq-meter-fill'); if(m) m.style.width=(s/18*100)+'%'; }, 600);
-}
-
-document.addEventListener('DOMContentLoaded', elqStart);
-elqStart();
-</script>
-
-<!-- ═══════════════ 6. THE ECONOMICS ═══════════════ -->
+<!-- ECONOMICS -->
 <section id="economics" class="py-20 px-6 bg-cream border-b hairline">
   <div class="max-w-6xl mx-auto reveal">
-    <div class="kicker mb-4">04 — The Economics of Expertise</div>
-    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-4 max-w-2xl">
-      Blueprints, not billable hours.
-    </h2>
-    <p class="text-gray-600 max-w-2xl mb-10">
-      Firms sell you time. We sell you the finished architecture — verified, deterministic,
-      and yours to deploy on infrastructure you already own.
-    </p>
+    <div class="kicker mb-4">05 — Why Productized, Not Hourly</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-4 max-w-2xl">Blueprints, not billable hours.</h2>
+    <p class="text-gray-600 max-w-2xl mb-10">Firms sell you time. OpenMAIC + Efficiency Labs sells you the finished architecture.</p>
     <div class="bg-white border hairline rounded-xl overflow-hidden shadow-sm">
       <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="border-b hairline">
-            <th class="p-5 text-[10px] uppercase tracking-[0.16em] text-gray-500 font-semibold w-44"></th>
-            <th class="p-5 text-[10px] uppercase tracking-[0.16em] text-gray-500 font-semibold">Traditional Advisory</th>
-            <th class="p-5 bg-ink text-paper text-[10px] uppercase tracking-[0.16em] font-semibold">Efficiency Labs</th>
-          </tr>
-        </thead>
+        <thead><tr class="border-b hairline"><th class="p-5 text-[10px] uppercase tracking-[0.16em] text-gray-500 font-semibold w-44"></th><th class="p-5 text-[10px] uppercase tracking-[0.16em] text-gray-500 font-semibold">Traditional Advisory</th><th class="p-5 bg-ink text-paper text-[10px] uppercase tracking-[0.16em] font-semibold">Efficiency Labs · OpenMAIC</th></tr></thead>
         <tbody class="text-sm">
-          <tr class="border-b hairline">
-            <td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">What you receive</td>
-            <td class="p-5 text-gray-600">Slide deck and recommendations</td>
-            <td class="p-5 bg-ink text-[#EDEAE4] font-medium">Production artifacts: system prompts, JSON schemas, Lambda code, RBAC matrices</td>
-          </tr>
-          <tr class="border-b hairline">
-            <td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">Produced by</td>
-            <td class="p-5 text-gray-600">Pyramid of junior analysts, billed hourly</td>
-            <td class="p-5 bg-ink text-[#EDEAE4] font-medium">Senior architects, machine-verified</td>
-          </tr>
-          <tr class="border-b hairline">
-            <td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">Time to value</td>
-            <td class="p-5 text-gray-600">6–12 weeks of discovery and delivery</td>
-            <td class="p-5 bg-ink text-[#EDEAE4] font-medium">Instant download — deploy today</td>
-          </tr>
-          <tr class="border-b hairline">
-            <td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">Typical cost</td>
-            <td class="p-5 text-gray-600">$40,000 – $400,000+</td>
-            <td class="p-5 bg-ink text-[#EDEAE4] font-medium"><span class="font-display text-lg">$97 – $297</span> one-time</td>
-          </tr>
-          <tr>
-            <td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">Lock-in</td>
-            <td class="p-5 text-gray-600">Retainers, change orders, rented insight</td>
-            <td class="p-5 bg-ink text-[#EDEAE4] font-medium">None — runs entirely on your stack, forever</td>
-          </tr>
+          <tr class="border-b hairline"><td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">What you receive</td><td class="p-5 text-gray-600">Slide deck and recommendations</td><td class="p-5 bg-ink text-[#EDEAE4] font-medium">Production artifacts: agent prompts, JSON schemas, Lambda code, RBAC matrices, OpenMAIC runtime</td></tr>
+          <tr class="border-b hairline"><td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">Produced by</td><td class="p-5 text-gray-600">Pyramid of junior analysts, billed hourly</td><td class="p-5 bg-ink text-[#EDEAE4] font-medium">Senior architects, agent-verified</td></tr>
+          <tr class="border-b hairline"><td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">Time to value</td><td class="p-5 text-gray-600">6–12 weeks of discovery and delivery</td><td class="p-5 bg-ink text-[#EDEAE4] font-medium">Instant download — deploy today</td></tr>
+          <tr class="border-b hairline"><td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">Typical cost</td><td class="p-5 text-gray-600">$40,000 – $400,000+</td><td class="p-5 bg-ink text-[#EDEAE4] font-medium"><span class="font-display text-lg">$97 – $297</span> one-time</td></tr>
+          <tr><td class="p-5 text-gray-500 text-xs uppercase tracking-[0.1em]">Lock-in</td><td class="p-5 text-gray-600">Retainers, change orders, rented insight</td><td class="p-5 bg-ink text-[#EDEAE4] font-medium">None — runs entirely on your stack, forever</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ 7. PRODUCTS ═══════════════ -->
-<section id="solutions" class="py-24 px-6 bg-white border-b hairline">
+<!-- PRICING -->
+<section id="pricing" class="py-24 px-6 bg-white border-b hairline">
   <div class="max-w-7xl mx-auto">
     <div class="text-center mb-16 reveal">
-      <div class="kicker justify-center mb-4" style="justify-content:center">05 — Strategic Architecture Products</div>
+      <div class="kicker justify-center mb-4" style="justify-content:center">06 — OpenMAIC-Powered Packages</div>
       <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-4">Deploy Without the SaaS Trap</h2>
-      <p class="text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
-        Competitors charge monthly to rent their infrastructure. We sell the exact architectural
-        blueprints so your internal team builds it right the first time — on your own servers.
-      </p>
+      <p class="text-gray-600 max-w-2xl mx-auto text-base md:text-lg">Each tier ships a working slice of OpenMAIC. Buy one, expand later.</p>
     </div>
-
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-
-      <!-- Prompt Architecture Suite -->
-      <div class="bg-white border hairline rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow flex flex-col reveal">
-        <div class="mb-6">
-          <h3 class="font-display text-xl font-semibold text-ink mb-2">Prompt Architecture Suite</h3>
-          <p class="text-sm text-gray-500 min-h-[40px]">Multi-variable reasoning engines for complex enterprise workflows.</p>
-        </div>
-        <div class="mb-6">
-          <span class="font-display text-4xl font-semibold text-ink">$97</span>
-          <span class="text-sm text-gray-500 font-medium"> / one-time</span>
-        </div>
+      <div class="price-card flex flex-col reveal">
+        <div class="mb-6"><div class="text-[10px] font-mono uppercase tracking-[0.18em] text-olive mb-2">Tier A · Starter</div><h3 class="font-display text-xl font-semibold text-ink mb-2">Prompt Architecture Suite</h3><p class="text-sm text-gray-500 min-h-[40px]">Multi-agent reasoning engines for one core workflow.</p></div>
+        <div class="mb-6"><span class="font-display text-4xl font-semibold text-ink">$97</span><span class="text-sm text-gray-500 font-medium"> / one-time</span></div>
+        <div class="text-[10px] font-bold uppercase tracking-[0.14em] text-olive mb-3">Includes The Architect + The Scribe agents</div>
         <ul class="text-sm text-gray-600 space-y-3 mb-8 flex-1">
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> 5 Production CI/CD System Prompts</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> Strict Deterministic JSON Schemas</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> Zero-Hallucination Grounding Rules</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> Digital Notion &amp; Markdown Vault</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> 5 Production System Prompts</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Deterministic JSON Schemas</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Zero-Hallucination Grounding Rules</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Notion &amp; Markdown Vault</li>
         </ul>
-        <button onclick="handlePurchase('Prompt Architecture Suite', 97)"
-          class="w-full px-6 py-3.5 border-2 border-olive text-olive font-bold uppercase tracking-[0.14em] text-xs rounded hover:bg-olive hover:text-paper transition-colors cursor-pointer">
-          Purchase Framework · $97
-        </button>
+        <button onclick="handlePurchase('Prompt Architecture Suite', 97)" class="w-full px-6 py-3.5 border-2 border-olive text-olive font-bold uppercase tracking-[0.14em] text-xs rounded hover:bg-olive hover:text-paper transition-colors cursor-pointer">Purchase · $97</button>
       </div>
-
-      <!-- Data Vault Bridge — highlighted -->
-      <div class="relative bg-paper border-2 border-olive rounded-xl p-8 shadow-md md:-translate-y-4 flex flex-col reveal">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-olive text-paper px-4 py-1 text-[10px] font-bold uppercase tracking-[0.18em] rounded-full shadow-sm whitespace-nowrap">
-          Most Critical
-        </div>
-        <div class="mb-6">
-          <h3 class="font-display text-xl font-semibold text-ink mb-2">The Data Vault Bridge</h3>
-          <p class="text-sm text-gray-600 min-h-[40px]">Custom telemetry documentation &amp; API payload mapping.</p>
-        </div>
-        <div class="mb-6">
-          <span class="font-display text-4xl font-semibold text-ink">$149</span>
-          <span class="text-sm text-gray-500 font-medium"> / one-time</span>
-        </div>
+      <div class="price-card featured flex flex-col reveal">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-olive text-paper px-4 py-1 text-[10px] font-bold uppercase tracking-[0.18em] rounded-full shadow-sm whitespace-nowrap">Most Critical</div>
+        <div class="mb-6"><div class="text-[10px] font-mono uppercase tracking-[0.18em] text-olive mb-2">Tier B · Operational</div><h3 class="font-display text-xl font-semibold text-ink mb-2">The Data Vault Bridge</h3><p class="text-sm text-gray-600 min-h-[40px]">Telemetry plumbing + PII scrubbing + DLQ protocol.</p></div>
+        <div class="mb-6"><span class="font-display text-4xl font-semibold text-ink">$149</span><span class="text-sm text-gray-500 font-medium"> / one-time</span></div>
+        <div class="text-[10px] font-bold uppercase tracking-[0.14em] text-olive mb-3">Adds The Vault Keeper + The Guardian agents</div>
         <ul class="text-sm text-gray-700 space-y-3 mb-8 flex-1">
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> 40-Page Architecture Blueprint</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> Stripe Webhook Revenue Pipeline</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> AWS Lambda PII Sanitization Logic</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> Dead Letter Queue (DLQ) Protocol</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Everything in Tier A</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> 40-Page Architecture Blueprint</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> AWS Lambda PII Sanitization</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Stripe / HubSpot / Jira Webhooks</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Dead Letter Queue Protocol</li>
         </ul>
-        <button onclick="handlePurchase('The Data Vault Bridge', 149)"
-          class="w-full px-6 py-3.5 bg-olive text-paper font-bold uppercase tracking-[0.14em] text-xs rounded hover:bg-[#5D6350] shadow-sm transition-colors cursor-pointer">
-          Purchase Blueprint · $149
-        </button>
+        <button onclick="handlePurchase('The Data Vault Bridge', 149)" class="w-full px-6 py-3.5 bg-olive text-paper font-bold uppercase tracking-[0.14em] text-xs rounded hover:bg-[#5D6350] shadow-sm transition-colors cursor-pointer">Purchase · $149</button>
       </div>
-
-      <!-- Complete Bundle -->
-      <div class="bg-white border hairline rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow flex flex-col reveal">
-        <div class="mb-6">
-          <h3 class="font-display text-xl font-semibold text-ink mb-2">Complete Architecture Bundle</h3>
-          <p class="text-sm text-gray-500 min-h-[40px]">Prompts, telemetry blueprints, and the full transition playbook.</p>
-        </div>
-        <div class="mb-6">
-          <span class="font-display text-4xl font-semibold text-ink">$297</span>
-          <span class="text-sm text-gray-500 font-medium"> / one-time</span>
-        </div>
+      <div class="price-card flex flex-col reveal">
+        <div class="mb-6"><div class="text-[10px] font-mono uppercase tracking-[0.18em] text-olive mb-2">Tier C · Full Mesh</div><h3 class="font-display text-xl font-semibold text-ink mb-2">Complete OpenMAIC Bundle</h3><p class="text-sm text-gray-500 min-h-[40px]">All six specialist agents + the conversation runtime.</p></div>
+        <div class="mb-6"><span class="font-display text-4xl font-semibold text-ink">$297</span><span class="text-sm text-gray-500 font-medium"> / one-time</span></div>
+        <div class="text-[10px] font-bold uppercase tracking-[0.14em] text-olive mb-3">Unlocks The Operator + The Diagnostician agents</div>
         <ul class="text-sm text-gray-600 space-y-3 mb-8 flex-1">
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> Includes Prompt Suite &amp; Vault Blueprint</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> Zero-Manual Transition Playbook</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> Task Viability Scoring Matrix</li>
-          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">&#10003;</span> SecOps RBAC Matrix &amp; Board Deck Outline</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Everything in Tiers A + B</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Full OpenMAIC Runtime</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Zero-Manual Transition Playbook</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> Task Viability Scoring Matrix</li>
+          <li class="flex items-start"><span class="text-olive mr-2.5 font-bold">✓</span> SecOps RBAC Matrix &amp; Board Deck</li>
         </ul>
-        <button onclick="handlePurchase('Complete Architecture Bundle', 297)"
-          class="w-full px-6 py-3.5 border-2 border-ink text-ink font-bold uppercase tracking-[0.14em] text-xs rounded hover:bg-ink hover:text-paper transition-colors cursor-pointer">
-          Purchase Bundle · $297
-        </button>
+        <button onclick="handlePurchase('Complete Architecture Bundle', 297)" class="w-full px-6 py-3.5 border-2 border-ink text-ink font-bold uppercase tracking-[0.14em] text-xs rounded hover:bg-ink hover:text-paper transition-colors cursor-pointer">Purchase · $297</button>
       </div>
     </div>
-
-    <div class="mt-14 text-center reveal">
-      <p class="text-sm text-gray-500">
-        Need enterprise deployment advisory?
-        <a href="mailto:contact@efficiencylabs.com" class="text-olive font-bold hover:underline">Contact us for custom deployment.</a>
-      </p>
-    </div>
+    <div class="mt-14 text-center reveal"><p class="text-sm text-gray-500">Need enterprise deployment advisory? <a href="mailto:contact@efficiencylabs.com" class="text-olive font-bold hover:underline">Contact us for custom deployment.</a></p></div>
   </div>
 </section>
 
-<!-- ═══════════════ 8. PRINCIPLE BAND ═══════════════ -->
+<!-- PRINCIPLE BAND -->
 <section class="bg-ink text-paper py-24 px-6 text-center border-b border-black/20">
   <div class="max-w-3xl mx-auto reveal">
-    <blockquote class="font-display text-3xl md:text-5xl leading-snug font-normal">
-      "Measure first.<br>Automate second.<br><em class="not-italic text-taupe">Approve always."</em>
-    </blockquote>
+    <blockquote class="font-display text-3xl md:text-5xl leading-snug font-normal">"Measure first.<br>Automate second.<br><em class="not-italic text-taupe">Approve always."</em></blockquote>
     <div class="mt-8 text-[11px] uppercase tracking-[0.24em] text-taupe">The Efficiency Labs Operating Principle</div>
   </div>
 </section>
 
-<!-- ═══════════════ 9. FOOTER ═══════════════ -->
+<!-- FOOTER -->
 <footer class="bg-coal text-gray-400 py-14 px-6">
   <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-    <div class="text-center md:text-left">
-      <div class="font-display text-lg font-semibold text-paper tracking-wide mb-1">Efficiency Labs</div>
-      <p class="text-xs">Translating complex reasoning into autonomous business workflows.</p>
-    </div>
-    <div class="flex flex-wrap justify-center gap-6 text-sm">
-      <a href="#simulator" class="text-taupe hover:text-paper transition-colors font-medium">Interactive Simulator</a>
-      <a href="#diagnostic" class="hover:text-paper transition-colors">Governance Diagnostic</a>
-      <a href="#economics" class="hover:text-paper transition-colors">Why Blueprints</a>
-      <a href="#solutions" class="hover:text-paper transition-colors">Blueprints &amp; Pricing</a>
-    </div>
+    <div class="text-center md:text-left"><div class="font-display text-lg font-semibold text-paper tracking-wide mb-1">Efficiency Labs</div><p class="text-xs">OpenMAIC: an AI-driven Business Operations Framework.</p></div>
+    <div class="flex flex-wrap justify-center gap-6 text-sm"><a href="#framework" class="text-taupe hover:text-paper transition-colors font-medium">Framework</a><a href="#canvas" class="hover:text-paper transition-colors">Live Canvas</a><a href="#readiness" class="hover:text-paper transition-colors">Readiness</a><a href="#pricing" class="hover:text-paper transition-colors">Pricing</a></div>
     <div class="text-xs">&copy; 2026 Efficiency Labs. All rights reserved.</div>
   </div>
 </footer>
 
-<!-- ═══════════════ 10. CHECKOUT MODAL ═══════════════ -->
-<div id="checkout-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+<!-- CHECKOUT MODAL -->
+<div id="checkout-modal" class="fixed inset-0 bg-black/60 z-[60] hidden items-center justify-center p-4">
   <div class="bg-white border hairline shadow-2xl max-w-md w-full p-7 relative rounded-xl">
-    <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-ink font-bold text-xl cursor-pointer">&times;</button>
+    <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-ink font-bold text-xl cursor-pointer bg-transparent border-none">×</button>
     <div class="inline-block px-2.5 py-0.5 bg-olive text-paper text-[10px] font-bold uppercase tracking-[0.16em] mb-4 rounded">Instant Delivery</div>
-    <h3 id="modal-product-title" class="font-display text-xl font-semibold text-ink mb-1">Prompt Architecture Suite</h3>
-    <p id="modal-product-price" class="text-2xl font-semibold text-olive mb-4">$97 one-time</p>
-    <p class="text-xs text-gray-600 mb-5 leading-relaxed">
-      Upon completing payment, your digital Notion vault access links and downloadable Markdown
-      packages will be sent immediately to your email address.
-    </p>
+    <h3 id="modal-product-title" class="font-display text-xl font-semibold text-ink mb-1">—</h3>
+    <p id="modal-product-price" class="text-2xl font-semibold text-olive mb-4">—</p>
+    <p class="text-xs text-gray-600 mb-5 leading-relaxed">Upon completing payment, your OpenMAIC blueprint access links and downloadable Markdown packages will be sent immediately to your email address.</p>
     <div class="space-y-3">
-      <div>
-        <label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-gray-500 mb-1">Work Email</label>
-        <input id="modal-customer-email" type="email" placeholder="you@company.com"
-          class="w-full p-2.5 text-sm border hairline rounded-md bg-cream focus:bg-white focus:ring-2 focus:ring-olive/40 outline-none" />
-      </div>
-      <button onclick="proceedToStripe()"
-        class="w-full py-3 bg-olive hover:bg-[#5D6350] text-paper font-bold uppercase tracking-[0.14em] text-xs rounded shadow-sm transition-all cursor-pointer">
-        Proceed to Secure Checkout →
-      </button>
+      <div><label class="block text-[10px] font-bold uppercase tracking-[0.14em] text-gray-500 mb-1">Work Email</label><input id="modal-customer-email" type="email" placeholder="you@company.com" class="w-full p-2.5 text-sm border hairline rounded-md bg-cream focus:bg-white focus:ring-2 focus:ring-olive/40 outline-none" /></div>
+      <button onclick="proceedToStripe()" class="w-full py-3 bg-olive hover:bg-[#5D6350] text-paper font-bold uppercase tracking-[0.14em] text-xs rounded shadow-sm transition-all cursor-pointer">Proceed to Secure Checkout →</button>
       <p class="text-[10px] text-center text-gray-400">Secured via Stripe 256-bit encryption • Instant Delivery</p>
     </div>
   </div>
 </div>
 
+<div id="tourVeil" class="tour-veil"></div>
+<button class="tour-fab" id="tourFab" onclick="startTour()"><span class="dot"></span><span id="tourFabLabel">Tour OpenMAIC</span></button>
+
 <script>
-/* ══════════ 1. SIMULATOR DATA ══════════ */
-var SIM_LOOPS = [
-  {
-    id: "founder_loop",
-    title: "Founder: Lead Gen Loop",
-    variables: {
-      "Stripe Customer Email": "investor@venture.io",
-      "Checkout Value": "$0.00 (Lead Magnet)",
-      "Target Database": "Sales Tracker.csv"
-    },
-    steps: [
-      { id:"s1", type:"trigger", title:"Stripe Webhook", desc:"Listens for 'checkout.session.completed' from Stripe API.", explainer:"The system waits like a digital receptionist until someone buys your toolkit." },
-      { id:"s2", type:"action",  title:"Make.com Routing", desc:"Parses Stripe payload and routes data to marketing stack.", explainer:"A digital traffic cop takes the buyer's info and sends it exactly where it needs to go." },
-      { id:"s3", type:"action",  title:"MailerLite Delivery", desc:"Fires the Welcome Email sequence containing the AI Prompt Kit.", explainer:"Automatically sends the welcome email with the download link, so you don't have to." },
-      { id:"s4", type:"action",  title:"Notion API Sync", desc:"Appends the new lead telemetry to the central Sales Tracker CSV.", explainer:"Updates your Sales Tracker spreadsheet automatically so your records are perfectly up to date." }
-    ]
-  },
-  {
-    id: "consultant_loop",
-    title: "Consultant: Intake & Audit",
-    variables: {
-      "Client Name": "Acme Corp Logistics",
-      "Typeform Intake ID": "TF-992A-INTAKE",
-      "Claude Model": "claude-3-5-sonnet"
-    },
-    steps: [
-      { id:"s1", type:"trigger", title:"Typeform Submission", desc:"Activates when a new discovery form is submitted by a prospect.", explainer:"Captures the exact answers when a new potential client fills out your questionnaire." },
-      { id:"s2", type:"action",  title:"Anthropic Claude Synthesis", desc:"API reads form data and drafts a preliminary strategy brief.", explainer:"AI reads the client's answers and writes a draft strategy document for you in seconds." },
-      { id:"s3", type:"safety",  title:"Slack Manager Approval", desc:"Halts workflow. Pings #leadership in Slack. You must review the AI's brief.", explainer:"The AI pauses and sends you a message. It waits for your human 'thumbs up' before sending anything." },
-      { id:"s4", type:"action",  title:"Google Workspace API", desc:"Generates a formatted Google Doc brief and emails the client.", explainer:"Takes the approved strategy, turns it into a neat Google Doc, and emails it to the client." }
-    ]
-  },
-  {
-    id: "cto_loop",
-    title: "CTO: Threat Remediation",
-    variables: {
-      "AWS GuardDuty Alert": "HIGH (Brute Force)",
-      "Source IP": "192.0.2.144",
-      "Datadog Trace ID": "prod-db-cluster-02"
-    },
-    steps: [
-      { id:"s1", type:"trigger", title:"AWS EventBridge", desc:"Ingests high-severity alert from AWS network monitoring.", explainer:"Acts as a security camera that alerts you the second someone tries to break into your system." },
-      { id:"s2", type:"action",  title:"Cloudflare WAF Injection", desc:"Automatically injects a Cloudflare firewall rule to isolate the IP.", explainer:"Instantly builds a digital wall to block the hacker's computer before they can do damage." },
-      { id:"s3", type:"safety",  title:"PagerDuty Escalation", desc:"Halts. SecOps engineer must verify the IP is not a corporate VPN.", explainer:"Pings a human security expert to double-check that we didn't accidentally block a real employee." },
-      { id:"s4", type:"action",  title:"Jira API Resolution", desc:"Logs the incident in Jira and closes the active security alert.", explainer:"Logs the whole event in your ticketing system and marks the emergency as 'handled'." }
-    ]
-  }
-];
-
-var currentLoopIdx = 0, currentStepIdx = 0, currentRunningStep = -1;
-var simulatorState = "IDLE", executionTimer = null;
-
-/* ══════════ 2. RENDER LOGIC ══════════ */
-function renderSimulator() {
-  var loop = SIM_LOOPS[currentLoopIdx];
-  var stepsBox = document.getElementById('sim-steps-container');
-  var varsBox  = document.getElementById('sim-variables-container');
-  if (!stepsBox || !varsBox) return;
-
-  var html = '';
-  for (var i = 0; i < loop.steps.length; i++) {
-    var step = loop.steps[i];
-    var sel = (i === currentStepIdx), act = (i === currentRunningStep);
-    var cls = "w-full p-3.5 rounded-md border cursor-pointer transition-all duration-150 relative ";
-    if (act)       cls += "bg-olive/10 border-olive shadow-[3px_3px_0_0_#6B705C]";
-    else if (sel)  cls += "bg-paper border-ink shadow-[3px_3px_0_0_rgba(56,51,47,.85)]";
-    else           cls += "bg-white border-gray-300 hover:border-gray-400";
-
-    html += '<div onclick="selectStep(' + i + ')" class="' + cls + '">';
-    html += '<div class="flex justify-between items-start mb-1.5">';
-    html += '<span class="font-bold uppercase text-[11px] tracking-wide ' + (act ? 'text-ink' : '') + '">' + (i+1) + '. ' + step.title + '</span>';
-    if (step.type === 'safety') {
-      html += '<span class="bg-rose text-ink text-[9px] px-1.5 py-0.5 font-bold uppercase tracking-wide rounded">Safety Stop</span>';
-    }
-    html += '</div>';
-    html += '<p class="text-[11px] text-gray-600 mb-2">' + step.desc + '</p>';
-    html += '<div class="p-1.5 border-l-2 border-l-olive/50 bg-cream/70 text-[10px] text-gray-500 rounded-r"><strong>💡 Explainer:</strong> ' + step.explainer + '</div>';
-    html += '</div>';
-    if (i < loop.steps.length - 1) {
-      html += '<div class="h-4 w-px my-1 ' + (act ? 'bg-olive' : 'bg-gray-300') + '"></div>';
-    }
-  }
-  stepsBox.innerHTML = html;
-
-  var vHtml = '';
-  for (var k in loop.variables) {
-    if (loop.variables.hasOwnProperty(k)) {
-      vHtml += '<div><label class="block text-[10px] font-bold uppercase tracking-[0.14em] mb-1 text-gray-500">' + k + '</label>'
-             + '<input type="text" value="' + loop.variables[k] + '" onchange="updateSimVariable(\'' + k + '\', this.value)" '
-             + 'class="w-full p-2 text-xs font-mono border hairline rounded-md bg-cream focus:bg-white outline-none" /></div>';
-    }
-  }
-  varsBox.innerHTML = vHtml;
-  renderInspector();
-}
-
-function renderInspector() {
-  var loop = SIM_LOOPS[currentLoopIdx];
-  var step = loop.steps[currentStepIdx] || loop.steps[0];
-  var b = document.getElementById('sim-inspecting-step-badge');
-  var t = document.getElementById('sim-input-title');
-  var d = document.getElementById('sim-input-desc');
-  var e = document.getElementById('sim-input-explainer');
-  if (b) b.innerText = 'Step ' + (currentStepIdx + 1);
-  if (t) t.value = step.title;
-  if (d) d.value = step.desc;
-  if (e) e.value = step.explainer;
-}
-
-function selectStep(idx) { currentStepIdx = idx; renderSimulator(); }
-function handleTitleInput(v)     { SIM_LOOPS[currentLoopIdx].steps[currentStepIdx].title = v; renderSimulator(); }
-function handleDescInput(v)      { SIM_LOOPS[currentLoopIdx].steps[currentStepIdx].desc = v; }
-function handleExplainerInput(v) { SIM_LOOPS[currentLoopIdx].steps[currentStepIdx].explainer = v; }
-function updateSimVariable(k, v) { SIM_LOOPS[currentLoopIdx].variables[k] = v; }
-
-function setActiveTabClass(btn, active) {
-  btn.className = "sim-tab flex-1 min-w-[200px] py-4 px-4 text-xs md:text-sm font-bold uppercase tracking-[0.14em] "
-    + "transition-colors cursor-pointer "
-    + (btn.id !== 'tab-cto' ? "border-r border-r-ink/10 " : "")
-    + (active ? "bg-white text-ink border-b-2 border-b-olive"
-              : "bg-sand text-gray-600 hover:bg-cream");
-}
-
-function switchLoop(idx) {
-  if (executionTimer) clearTimeout(executionTimer);
-  currentLoopIdx = idx; currentStepIdx = 0; currentRunningStep = -1; simulatorState = "IDLE";
-
-  var banner = document.getElementById('sim-safety-banner');
-  if (banner) banner.classList.add('hidden');
-  resetStatus();
-  var logs = document.getElementById('sim-logs-container');
-  if (logs) logs.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-gray-500 text-center p-4 border border-dashed border-white/15 rounded">[ SYSTEM STANDBY ]<br/><br/>Click "▶ Run Workflow" to initiate execution.</div>';
-
-  setActiveTabClass(document.getElementById('tab-founder'), idx === 0);
-  setActiveTabClass(document.getElementById('tab-consultant'), idx === 1);
-  setActiveTabClass(document.getElementById('tab-cto'), idx === 2);
-
-  renderSimulator();
-}
-
-function addLog(type, title, msg) {
-  var c = document.getElementById('sim-logs-container');
-  if (!c) return;
-  var time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  var item = document.createElement('div');
-  var bc = 'border-l-gray-600 text-gray-300', tc = 'text-gray-200';
-  if (type === 'SUCCESS') { bc = 'log-ok text-emerald-100'; tc = 'log-ok-t'; }
-  if (type === 'WARN' || type === 'ERROR') { bc = 'log-warn text-rose-200'; tc = 'log-warn-t'; }
-  if (type === 'ACTION')  { bc = 'log-act text-gray-100'; tc = 'log-act-t'; }
-  item.className = 'p-2.5 border-l-4 text-xs font-mono bg-[#332F2B] rounded-r ' + bc;
-  item.innerHTML = '<div class="flex justify-between items-center mb-0.5"><strong class="' + tc + '">' + title
-                 + '</strong><span class="text-[9px] opacity-40">' + time + '</span></div>'
-                 + '<p class="leading-relaxed opacity-90">' + msg + '</p>';
-  c.appendChild(item);
-  c.scrollTop = c.scrollHeight;
-}
-
-function resetStatus() {
-  var dot = document.getElementById('sim-status-dot');
-  var st  = document.getElementById('sim-status-text');
-  var btn = document.getElementById('sim-run-btn');
-  if (dot) dot.className = 'w-2.5 h-2.5 bg-gray-500 rounded-full border border-black/30';
-  if (st)  st.innerText = 'IDLE';
-  if (btn) btn.innerText = '▶ Run Workflow';
-}
-
-function finishRun(okMsg) {
-  simulatorState = "SUCCESS"; currentRunningStep = -1;
-  var dot = document.getElementById('sim-status-dot');
-  var st  = document.getElementById('sim-status-text');
-  if (dot) dot.className = 'w-2.5 h-2.5 bg-olive rounded-full border border-black/30';
-  if (st)  st.innerText = 'SUCCESS';
-  resetStatusBtnOnly();
-  addLog('SUCCESS', 'Execution Completed', okMsg);
-  renderSimulator();
-}
-function resetStatusBtnOnly() {
-  var btn = document.getElementById('sim-run-btn');
-  if (btn) btn.innerText = '▶ Run Workflow';
-}
-
-function runSimulatorWorkflow() {
-  if (simulatorState === "RUNNING" || simulatorState === "WAITING") return;
-  simulatorState = "RUNNING"; currentRunningStep = -1;
-
-  var banner = document.getElementById('sim-safety-banner');
-  if (banner) banner.classList.add('hidden');
-
-  var dot = document.getElementById('sim-status-dot');
-  var st  = document.getElementById('sim-status-text');
-  var btn = document.getElementById('sim-run-btn');
-  if (dot) dot.className = 'w-2.5 h-2.5 bg-olive animate-pulse rounded-full border border-black/30';
-  if (st)  st.innerText = 'RUNNING…';
-  if (btn) btn.innerText = 'Running…';
-
-  var logs = document.getElementById('sim-logs-container');
-  if (logs) logs.innerHTML = '';
-
-  var loop = SIM_LOOPS[currentLoopIdx];
-  addLog('SYSTEM', 'Pipeline Activated', 'Executing ' + loop.title);
-  for (var k in loop.variables) {
-    if (loop.variables.hasOwnProperty(k)) addLog('DATA', 'Context Loaded', '[' + k + '] = ' + loop.variables[k]);
-  }
-
-  var step = 0;
-  function executeNext() {
-    if (step >= loop.steps.length) { finishRun('All pipeline stages finished with zero errors.'); return; }
-    currentRunningStep = step; currentStepIdx = step;
-    var cur = loop.steps[step];
-    renderSimulator();
-
-    if (cur.type === 'safety') {
-      simulatorState = "WAITING";
-      if (dot) dot.className = 'w-2.5 h-2.5 bg-rose-500 animate-ping rounded-full border border-black/30';
-      if (st)  st.innerText = 'SAFETY HALT';
-      if (banner) banner.classList.remove('hidden');
-      addLog('WARN', 'Safety Stop Activated', 'Execution halted at: ' + cur.title + '. Awaiting human authorization.');
-      return;
-    }
-    addLog('ACTION', 'Executing: ' + cur.title, cur.desc);
-    step++;
-    executionTimer = setTimeout(executeNext, 1200);
-  }
-  executionTimer = setTimeout(executeNext, 600);
-}
-
-function handleHumanDecision(approved) {
-  var banner = document.getElementById('sim-safety-banner');
-  if (banner) banner.classList.add('hidden');
-  var loop = SIM_LOOPS[currentLoopIdx];
-  var dot = document.getElementById('sim-status-dot');
-  var st  = document.getElementById('sim-status-text');
-
-  if (approved) {
-    addLog('SUCCESS', 'Human Approved', 'Manager authorization verified. Resuming pipeline execution.');
-    simulatorState = "RUNNING";
-    if (dot) dot.className = 'w-2.5 h-2.5 bg-olive animate-pulse rounded-full border border-black/30';
-    if (st)  st.innerText = 'RUNNING…';
-
-    var step = currentRunningStep + 1;
-    function resumeNext() {
-      if (step >= loop.steps.length) { finishRun('Pipeline resolved successfully.'); return; }
-      currentRunningStep = step; currentStepIdx = step;
-      var cur = loop.steps[step];
-      renderSimulator();
-      addLog('ACTION', 'Executing: ' + cur.title, cur.desc);
-      step++;
-      executionTimer = setTimeout(resumeNext, 1200);
-    }
-    executionTimer = setTimeout(resumeNext, 600);
+/* ════════════════════════════════════════════════════════════════════
+   TRY-IT: copy prompt to clipboard
+ ════════════════════════════════════════════════════════════════════ */
+function copyTryIt(btn, text){
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      btn.classList.add('copied');
+      var orig = btn.innerText;
+      btn.innerText = '✓ Copied';
+      setTimeout(function(){ btn.innerText = orig; btn.classList.remove('copied'); }, 1400);
+    });
   } else {
-    simulatorState = "REJECTED"; currentRunningStep = -1;
-    if (dot) dot.className = 'w-2.5 h-2.5 bg-rose-600 rounded-full border border-black/30';
-    if (st)  st.innerText = 'REJECTED';
-    resetStatusBtnOnly();
-    addLog('ERROR', 'Execution Terminated', 'Action was rejected by supervisor. Pipeline aborted.');
-    renderSimulator();
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+    btn.classList.add('copied');
+    btn.innerText = '✓ Copied';
+    setTimeout(function(){ btn.innerText = 'Copy'; btn.classList.remove('copied'); }, 1400);
   }
+ // Also load it into the composer so user can send it  var composer = document.getElementById('operatorInput');
+  if (composer){ composer.value = text; composer.focus(); }
 }
 
-/* ══════════ 3. DIAGNOSTIC TABS ══════════ */
-function activateDiagTab(targetId) {
-  document.querySelectorAll('.diag-content-section').forEach(function(s){ s.classList.add('hidden'); });
-  var target = document.getElementById(targetId);
-  if (target) target.classList.remove('hidden');
-
-  var activeId = 'btn-diag-gov';
-  if (targetId === 'section-scale') activeId = 'btn-diag-scale';
-  if (targetId === 'section-rbac')  activeId = 'btn-diag-rbac';
-
-  document.querySelectorAll('.diag-nav-btn').forEach(function(b){
-    if (b.id === activeId) {
-      b.classList.remove('text-gray-600','hover:bg-white','border-transparent','bg-white');
-      b.classList.add('bg-ink','text-paper','border-olive');
-    } else {
-      b.classList.remove('bg-ink','text-paper','border-olive');
-      b.classList.add('text-gray-600','hover:bg-white','border-transparent');
-    }
+/* ════════════════════════════════════════════════════════════════════
+   HOVER-TIP POSITIONING — fixed positioning so canvas overflow:hidden can't clip
+   ════════════════════════════════════════════════════════════════════ */
+function positionTip(triggerEl, tipEl){
+  var r = triggerEl.getBoundingClientRect();
+  var tw = tipEl.offsetWidth || 300;
+  var th = tipEl.offsetHeight || 200;
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var gap = 12;
+  var left = r.right + gap;
+  var top = r.top + r.height/2 - th/2;
+  if (left + tw > vw - 8){ left = r.left - tw - gap; tipEl.classList.add('pos-left'); }
+  else { tipEl.classList.remove('pos-left'); }
+  if (top < 8) top = 8;
+  if (top + th > vh - 8) top = vh - th - 8;
+  tipEl.style.left = left + 'px';
+  tipEl.style.top  = top  + 'px';
+}
+function showTip(triggerEl, tipEl){
+  document.querySelectorAll('.omaic-hover .omaic-tip.show').forEach(function(t){
+    if (t !== tipEl) t.classList.remove('show');
+  });
+  tipEl.classList.add('show');
+  positionTip(triggerEl, tipEl);
+}
+function hideTip(tipEl){ tipEl.classList.remove('show'); }
+function wireHoverTips(){
+  document.querySelectorAll('.omaic-hover').forEach(function(host){
+    var tip = host.querySelector('.omaic-tip');
+    if (!tip) return;
+    host.addEventListener('mouseenter', function(){ showTip(host, tip); });
+    host.addEventListener('mouseleave', function(){ hideTip(tip); });
+    host.addEventListener('focusin',  function(){ showTip(host, tip); });
+    host.addEventListener('focusout', function(){ hideTip(tip); });
   });
 }
+function repositionOpenTips(){
+  document.querySelectorAll('.omaic-hover .omaic-tip.show').forEach(function(tip){
+    var host = tip.parentElement; positionTip(host, tip);
+  });
+}
+window.addEventListener('scroll', repositionOpenTips, {passive:true});
+window.addEventListener('resize', repositionOpenTips);
 
-/* ══════════ 4. CHECKOUT ROUTING ══════════ */
+/* ════════════════════════════════════════════════════════════════════
+   COACHMARK (framework cards) — fixed positioning
+   ════════════════════════════════════════════════════════════════════ */
+function closeAllCoachTips(){ document.querySelectorAll('.coach-tip').forEach(function(t){ t.classList.remove('show'); }); }
+function closeTip(id, ev){ if (ev){ ev.stopPropagation(); ev.preventDefault(); } var el = document.getElementById(id); if (el) el.classList.remove('show'); }
+function toggleTip(id, ev){
+  if (ev){ ev.stopPropagation(); ev.preventDefault(); }
+  var el = document.getElementById(id); if (!el) return;
+  var wasShown = el.classList.contains('show');
+  closeAllCoachTips();
+  if (!wasShown){ el.classList.add('show'); var host = el.parentElement; positionCoachTip(host, el); }
+}
+function positionCoachTip(host, tip){
+  var r = host.getBoundingClientRect();
+  var tw = tip.offsetWidth || 260;
+  var th = tip.offsetHeight || 160;
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var gap = 12;
+  var pos = tip.dataset.pos || 'right';
+  var left, top;
+  if (pos === 'right'){ left = r.right + gap; top = r.top + r.height/2 - th/2; }
+  else if (pos === 'left'){ left = r.left - tw - gap; top = r.top + r.height/2 - th/2; }
+  else if (pos === 'top'){ left = r.left + r.width/2 - tw/2; top = r.top - th - gap; }
+  else { left = r.left + r.width/2 - tw/2; top = r.bottom + gap; }
+  if (left + tw > vw - 8) left = r.left - tw - gap;
+  if (left < 8) left = 8;
+  if (top < 8) top = 8;
+  if (top + th > vh - 8) top = vh - th - 8;
+  tip.style.left = left + 'px';
+  tip.style.top  = top  + 'px';
+}
+document.addEventListener('click', function(e){
+  if (!e.target.closest('.coach-tip') && !e.target.closest('.coach-dot') && !e.target.closest('.omaic-hover')) closeAllCoachTips();
+});
+window.addEventListener('scroll', function(){
+  document.querySelectorAll('.coach-tip.show').forEach(function(t){
+    var h = t.parentElement; positionCoachTip(h, t);
+  });
+}, {passive:true});
+
+/* ════════════════════════════════════════════════════════════════════
+   TOUR
+   ════════════════════════════════════════════════════════════════════ */
+var TOUR_STEPS = [
+ { tipId:'tipMesh', scrollTo:'#framework' },
+  { tipId:'tipA2',   scrollTo:'#framework' },
+  { tipId:'tipCanvas', scrollTo:'#canvas' }
+];
+var tourIdx = 0;
+function startTour(){ tourIdx=0; document.getElementById('tourVeil').classList.add('on'); document.getElementById('tourFabLabel').innerText='Skip tour'; document.getElementById('tourFab').onclick=endTour; runTourStep(); }
+function runTourStep(){ if (tourIdx>=TOUR_STEPS.length){endTour();return;} var step=TOUR_STEPS[tourIdx]; var target=document.querySelector(step.scrollTo); if(target) target.scrollIntoView({behavior:'smooth',block:'start'}); setTimeout(function(){ closeAllCoachTips(); var tip=document.getElementById(step.tipId); if(tip){ tip.classList.add('show'); var host=tip.parentElement; positionCoachTip(host,tip); } tourIdx++; setTimeout(runTourStep,4500); },700); }
+function endTour(){ closeAllCoachTips(); document.getElementById('tourVeil').classList.remove('on'); document.getElementById('tourFabLabel').innerText='Tour OpenMAIC'; document.getElementById('tourFab').onclick=startTour; }
+
+/* ════════════════════════════════════════════════════════════════════
+   OPENMAIC RUNTIME
+   ════════════════════════════════════════════════════════════════════ */
+var AGENT_CATALOG = {
+  diagnostician: { code:'A-01', name:'The Diagnostician', tier:'Read-only',
+    desc:'Ingests operational signals — logs, tickets, CRM, finance — and produces structured readiness reports.',
+    tools:['log.read','metrics.read','survey.read'],
+    deliverable:'Free Governance Diagnostic + Readiness Score' },
+  architect:     { code:'A-02', name:'The Architect', tier:'Tier 1–2',
+    desc:'Generates deterministic system prompts, JSON schemas, and Lambda scaffolding from a one-paragraph brief.',
+    tools:['prompt.write','schema.write','lambda.write'],
+    deliverable:'Prompt Architecture Suite · $97' },
+  vault:         { code:'A-03', name:'The Vault Keeper', tier:'Tier 1–2',
+    desc:'Strips PII from inbound payloads, routes to your data lake, enforces schema contracts.',
+    tools:['payload.scrub','lake.write','schema.enforce'],
+    deliverable:'Data Vault Bridge · $149' },
+  operator:      { code:'A-04', name:'The Operator', tier:'Tier 2–3',
+    desc:'Executes approved workflows across Stripe, Jira, Slack, HubSpot, and your CRM.',
+    tools:['stripe.execute','jira.write','slack.send','hubspot.update'],
+    deliverable:'OpenMAIC Bundle · $297' },
+  guardian:      { code:'A-05', name:'The Guardian', tier:'Always-on',
+    desc:'Scores every tool call against the RBAC matrix and forces a halt when risk exceeds threshold.',
+    tools:['rbac.evaluate','halt.trigger','audit.write'],
+    deliverable:'Risk-tier RBAC blueprint' },
+  scribe:        { code:'A-06', name:'The Scribe', tier:'Read-only',
+    desc:'Maintains a tamper-evident audit trail of every prompt, tool call, and approval.',
+    tools:['audit.append','report.compile','board.deck.write'],
+    deliverable:'Board deck + transition playbook' }
+};
+
+var ROUTING = [
+  { match:/(diagnostic|readiness|assess|audit|score)/i, agents:['diagnostician'], tier:1 },
+  { match:/(architect|prompt|schema|system\s*prompt|json)/i, agents:['architect'], tier:1 },
+  { match:/(vault|payload|pii|anitiz|scrub|telemetry|webhook)/i, agents:['vault','scribe'], tier:1 },
+  { match:/(block\s*ip|block_ip|isolate|remedi|guardduty|security|incident)/i, agents:['operator','scribe'], tier:3 },
+  { match:/(stripe|charge|refund|customer|lead\s*gen|email|hubspot|jira|ticket)/i, agents:['operator'], tier:2 },
+  { match:/(board|brief|summary|report|audit\s*log)/i, agents:['scribe'], tier:1 },
+  { match:/(deploy|run\s*the\s*mesh|orchestrate|simulate)/i, agents:['diagnostician','architect','vault','operator','guardian','scribe'], tier:1 }
+];
+
+/* Tool tips — What / How / Why / For whom / Where / When / example prompts and outputs */
+var TOOL_TIPS = {
+  'log.read':       { what:'Reads your operational logs.', how:'Pulls entries from your log store without writing back.', why:'Ground truth before recommending changes.', forWhom:'Founders, ops leads.', where:'CloudWatch, Datadog, S3 logs.', when:'On every diagnostic request.', value:'Zero data egress.',
+    exampleIn:'Scan last 24h of CloudWatch logs',
+    exampleOut:'14,221 events scanned · 2 anomalies flagged' },
+  'metrics.read':   { what:'Pulls readiness signals.', how:'Queries your metrics store for KPIs.', why:'A score must be computed, not guessed.', forWhom:'Anyone with a dashboard.', where:'Prometheus, Datadog, CloudWatch.', when:'Continuously during diagnostics.', value:'No assumptions.',
+    exampleIn:'Compute readiness score across6 governance questions',
+    exampleOut:'11/18 · "Emerging Operator" · gap: no RBAC matrix' },
+  'prompt.write':   { what:'Writes a deterministic system prompt.', how:'Generates from a brief, validates against JSON schema.', why:'A prompt you can\'t parse is one you can\'t audit.', forWhom:'CTOs, prompt engineers.', where:'Saved to your repo.', when:'Pre-deployment.', value:'Schema-validated, 1-click deploy.',
+    exampleIn:'Draft a SecOps prompt for triage',
+    exampleOut:'sys_prompt.md (4 KB) · grounding rules attached' },
+  'schema.write':   { what:'Compiles a JSON schema.', how:'Generates Zod-equivalent types.', why:'Every tool call lands in the same contract.', forWhom:'Engineers.', where:'Committed to your repo.', when:'When scaffolding a new agent.', value:'Fewer bugs, faster debugging.',
+    exampleIn:'Compile JSON schema for triage events',
+    exampleOut:'triage.schema.json · zod.ts · both committed' },
+  'lambda.write':   { what:'Generates a deployable Lambda handler.', how:'Packages a 40KB zip with IAM role pre-wired.', why:'You should ship today, not in 6 weeks.', forWhom:'DevOps.', where:'Your AWS account.', when:'Any deployment window.', value:'40KB zip, IAM wired, DLQ connected.',
+    exampleIn:'Generate Lambda for triage handler',
+    exampleOut:'handler.zip (4 KB) · IAM role attached · DLQ wired' },
+  'payload.scrub':  { what:'Redacts PII before any model call.', how:'Strips 18+ PII fields against your contract.', why:'A single SSN in a prompt is a SOC-2 finding.', forWhom:'Compliance officers.', where:'Your Lambda edge.', when:'On every inbound payload.', value:'Blast radius bounded.',
+    exampleIn:'{email:"a@b.com", ssn:"n", note:"please help"}',
+    exampleOut:'{email:"[REDACTED]", ssn:"[REDACTED]", note:"please help"}' },
+  'lake.write':     { what:'Writes scrubbed rows to your data lake.', how:'Appends to S3 in Parquet format.', why:'Downstream tools only see clean data.', forWhom:'Data teams.', where:'s3://your-lake/clean/.', when:'Continuously.', value:'Clean parquet, no leakage.',
+    exampleIn:'Append1,402 cleaned triage events',
+    exampleOut:'s3://vault/clean/2026-08-31.parquet · 1,402 rows' },
+  'schema.enforce': { what:'Rejects out-of-schema payloads to DLQ.', how:'Validates then routes bad input.', why:'Bad input would become a hallucinated output.', forWhom:'Engineers on call.', where:'Your DLQ topic.', when:'On schema mismatch.', value:'Silent failures become loud.',
+    exampleIn:'{event_id:42, severity:"weird"}',
+    exampleOut:'✗ rejected → dlq/2026-08-31.json · severity not in enum' },
+  'stripe.execute': { what:'Executes a Stripe action.', how:'Calls Stripe API only after Tier 2 approval.', why:'Charges, refunds, subscriptions must be approved first.', forWhom:'Finance, founders.', where:'Stripe dashboard + audit log.', when:'After async review.', value:'T2 stays async-reviewed.',
+    exampleIn:'Recharge customer cus_4nK2 for $49',
+    exampleOut:'ch_1Pq9Z2 ... · 200 OK · logged in audit' },
+  'jira.write':     { what:'Opens a Jira ticket.', how:'POSTs to Jira REST API.', why:'Even when the mesh acts, your ticketing system stays in the loop.', forWhom:'Engineering teams.', where:'Your Jira project.', when:'On every operator action.', value:'No work in a black box.',
+    exampleIn:'Open OPS ticket for retry storm on prod-db-02',
+    exampleOut:'OPS-1487 created · P1 · assignee: secops-oncall' },
+  'slack.send':     { what:'Posts to a Slack channel.', how:'Sends via Slack Web API.', why:'Humans stay informed before anything irreversible.', forWhom:'Anyone in #ops or #leadership.', where:'Your Slack workspace.', when:'On approval-needed events.', value:'Async approvals in tools you use.',
+    exampleIn:'Post to #leadership: "2 anomalies, awaiting review"',
+    exampleOut:'Posted to #leadership · thread-id=1718244912' },
+  'hubspot.update': { what:'Updates a HubSpot lifecycle stage.', how:'Patches contact record via HubSpot API.', why:'Your CRM is the source of truth.', forWhom:'Sales, marketing.', where:'Your HubSpot portal.', when:'On qualified lead / opportunity.', value:'Single source of truth.',
+    exampleIn:'Set contact jane@acme.io → opportunity',
+    exampleOut:'contact4401 updated · lifecycle=opportunity' },
+  'rbac.evaluate':  { what:'Scores the action against the RBAC matrix.', how:'Sidecar process checks tier before tool runs.', why:'Independent process · separation of duties.', forWhom:'Security, auditors.', where:'Always on.', when:'Before every tool call.', value:'No agent polices itself.',
+    exampleIn:'{tool:"stripe.execute", tier:3, amount:4900}',
+    exampleOut:'tier=3 → halt.trigger() · await operator' },
+  'halt.trigger':   { what:'Halts the mesh until a human approves.', how:'Stops the workflow and surfaces the approval banner.', why:'Inverse of "shadow AI" — humans approve, agents execute.', forWhom:'Whoever owns the risk.', where:'The OpenMAIC canvas.', when:'On Tier 3+ detection.', value:'<50ms overhead, 100% T3+ coverage.',
+    exampleIn:'Block IP 192.0.2.144 in Cloudflare',
+    exampleOut:'⚠ HALT · awaiting operator ✓/✕' },
+  'audit.write':    { what:'Hash-chains the decision into the audit log.', how:'Appends a SHA-256-linked entry.', why:'Auditors and boards want replayable proof.', forWhom:'Auditors, boards.', where:'Your S3 + Glacier.', when:'On every tool call.', value:'SOC-2 ready.',
+    exampleIn:'{tool:"halt.trigger", decision:"approved"}',
+    exampleOut:'appended · sha256:e8f0…a7b1 · link verified' },
+  'audit.append':   { what:'Appends to the audit log.', how:'Same hash-chain mechanism.', why:'Every action leaves a tamper-evident trace.', forWhom:'Auditors, boards.', where:'Your S3 + Glacier.', when:'On every tool call.', value:'Board-ready brief, auto-compiled.',
+    exampleIn:'Append today\'s completed tasks',
+    exampleOut:'appended · 128 entries · sha256:e8f0…' },
+  'report.compile': { what:'Compiles this week\'s activity report.', how:'Aggregates audit entries into a PDF.', why:'You should never have to ask "what did the AI do?"', forWhom:'Boards, executives.', where:'Your email + S3.', when:'Weekly or on-demand.', value:'5 pages, board-ready.',
+    exampleIn:'Compile this week\'s activity report',
+    exampleOut:'board_brief_2026_08.pdf · 11 pages · 4 charts' },
+  'board.deck.write':{ what:'Drafts a board deck section.', how:'Renders markdown KPI section.', why:'Translate technical execution into board language.', forWhom:'Boards, executives.', where:'Google Slides / Notion.', when:'Weekly or quarterly.', value:'KPI section auto-populated.',
+    exampleIn:'Generate Q3 AI operations slide',
+    exampleOut:'deck.md · KPI section · 4 charts linked' }
+};
+var TOOL_RESPONSES = {};
+Object.keys(TOOL_TIPS).forEach(function(k){ TOOL_RESPONSES[k] = TOOL_TIPS[k].what; });
+
+var canvasState = 'IDLE';
+var metrics = { tasks:0, halts:0, spend:0 };
+var operatorApprovalResolve = null;
+
+function selectAgent(key, el){
+  document.querySelectorAll('#agentMesh .orch-card').forEach(function(c){ c.classList.remove('active'); });
+ el.classList.add('active');
+  var a = AGENT_CATALOG[key];
+  document.getElementById('agentDetail').classList.remove('hidden');
+  document.getElementById('agentDetailBadge').innerText = a.code.split('-')[1];
+  document.getElementById('agentDetailName').innerText = a.name;
+  document.getElementById('agentDetailTier').innerText = a.tier;
+  document.getElementById('agentDetailDesc').innerText = a.desc;
+  document.getElementById('agentDetailTools').innerText = a.tools.join(' · ');
+  document.getElementById('agentDetailDeliverable').innerText = a.deliverable;
+}
+
+function renderCanvasAgents(){
+  var box = document.getElementById('canvasAgents');
+  var order = ['diagnostician','architect','vault','operator','guardian','scribe'];
+  var html = '';
+  order.forEach(function(k){
+    var a = AGENT_CATALOG[k];
+    var persona = (k==='diagnostician'||k==='scribe')?'founders & boards'
+                 :(k==='architect'||k==='operator')?'CTOs & ops'
+                 :(k==='vault')?'compliance & data teams'
+                 :'everyone, always-on';
+    var toolSample = a.tools[0];
+    var tip = TOOL_TIPS[toolSample] || {};
+    html += '<div class="omaic-node omaic-hover" id="agentCard-'+k+'" data-agent="'+k+'">'
+ +  '<div class="flex justify-between items-center mb-1">'
+         +    '<span class="font-mono text-[9px] text-gray-400 uppercase tracking-[0.14em]">'+a.code+'</span>'
+ +    '<span class="omaic-pill '+(a.tier.indexOf('Tier')===0?'rose':'olive')+'">'+a.tier+'</span>'
+         +  '</div>'
+         + '<div class="font-bold text-[12px] mb-0.5">'+a.name+'</div>'
+         +  '<div class="text-[10px] text-gray-400 font-mono">'+a.tools.length+' tools · idle</div>'
+         +  '<span class="omaic-tip">'
+         +    '<span class="t-h">'+a.name+'</span>'
+         +    '<span class="t-t">'+a.desc+'</span>'
+         +    '<span class="t-b">For '+persona+'.</span>'
+         +    '<span class="t-grid">'
+         +      '<div><span class="lbl">Tier</span><span class="val">'+a.tier+'</span></div>'
+         +      '<div><span class="lbl">Why</span><span class="val">Specialist scope</span></div>'
+         +      '<div><span class="lbl">Where</span><span class="val">Your stack</span></div>'
+         +      '<div><span class="lbl">When</span><span class="val">Routed per task</span></div>'
+         +    '</span>'
+         +    (tip.exampleIn ? '<div class="try-it"><div class="try-h"><span class="try-lbl">Try it</span><button class="try-copy" onclick="copyTryIt(this,\''+(a.tools[0]==='audit.append'?'Append today\\\'s completed tasks':a.tools[0]==='board.deck.write'?'Generate Q3 AI operations slide':'Run '+a.name.toLowerCase()+' on the latest data')+'\')">Copy</button></div>'
+         +      '<div class="try-prompt">'+(a.tools[0]==='audit.append'?'Append today\\\'s completed tasks':a.tools[0]==='board.deck.write'?'Generate Q3 AI operations slide':'Run '+a.name.toLowerCase()+' on the latest data')+'</div>'
+         +      '<div class="try-out">'+tip.exampleOut+'</div>'
+         +    '</div>' : '')
+         +  '</span>'
+         +'</div>';
+  });
+  box.innerHTML = html;
+ wireHoverTips(); // re-wire after dynamic insertion
+}
+
+function addMessage(role, text){
+  var log = document.getElementById('conversationLog');
+  var msg = document.createElement('div');
+  msg.className = 'omaic-msg ' + role;
+  msg.innerHTML = text;
+  log.appendChild(msg);
+  log.scrollTop = log.scrollHeight;
+  return msg;
+}
+
+function toolCallCard(tool){
+  var resp = TOOL_RESPONSES[tool] || 'OK';
+  var tip = TOOL_TIPS[tool];
+  var explainer = tip ?
+    '<div class="tc-explainer">'
+ + '<div class="tc-row"><div class="ico">W</div><div><span class="lbl">What</span><span class="txt">'+tip.what+'</span></div></div>'
+ + '<div class="tc-row"><div class="ico">H</div><div><span class="lbl">How</span><span class="txt">'+tip.how+'</span></div></div>'
+ + '<div class="tc-row"><div class="ico">Y</div><div><span class="lbl">Why</span><span class="txt">'+tip.why+'</span></div></div>'
+ + '<div class="tc-row"><div class="ico">F</div><div><span class="lbl">For whom</span><span class="txt">'+tip.forWhom+'</span></div></div>'
+ + '<div class="tc-row"><div class="ico">R</div><div><span class="lbl">Where</span><span class="txt">'+tip.where+'</span></div></div>'
+ + '<div class="tc-row"><div class="ico">N</div><div><span class="lbl">When</span><span class="txt">'+tip.when+'</span></div></div>'
+ + '</div>' : '';
+  var example = (tip && tip.exampleIn) ?
+    '<div class="tc-example">'
+ + '<div class="ex-h">▶ Try it</div>'
+ + '<div class="ex-prompt">'+tip.exampleIn.replace(/'/g,"\\'")+'</div>'
+ + '<div class="ex-out">'+tip.exampleOut+'</div>'
+ + '</div>' : '';
+  return '<div class="omaic-tool-card">'
+ +   '<div class="flex justify-between items-center"><span class="name">→ '+tool+'</span>'
+ +     '<span class="text-[10px] text-gray-500 font-mono">'+Math.floor(Math.random()*40+10)+'ms</span></div>'
+       +   '<div class="mt-1 text-gray-300">'+resp+'</div>'
+       +   explainer
+ +   example
+ + '</div>';
+}
+
+function appendToolLog(name){
+  var log = document.getElementById('toolLog');
+  if (log.querySelector('.italic')) log.innerHTML = '';
+  var row = document.createElement('div');
+  row.className = 'flex justify-between border-b border-white/5 pb-1.5 mb-1.5';
+  row.innerHTML = '<span class="text-rose">→ '+name+'</span><span class="text-gray-500">OK</span>';
+ log.insertBefore(row, log.firstChild);
+  while (log.children.length > 6) log.removeChild(log.lastChild);
+}
+
+function routeMessage(text){
+  for (var i=0;i<ROUTING.length;i++) if (ROUTING[i].match.test(text)) return ROUTING[i];
+  return { agents:['diagnostician'], tier:1 };
+}
+
+function flashAgent(key){
+  var card = document.getElementById('agentCard-'+key);
+  if (!card) return;
+  card.classList.add('running');
+  setTimeout(function(){ card.classList.remove('running'); }, 900);
+}
+
+function setSessionState(s){ canvasState = s; document.getElementById('canvasSessionState').innerText = s; }
+
+async function executeRequest(text){
+  setSessionState('ROUTING…'); await sleep(380);
+  var route = routeMessage(text); var tier = route.tier;
+  addMessage('system', '⚙ Router matched · routing to <strong>'+route.agents.length+'</strong> agent(s) · risk tier <strong>'+tier+'</strong>');
+  metrics.tasks++; document.getElementById('metricTasks').innerText = metrics.tasks;
+
+  for (var i=0;i<route.agents.length;i++){
+    var key = route.agents[i]; var a = AGENT_CATALOG[key];
+    flashAgent(key); setSessionState(key.toUpperCase()+' · THINKING'); await sleep(420);
+    var tool = a.tools[Math.floor(Math.random()*a.tools.length)];
+    var cost = (Math.random()*0.08 + 0.02).toFixed(2);
+    metrics.spend = +(metrics.spend + +cost).toFixed(2);
+    document.getElementById('metricSpend').innerText = '$' + metrics.spend.toFixed(2);
+    addMessage('assistant', '<div class="font-bold text-paper mb-1">'+a.name+'</div>' + toolCallCard(tool));
+    appendToolLog(tool); await sleep(380);
+  }
+
+  if (route.agents.indexOf('guardian') === -1){
+    flashAgent('guardian'); setSessionState('GUARDIAN · EVALUATING'); await sleep(380);
+    addMessage('assistant', '<div class="font-bold text-paper mb-1">The Guardian</div>' + toolCallCard('rbac.evaluate'));
+    appendToolLog('rbac.evaluate'); await sleep(280);
+  }
+
+  if (tier >= 3){
+    setSessionState('AWAITING HUMAN · TIER '+tier);
+    addMessage('system', '⚠ Tier '+tier+' action detected. The Guardian halted the mesh. Operator authorization required.');
+    var banner = document.getElementById('approvalBanner');
+    document.getElementById('approvalText').innerHTML = 'Operator wants to execute: <strong>'+text+'</strong> — Tier '+tier+' (HIGH). <span class="text-rose">Approve to resume the mesh</span>, or reject to abort and log the decision.';
+    banner.classList.remove('hidden');
+    var approved = await waitForApproval();
+    banner.classList.add('hidden');
+    if (!approved){
+      addMessage('system', '✘ Operator rejected the action. Mesh aborted. The Scribe logged the rejection for the audit trail.');
+      flashAgent('scribe'); await sleep(300); setSessionState('REJECTED');
+      addMessage('assistant', '<div class="font-bold text-paper mb-1">The Scribe</div>'+toolCallCard('audit.append'));
+      appendToolLog('audit.append'); return;
+    }
+    metrics.halts++; document.getElementById('metricHalts').innerText = metrics.halts;
+    addMessage('system', '✓ Operator approved. The Operator resumes execution under Guardian oversight.');
+    flashAgent('operator'); await sleep(380);
+    addMessage('assistant', '<div class="font-bold text-paper mb-1">The Operator</div>'+toolCallCard('jira.write'));
+    appendToolLog('jira.write'); await sleep(280);
+    flashAgent('scribe');
+    addMessage('assistant', '<div class="font-bold text-paper mb-1">The Scribe</div>'+toolCallCard('audit.append'));
+    appendToolLog('audit.append');
+    setSessionState('COMPLETE');
+    addMessage('system', '✓ Workflow closed · audit log sealed · ready for review.');
+  } else {
+    flashAgent('scribe'); await sleep(280);
+    addMessage('assistant', '<div class="font-bold text-paper mb-1">The Scribe</div>'+toolCallCard('audit.append'));
+    appendToolLog('audit.append');
+    setSessionState('COMPLETE');
+    addMessage('system', '✓ Workflow closed · audit log sealed.');
+  }
+}
+
+function waitForApproval(){ return new Promise(function(resolve){ operatorApprovalResolve = resolve; }); }
+function handleApproval(approved){ if (operatorApprovalResolve) operatorApprovalResolve(approved); operatorApprovalResolve = null; }
+
+function sendOperatorMessage(){
+  var input = document.getElementById('operatorInput');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = ''; addMessage('user', text); executeRequest(text);
+}
+function quickPrompt(p){ document.getElementById('operatorInput').value = p; sendOperatorMessage(); }
+function clearConversation(){
+  document.getElementById('conversationLog').innerHTML = '';
+  document.getElementById('toolLog').innerHTML = '<div class="text-gray-500 italic">No tool calls yet. Send a message to begin.</div>';
+  document.getElementById('approvalBanner').classList.add('hidden');
+  metrics = { tasks:0, halts:0, spend:0 };
+  document.getElementById('metricTasks').innerText = '0';
+  document.getElementById('metricHalts').innerText = '0';
+  document.getElementById('metricSpend').innerText = '$0';
+  setSessionState('IDLE');
+  addMessage('assistant', '<div class="font-display text-base mb-1">Welcome to the OpenMAIC canvas.</div>Direct the mesh in natural language — try <em>"Block IP 192.0.2.144"</em>, <em>"Run my readiness diagnostic"</em>, or <em>"Generate this week\'s board brief."</em>');
+}
+
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+/* ════════════════════════════════════════════════════════════════════
+   READINESS QUIZ
+   ════════════════════════════════════════════════════════════════════ */
+var ELQ_QUESTIONS = [
+  { q:"Where does most of your team's LLM work happen today?",
+    o:[["Personal chat windows and ad-hoc accounts",0],["Shared prompt docs — no versions, no review",1],["Some approved templates, loosely enforced",2],["A governed mesh with versioned prompts",3]]},
+  { q:"How are model outputs constrained?",
+    o:[["Free-form — we read them and hope",0],["Basic written instructions",1],["Structured JSON on some workflows",2],["Deterministic schemas with grounding rules, every call",3]]},
+  { q:"An agent is about to take a high-risk action. What happens?",
+    o:[["It just happens",0],["We find out later from the logs",1],["Manual spot-checks catch most of it",2],["Automatic halt — a human approves before execution",3]]},
+  { q:"How does your operational data reach the model?",
+    o:[["Copy-pasted manually, per task",0],["Loose integrations — scope is unclear",1],["Centralized store with partial scrubbing",2],["Documented vault with automated PII-sanitization",3]]},
+  { q:"What does your automation cost structure look like?",
+    o:[["Monthly SaaS wrapper fees, and rising",0],["A mix of rented platforms and owned scripts",1],["Mostly our own infrastructure",2],["Direct API calls on our own stack",3]]},
+  { q:"Who decides what agents are allowed to do?",
+    o:[["Nobody, formally",0],["Informal team norms",1],["A documented policy nobody enforces",2],["A risk-tiered RBAC matrix (Tier 1–4)",3]]}
+];
+var ELQ_TIER = [
+  { min:0,  max:6,  label:"The Shadow Zone", desc:"High autonomy risk. Ungoverned usage is already inside your org — install deterministic constraints before an incident installs them for you.", product:"Prompt Architecture Suite", price:97 },
+  { min:7,  max:12, label:"Emerging Operator", desc:"You have momentum but leaks: undocumented data paths, uneven oversight, rented infrastructure margins. The fastest lift is telemetry and vault discipline.", product:"The Data Vault Bridge", price:149 },
+  { min:13, max:18, label:"Governance-Ready", desc:"Strong foundations. What separates you from full autonomous deployment is the formal layer — transition playbook, viability scoring, RBAC enforcement.", product:"Complete Architecture Bundle", price:297 }
+];
+var ELQ_ANSWERS = [], ELQ_IDX = 0;
+function elqRender(){
+  var body = document.getElementById('elq-body');
+  var Q = ELQ_QUESTIONS[ELQ_IDX];
+  document.getElementById('elq-progress-text').innerText = 'QUESTION ' + (ELQ_IDX+1) + ' / 6';
+  document.getElementById('elq-progress').style.width = ((ELQ_IDX)/6*100) + '%';
+  var h = '<h3 class="font-display text-xl md:text-2xl font-semibold text-ink mb-1">' + (ELQ_IDX+1) + '. ' + Q.q + '</h3>';
+  h += '<div class="text-[11px] uppercase tracking-[0.14em] text-gray-400 mb-6">' + (6-(ELQ_IDX+1)) + ' questions remaining</div><div class="space-y-3">';
+  for (var i=0;i<Q.o.length;i++){
+    var picked = ELQ_ANSWERS[ELQ_IDX]===i ? ' bg-olive text-paper border-olive' : '';
+    h += '<button onclick="elqPick('+i+')" class="elq-opt text-left w-full p-3.5 border hairline rounded-lg bg-white text-sm text-gray-700 hover:border-olive transition-colors'+picked+'">'
+       +   '<span class="font-mono text-[11px] mr-3 '+(picked?'text-white':'text-gray-400')+'">'+String.fromCharCode(65+i)+'.</span>'
+       +   Q.o[i][0] + '</button>';
+  }
+  h += '</div>';
+  if (ELQ_IDX>0) h += '<button onclick="elqBack()" class="mt-6 text-xs font-bold uppercase tracking-[0.14em] text-gray-500 hover:text-ink transition-colors bg-transparent border-none cursor-pointer">← Previous question</button>';
+  body.innerHTML = h;
+}
+function elqPick(i){ ELQ_ANSWERS[ELQ_IDX]=i; setTimeout(function(){ if(ELQ_IDX<ELQ_QUESTIONS.length-1){ELQ_IDX++;elqRender();}else elqResult(); }, 220); }
+function elqBack(){ if(ELQ_IDX>0){ELQ_IDX--;elqRender();} }
+function elqStart(){ ELQ_ANSWERS=[]; ELQ_IDX=0; elqRender(); }
+function elqScore(){ var s=0; for(var i=0;i<ELQ_ANSWERS.length;i++){ if(ELQ_ANSWERS[i]!==undefined) s+=ELQ_QUESTIONS[i].o[ELQ_ANSWERS[i]][1]; } return s; }
+function elqResult(){
+  var s = elqScore();
+  document.getElementById('elq-progress').style.width = '100%';
+  document.getElementById('elq-progress-text').innerText = 'COMPLETE';
+  var tier = ELQ_TIER[0];
+  for (var t=0;t<ELQ_TIER.length;t++){ if (s>=ELQ_TIER[t].min && s<=ELQ_TIER[t].max) tier = ELQ_TIER[t]; }
+  document.getElementById('liveReadinessScore').innerText = s + ' / 18';
+  document.getElementById('liveReadinessBar').style.width = (s/18*100) + '%';
+  var h = '<div class="text-center">';
+  h += '<div class="font-display text-6xl md:text-7xl font-semibold text-ink">'+s+'<span class="text-2xl text-gray-400">/18</span></div>';
+  h += '<div class="text-[11px] font-bold uppercase tracking-[0.22em] text-olive mt-2 mb-1">Your OpenMAIC Tier</div>';
+  h += '<h3 class="font-display text-2xl md:text-3xl font-semibold text-ink">'+tier.label+'</h3>';
+  h += '<p class="text-sm text-gray-600 max-w-lg mx-auto mt-3 leading-relaxed">'+tier.desc+'</p>';
+  h += '<div class="h-2 bg-gray-200 rounded-full max-w-md mx-auto mt-6 overflow-hidden"><div id="="elq-meter-fill" style="height:100%;background:linear-gradient(90deg,#A39B8B,#6B705C);width:0;transition:width 1.2s"></div></div>';
+  h += '<div class="mt-9 max-w-sm mx-auto bg-white border hairline rounded-xl p-6 text-left shadow-sm">';
+  h += '<div class="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-500 mb-1">Recommended Blueprint</div>';
+  h += '<div class="font-display text-lg font-semibold text-ink">'+tier.product+'</div>';
+  h += '<div class="font-display text-3xl font-semibold text-olive mt-1">$'+tier.price+' <span class="text-xs text-gray-500 font-sans font-medium">one-time</span></div>';
+  h += '<button onclick="handlePurchase(\''+tier.product+'\', '+tier.price+')" class="w-full mt-5 px-5 py-3 bg-olive text-paper text-xs font-bold uppercase tracking-[0.14em] rounded hover:bg-[#5D6350] transition-colors cursor-pointer border-none">Get the Blueprint →</button>';
+  h += '<a href="#pricing" class="block text-center mt-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500 hover:text-ink transition-colors">Compare all packages</a>';
+  h += '</div>';
+  h += '<button onclick="elqStart()" class="mt-7 text-xs font-bold uppercase tracking-[0.14em] text-gray-400 hover:text-ink transition-colors bg-transparent border-none cursor-pointer">↻ Retake the assessment</button>';
+  h += '</div>';
+  document.getElementById('elq-body').innerHTML = h;
+  setTimeout(function(){ var bar=document.getElementById('elq-meter-fill'); if(bar) bar.style.width=(s/18*100)+'%'; }, 600);
+}
+
+function toggleCap(el){
+  el.classList.toggle('on');
+  var cap = el.dataset.cap;
+  var card = document.getElementById('agentCard-'+cap);
+  if (card){ card.style.opacity = el.classList.contains('on') ? '1' : '0.35'; card.style.pointerEvents = el.classList.contains('on') ? 'auto' : 'none'; }
+}
+
 var STRIPE_PAYMENT_LINKS = {
   "Prompt Architecture Suite":   "https://buy.stripe.com/8x2cN4bAm8fzeFa1xe0sU01",
   "The Data Vault Bridge":       "https://buy.stripe.com/8x2dR88oafI17cIfo40sU00",
   "Complete Architecture Bundle":"https://buy.stripe.com/00w3cufQC9jDaoU8ZG0sU02"
 };
 var currentSelectedProduct = { name:'', price:0 };
-
 function handlePurchase(name, price) {
   currentSelectedProduct = { name:name, price:price };
   var url = STRIPE_PAYMENT_LINKS[name];
   if (url && url.indexOf('http') === 0) { window.location.href = url; return; }
   document.getElementById('modal-product-title').innerText = name;
   document.getElementById('modal-product-price').innerText = '$' + price + ' one-time';
-  var m = document.getElementById('checkout-modal');
-  m.classList.remove('hidden'); m.classList.add('flex');
+  var m = document.getElementById('checkout-modal'); m.classList.remove('hidden'); m.classList.add('flex');
 }
-function closeModal() {
-  var m = document.getElementById('checkout-modal');
-  m.classList.add('hidden'); m.classList.remove('flex');
-}
+function closeModal() { var m = document.getElementById('checkout-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
 function proceedToStripe() {
   var email = document.getElementById('modal-customer-email').value;
   var url = STRIPE_PAYMENT_LINKS[currentSelectedProduct.name];
-  if (url && url.indexOf('http') === 0) {
-    window.location.href = url + (email ? '?prefilled_email=' + encodeURIComponent(email) : '');
-  }
+  if (url && url.indexOf('http') === 0) window.location.href = url + (email ? '?prefilled_email=' + encodeURIComponent(email) : '');
 }
 
-/* ══════════ 5. UI CHROME ══════════ */
 var nav = document.getElementById('topnav');
 addEventListener('scroll', function(){ nav.style.boxShadow = scrollY > 40 ? '0 1px 0 rgba(56,51,47,.08)' : 'none'; }, {passive:true});
+document.getElementById('menuBtn').addEventListener('click', function(){ document.getElementById('mobileMenu').classList.toggle('hidden'); });
+document.querySelectorAll('#mobileMenu a').forEach(function(a){ a.addEventListener('click', function(){ document.getElementById('mobileMenu').classList.add('hidden'); }); });
+document.getElementById('operatorInput').addEventListener('keydown', function(e){ if ((e.metaKey||e.ctrlKey) && e.key==='Enter'){ e.preventDefault(); sendOperatorMessage(); } });
 
-document.getElementById('menuBtn').addEventListener('click', function(){
-  document.getElementById('mobileMenu').classList.toggle('hidden');
-});
-document.querySelectorAll('#mobileMenu a').forEach(function(a){
-  a.addEventListener('click', function(){ document.getElementById('mobileMenu').classList.add('hidden'); });
-});
-
-var io = new IntersectionObserver(function(entries){
-  entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-}, {threshold:.1});
+var io = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.1});
 document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
-renderSimulator();
-setActiveTabClass(document.getElementById('tab-founder'), true);
+/* BOOT */
+renderCanvasAgents();
+elqStart();
+clearConversation();
+wireHoverTips();
 </script>
 </body>
 </html>
