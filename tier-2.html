@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tier 2 · Data Vault Bridge | Efficiency Labs</title>
+<meta name="description" content="Telemetry plumbing, PII sanitization, and DLQ protocol. Adds The Vault Keeper + The Guardian agents. One-time $149.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#38332F', coal: '#2A2622', paper: '#FDFBF7',
+        cream: '#F5F4F2', sand: '#E0DDD8', taupe: '#A39B8B',
+        rose: '#CB997E', olive: '#6B705C',
+        emerald: '#5B7A52', amber: '#C68B3F'
+      },
+      fontFamily: {
+        display: ['"Source Serif 4"', 'Georgia', 'serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color:#FDFBF7; color:#38332F;
+ font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
+  ::selection { background:#6B705C; color:#FDFBF7; }
+  .hairline { border-color:rgba(56,51,47,.14); }
+  .kicker { display:flex; align-items:center; gap:14px;
+            font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+            font-weight:600; color:#A39B8B; }
+  .kicker::before { content:""; width:28px; height:1px; background:#CB997E; }
+
+  .code-block { background:#1E1E1E; border-radius:10px; overflow:hidden;
+ border:1px solid #2A2622; }
+  .code-head { background:#2A2622; border-bottom:1px solid #1A1714;
+               padding:10px 16px; display:flex; align-items:center; gap:10px; }
+  .code-dot { width:10px; height:10px; border-radius:99px; }
+  .code-dot.r { background:#E07856; } .code-dot.y { background:#E0B884; } .code-dot.g { background:#A8B89B; }
+  .code-file { font-family:'JetBrains Mono',monospace; font-size:11px;
+ color:#A39B8B; margin-left:8px; }
+  .code-body { padding:18px 20px; overflow-x:auto;
+ font-family:'JetBrains Mono',monospace; font-size:12.5px;
+ color:#E8EAE3; line-height:1.7; white-space:pre-wrap; }
+  .code-body .k { color:#CB997E; font-weight:600; }
+  .code-body .c { color:#A8B89B; }
+  .code-body .s { color:#E0B884; }
+  .code-body .v { color:#A8B89B; }
+  .code-body .n { color:#C8C2B5; }
+  .code-body .h { color:#6B705C; }
+
+  .token-chip { display:inline-flex; align-items:center; gap:4px;
+                padding:2px 8px; border-radius:99px;
+ font-size:10px; font-weight:700; letter-spacing:.12em;
+                text-transform:uppercase; }
+  .token-chip.olive { background:rgba(107,112,92,.18); color:#6B705C; }
+  .token-chip.rose  { background:rgba(203,153,126,.18); color:#CB997E; }
+
+  .step-num { width:32px; height:32px; border-radius:99px;
+              background:#6B705C; color:#FDFBF7;
+ display:flex; align-items:center; justify-content:center;
+ font-family:'Source Serif 4',serif; font-weight:600;
+ font-size:15px; flex-shrink:0; }
+
+  .download-btn { display:inline-flex; align-items:center; gap:10px;
+                  padding:14px 24px; background:#38332F; color:#FDFBF7;
+                  border-radius:8px; font-size:12px; font-weight:700;
+                  letter-spacing:.16em; text-transform:uppercase;
+ text-decoration:none; transition:all .2s; }
+  .download-btn:hover { background:#2A2622; transform:translateY(-1px); }
+  .download-btn.olive { background:#6B705C; }
+  .download-btn.olive:hover { background:#5D6350; }
+
+  .tier-tab { padding:14px 20px; font-size:11px; font-weight:700;
+              letter-spacing:.16em; text-transform:uppercase;
+              cursor:pointer; transition:all .2s; border-bottom:2px solid transparent;
+              color:#A39B8B; background:transparent; border:none; }
+  .tier-tab:hover { color:#38332F; }
+  .tier-tab.active { color:#38332F; border-bottom-color:#6B705C; background:#F5F4F2; }
+
+  .arch-diagram { background:#1A1714; border-radius:14px; padding:24px;
+ font-family:'JetBrains Mono',monospace; font-size:11.5px;
+ color:#EDEAE4; line-height:1.7; overflow-x:auto; }
+  .arch-diagram .hl { color:#CB997E; }
+  .arch-diagram .ok { color:#A8B89B; }
+  .arch-diagram .warn { color:#E07856; }
+  .arch-diagram .mut { color:#666; }
+</style>
+</head>
+<body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
+
+<div class="bg-olive text-paper py-3 px-6 text-center text-xs">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2">
+    <span class="font-bold uppercase tracking-[0.14em]">✓ Payment Confirmed</span>
+    <span class="opacity-90">Order #EL-2026-08-31-A02 · Receipt sent to your email · Tier 2 unlocked · Includes all Tier 1 files</span>
+  </div>
+</div>
+
+<nav class="bg-paper/95 backdrop-blur border-b hairline sticky top-0 z-50 w-full">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <div class="w-3.5 h-3.5 bg-olive"></div>
+      <div>
+        <a href="index.html" class="font-display text-xl font-semibold tracking-tight text-ink">Efficiency Labs</a>
+        <div class="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-semibold mt-0.5">Your Library · Member Access</div>
+      </div>
+    </div>
+    <div class="hidden md:flex gap-8 items-center">
+      <a href="#blueprints" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Blueprints</a>
+      <a href="#architecture" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Architecture</a>
+      <a href="#lambda" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Lambda Code</a>
+      <a href="#deploy" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Deploy</a>
+      <span class="text-xs text-gray-500 font-mono">Tier 2 · Data Vault Bridge</span>
+    </div>
+  </div>
+</nav>
+
+<header class="pt-14 pb-10 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col lg:flex-row justify-between gap-8 items-start">
+      <div class="flex-1">
+        <div class="kicker mb-4">Your Delivery · Tier 2 · $149 Paid</div>
+        <h1 class="font-display text-4xl md:text-5xl font-semibold text-ink tracking-tight leading-[1.08] mb-4">
+          The Data Vault Bridge
+        </h1>
+        <p class="text-base text-gray-600 leading-relaxed max-w-2xl mb-6">
+          A 40-page architecture blueprint plus production Lambda handlers for PII sanitization, webhook plumbing, and the Dead Letter Queue protocol. Unlocks The Vault Keeper + The Guardian agents — and includes every Tier 1 file.
+        </p>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="token-chip olive">All Tier 1 files</span>
+          <span class="token-chip rose">+ Lambda handler</span>
+          <span class="token-chip rose">+ PII scrubber</span>
+          <span class="token-chip olive">+ DLQ protocol</span>
+          <span class="token-chip rose">+ 40-page blueprint</span>
+       </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="#deploy" class="download-btn olive">▼ Download Full Bundle (.zip · 1.8 MB)</a>
+          <a href="#blueprint" class="download-btn">📄 View Blueprint PDF</a>
+        </div>
+      </div>
+      <div class="bg-cream border hairline rounded-xl p-5 w-full lg:w-80">
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-olive mb-3">What's Inside</div>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span><strong>Everything in Tier 1</strong> —5 prompts, schemas, handlers</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span><code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">vault-scrubber.js</code> — PII redaction Lambda</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span><code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">guardian.js</code> — RBAC sidecar process</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Stripe / Jira / Slack webhook adapters</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Dead Letter Queue (DLQ) protocol</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>40-page architecture blueprint (PDF + MD)</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Threat-model worksheet + IAM policy templates</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="bg-cream border-b hairline px-6">
+  <div class="max-w-6xl mx-auto flex overflow-x-auto">
+    <a href="tier-1.html" class="tier-tab">Tier 1 · $97 · Prompt Suite</a>
+    <a href="tier-2.html" class="tier-tab active">Tier 2 · $149 · Data Vault Bridge</a>
+    <a href="tier-3.html" class="tier-tab">Tier 3 · $297 · Complete Bundle</a>
+  </div>
+</section>
+
+<section id="blueprints" class="py-14 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">01 · Telemetry Pipeline</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">From raw event to governed action</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">The Tier 2 architecture. Every inbound event is scrubbed, scored, and gated before any model call or side effect.</p>
+
+    <div class="arch-diagram mb-8">
+<span class="mut"># Tier 2 reference architecture · openmaic/runtime/v2</span>
+<span class="mut"># ─────────────────────────────────────────────────────────────────</span>
+
+ ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐ │1. EventBridge│ │ 2. Vault │   │ 3. The Vault │ │ 4. LLM Agent  │
+  │   GuardDuty   │───▶│   Scrubber    │───▶│   Keeper     │───▶│   (Tier1)    │
+  │   /Webhook │    │   (PII strip)  │    │   (Schema │    │   prompt +    │
+  └──────────────┘    └──────────────┘    │   enforce)   │    │   schema.json │
+                                          └──────────────┘    └───────┬──────┘ │
+ ┌──────────────┐ │
+                                          │ 5. The │◀─────────┘
+                                          │   Guardian    │
+ │  (RBAC sidecar)│
+                                          └───────┬──────┘
+                                                  │ halt? or proceed                                                  ▼
+                          ┌──────────────────────────────────────┐
+                          │ 6. Action Layer (conditional)         │
+                          ├──────────────────────────────────────┤
+                          │ T1 / T2  → auto / async-execute │
+                          │  T3+ → halt + operator approval │
+                          └───────┬──────────────────────────────┘
+                                  │
+              ┌───────────────────┼───────────────────┐
+              ▼                   ▼                   ▼
+      ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+      │   Stripe     │    │   Jira       │    │   Slack      │
+      │   webhook    │    │   webhook │    │   webhook    │
+      └──────────────┘    └──────────────┘    └──────────────┘
+                                  │
+                                  ▼
+                          ┌──────────────┐
+                          │ 7. The Scribe │
+                          │   audit.log │
+                          │  (hash chain)  │
+                          └──────────────┘<span class="hl">★ Key insight:</span> Steps2–5 run <span class="ok">before</span> any LLM call. By the time
+  the model sees data, PII is gone, schema is validated, and risk is scored.
+  <span class="warn">Bad input never reaches the model.</span>
+ </div>
+
+ <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white border hairline rounded-xl p-5">
+        <div class="text-[10px] font-bold uppercase tracking-[0.14em] text-olive mb-2">2 · Scrubber</div>
+        <h4 class="font-display text-lg font-semibold text-ink mb-2">PII redaction</h4>
+        <p class="text-xs text-gray-600">18 PII patterns stripped at the edge. SSN, credit card, email, phone, address, DOB, passport, IP, IBAN, etc. Configurable per data class.</p>
+      </div>
+      <div class="bg-white border hairline rounded-xl p-5">
+        <div class="text-[10px] font-bold uppercase tracking-[0.14em] text-olive mb-2">5 · Guardian</div>
+        <h4 class="font-display text-lg font-semibold text-ink mb-2">RBAC sidecar</h4>
+        <p class="text-xs text-gray-600">Separate process. Scores every tool call against a 4-tier RBAC matrix. T3+ triggers halt and surfaces operator approval banner.</p>
+      </div>
+      <div class="bg-white border hairline rounded-xl p-5">
+        <div class="text-[10px] font-bold uppercase tracking-[0.14em] text-olive mb-2">7 · Scribe</div>
+        <h4 class="font-display text-lg font-semibold text-ink mb-2">Hash-chained audit</h4>
+        <p class="text-xs text-gray-600">Every action appended to S3 with SHA-256 link to prior entry. Tamper-evident. SOC-2 ready.1-click board export.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="lambda" class="py-14 px-6 bg-cream border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">02 · Lambda Source</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Production PII scrubber</h2>
+    <p class="text-gray-600 mb-6 max-w-2xl">Drop this into your <code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">vault-scrubber.js</code> handler. Ships ready to deploy.</p>
+
+    <div class="code-block">
+      <div class="code-head">
+        <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+        <span class="code-file">vault-scrubber.js</span>
+        <button onclick="copyCode('lambdaBody')" class="ml-auto px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-paper bg-olive rounded hover:bg-[#5D6350] transition-colors">Copy</button>
+      </div>
+<pre class="code-body" id="lambdaBody"><span class="h">/**
+ * Efficiency Labs · Tier 2 — vault-scrubber.js
+ * PII sanitization Lambda. Deploys to AWS Lambda / GCP Cloud Functions / Azure Functions.
+ * Runs at the edge of every inbound event BEFORE any model call.
+ */</span>
+<span class="k">import</span> {<span class="n">SecretsManagerClient</span>, <span class="n">GetSecretValueCommand</span> } <span class="k">from</span> <span class="s">"@aws-sdk/client-secrets-manager"</span>;
+
+<span class="k">const</span> <span class="n">PII_PATTERNS</span> = <span class="k">[</span>
+  { <span class="n">name</span>: <span class="s">"ssn"</span>, <span class="n">re</span>: <span class="s">/\b\d{3}-\d{2}-\d{4}\b/g</span>, <span class="n">replacement</span>: <span class="s">"[REDACTED:SSN]"</span> },
+  { <span class="n">name</span>: <span class="s">"credit_card"</span>,   <span class="n">re</span>: <span class="s">/\b(?:\d[ -]*?){13,16}\b/g</span>,         <span class="n">replacement</span>: <span class="s">"[REDACTED:CC]"</span> },
+  { <span class="n">name</span>: <span class="s">"email"</span>,        <span class="n">re</span>: <span class="s">/[\w.+-]+@[\w-]+\.[\w.-]+/g</span>, <span class="n">replacement</span>: <span class="s">"[REDACTED:EMAIL]"</span> },
+  { <span class="n">name</span>: <span class="s">"phone_us"</span>,     <span class="n">re</span>: <span class="s">/\b\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g</span>, <span class="n">replacement</span>: <span class="s">"[REDACTED:PHONE]"</span> },
+  { <span class="n">name</span>: <span class="s">"ipv4"</span>,        <span class="n">re</span>: <span class="s">/\b(?:25[0-5]|2[0-4]\d|[01]?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|[01]?\d?\d)){3}\b/g</span>, <span class="n">replacement</span>: <span class="s">"[REDACTED:IPV4]"</span> },
+  { <span class="n">name</span>: <span class="s">"iban"</span>,        <span class="n">re</span>: <span class="s">/\b[A-Z]{2}\d{2}[A-Z0-9]{4,30}\b/g</span>, <span class="n">replacement</span>: <span class="s">"[REDACTED:IBAN]"</span> },
+  { <span class="n">name</span>: <span class="s">"passport"</span>,    <span class="n">re</span>: <span class="s">/\b[A-Z][0-9]{8}\b/g</span>,               <span class="n">replacement</span>: <span class="s">"[REDACTED:PPT]"</span> },
+  { <span class="n">name</span>: <span class="s">"dob"</span>,         <span class="n">re</span>: <span class="s">/\b(0?[1-9]|1[0-2])\/(0?[1-9]|[12]\d|3[01])\/(19|20)\d{2}\b/g</span>, <span class="n">replacement</span>: <span class="s">"[REDACTED:DOB]"</span> },
+  <span class="c">// … 10 more patterns in the actual file</span>
+<span class="k">]</span>;
+
+<span class="k">export const</span> <span class="n">handler</span> = <span class="k">async</span> (<span class="n">event</span>) => {
+ <span class="k">const</span> <span class="n">scrubbed</span> = { ...<span class="n">event</span>, <span class="n">scrubbed_at</span>: <span class="k">new</span> <span class="n">Date</span>().<span class="n">toISOString</span>() };
+  <span class="k">const</span> <span class="n">report</span> = { <span class="n">redactions</span>: {}, <span class="n">total_redacted</span>: <span class="v">0</span> };
+
+  <span class="k">const</span> <span class="n">walk</span> = (<span class="n">obj</span>) => {
+ <span class="k">for</span> (<span class="k">const</span> <span class="n">key</span> <span class="k">in</span> <span class="n">obj</span>) {
+      <span class="k">if</span> (<span class="k">typeof</span> <span class="n">obj</span>[<span class="n">key</span>] ===<span class="s">"string"</span>) {
+        <span class="k">for</span> (<span class="k">const</span> { <span class="n">name</span>, <span class="n">re</span>, <span class="n">replacement</span> } <span class="k">of</span> <span class="n">PII_PATTERNS</span>) {
+          <span class="k">const</span> <span class="n">matches</span> = <span class="n">obj</span>[<span class="n">key</span>].<span class="n">match</span>(<span class="n">re</span>);
+ <span class="k">if</span> (<span class="n">matches</span>) {
+            <span class="n">obj</span>[<span class="n">key</span>] = <span class="n">obj</span>[<span class="n">key</span>].<span class="n">replace</span>(<span class="n">re</span>, <span class="n">replacement</span>);
+ <span class="n">report</span>.<span class="n">redactions</span>[<span class="n">name</span>] = (<span class="n">report</span>.<span class="n">redactions</span>[<span class="n">name</span>] || <span class="v">0</span>) + <span class="n">matches</span>.<span class="n">length</span>;
+            <span class="n">report</span>.<span class="n">total_redacted</span> += <span class="n">matches</span>.<span class="n">length</span>;
+          }
+        }
+      } <span class="k">else if</span> (<span class="k">typeof</span> <span class="n">obj</span>[<span class="n">key</span>] === <span class="s">"object"</span> && <span class="n">obj</span>[<span class="n">key</span>] !== <span class="k">null</span>) {
+        <span class="n">walk</span>(<span class="n">obj</span>[<span class="n">key</span>]);
+      }
+    }
+  };
+  <span class="n">walk</span>(<span class="n">scrubbed</span>);
+
+  <span class="c">// Forward to The Vault Keeper (schema enforce) → LLM agent</span>
+  <span class="k">const</span> <span class="n">res</span> = <span class="k">await</span> <span class="n">fetch</span>(<span class="n">process</span>.<span class="n">env</span>.<span class="n">VAULT_KEEPER_URL</span>, {
+    <span class="n">method</span>: <span class="s">"POST"</span>,
+    <span class="n">headers</span>: { <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span> },
+    <span class="n">body</span>: <span class="n">JSON</span>.<span class="n">stringify</span>({ <span class="n">payload</span>: <span class="n">scrubbed</span>, <span class="n">report</span> })
+  });
+  <span class="k">return</span> { <span class="n">statusCode</span>: <span class="n">res</span>.<span class="n">status</span>, <span class="n">body</span>: <span class="k">await</span> <span class="n">res</span>.<span class="n">text</span>() };
+};</pre>
+    </div>
+  </div>
+</section>
+
+<section id="architecture" class="py-14 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">03 · RBAC Matrix</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">The Guardian's decision tree</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">Four tiers. Each tool call is scored in &lt;50ms. The Guardian runs as a separate process so an agent can never police itself.</p>
+
+    <div class="bg-white border hairline rounded-xl overflow-hidden mb-8">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b hairline bg-cream">
+            <th class="p-4 text-[10px] uppercase tracking-[0.16em] text-gray-500 font-semibold">Action</th>
+            <th class="p-4 text-[10px] uppercase tracking-[0.16em] text-gray-500 font-semibold">Risk</th>
+            <th class="p-4 text-[10px] uppercase tracking-[0.16em] text-gray-500 font-semibold">Governance</th>
+            <th class="p-4 text-[10px] uppercase tracking-[0.16em] text-gray-500 font-semibold">Latency</th>
+          </tr>
+        </thead>
+        <tbody class="text-sm">
+          <tr class="border-b hairline">
+            <td class="p-4 font-mono text-xs text-gray-700">scan_logs</td>
+            <td class="p-4"><span class="px-2 py-0.5 bg-green-100 text-green-800 rounded text-[10px] font-bold">LOW</span></td>
+            <td class="p-4 text-gray-700">Auto-execute, async log</td>
+            <td class="p-4 font-mono text-xs text-gray-500">12ms</td>
+          </tr>
+          <tr class="border-b hairline bg-paper">
+            <td class="p-4 font-mono text-xs text-gray-700">update_jira</td>
+            <td class="p-4"><span class="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded text-[10px] font-bold">MED</span></td>
+            <td class="p-4 text-olive font-bold">Weekly human review</td>
+            <td class="p-4 font-mono text-xs text-gray-500">18ms</td>
+          </tr>
+          <tr class="border-b hairline">
+            <td class="p-4 font-mono text-xs text-gray-700">block_ip</td>
+            <td class="p-4"><span class="px-2 py-0.5 bg-orange-100 text-orange-800 rounded text-[10px] font-bold">HIGH</span></td>
+            <td class="p-4 text-orange-600 font-bold">1-click operator approval</td>
+            <td class="p-4 font-mono text-xs text-gray-500">22ms</td>
+          </tr>
+          <tr>
+<td class="p-4 font-mono text-xs text-gray-700">isolate_ec2</td>
+            <td class="p-4"><span class="px-2 py-0.5 bg-red-100 text-red-800 rounded text-[10px] font-bold">CRIT</span></td>
+            <td class="p-4 text-red-600 font-bold">CTO MFA challenge required</td>
+            <td class="p-4 font-mono text-xs text-gray-500">38ms</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="deploy" class="py-14 px-6 bg-ink text-paper border-b border-black/20">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4" style="color:#A39B8B">04 · Deploy</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight mb-8">15-minute installation</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+      <div>
+        <div class="step-num mb-4">1</div>
+        <h4 class="font-display text-lg font-semibold mb-2">Unzip</h4>
+        <p class="text-xs text-gray-300 leading-relaxed">Tier2 includes Tier 1's5 prompts plus vault, guardian, webhooks, and blueprint PDF.</p>
+      </div>
+      <div>
+        <div class="step-num mb-4">2</div>
+        <h4 class="font-display text-lg font-semibold mb-2">Configure</h4>
+        <p class="text-xs text-gray-300 leading-relaxed">Set vault endpoint, S3 bucket, Stripe/Jira/Slack keys in<code class="font-mono text-[11px] bg-coal px-1.5 py-0.5 rounded">.env</code>.</p>
+      </div>
+      <div>
+        <div class="step-num mb-4">3</div>
+        <h4 class="font-display text-lg font-semibold mb-2">Deploy</h4>
+        <p class="text-xs text-gray-300 leading-relaxed"><code class="font-mono text-[11px] bg-coal px-1.5 py-0.5 rounded">sls deploy</code> —4 functions + 3 webhook endpoints.</p>
+      </div>
+      <div>
+        <div class="step-num mb-4">4</div>
+        <h4 class="font-display text-lg font-semibold mb-2">Verify</h4>
+        <p class="text-xs text-gray-300 leading-relaxed">Send a test event with synthetic PII; confirm redactions in the audit log.</p>
+      </div>
+    </div>
+
+    <div class="bg-coal border border-white/10 rounded-xl p-5 font-mono text-sm overflow-x-auto">
+      <div class="text-[10px] text-gray-500 uppercase tracking-[0.16em] mb-3">terminal</div>
+<div class="text-emerald-400">$</div> <span class="text-paper">unzip data-vault-bridge-v1.zip && cd data-vault-bridge</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">cp .env.example .env && $EDITOR .env</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">npm install && npm run deploy</span>
+<div class="text-amber-400 mt-2">→ Deploying vault-scrubber · guardian · scribe ·3 webhooks</div>
+<div class="text-amber-400">✓ 4 functions live · 3 webhook endpoints ready</div>
+<div class="text-paper mt-1">PII patterns active: <span class="text-rose">18</span> · DLQ armed · audit log writing to s3://your-vault/audit/</div>
+    </div>
+  </div>
+</section>
+
+<section class="py-14 px-6 bg-rose-50 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">05 · Go further</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Tier 3 · Complete Bundle — $297</h2>
+    <p class="text-gray-600 mb-6 max-w-2xl">Adds the OpenMAIC runtime canvas, the transition playbook, the board deck, and the task viability scoring matrix. Everything you need to deploy, demo, and report.</p>
+    <a href="https://buy.stripe.com/00w3cufQC9jDaoU8ZG0sU02" class="download-btn olive">★ Upgrade to Tier 3 · $297</a>
+  </div>
+</section>
+
+<footer class="bg-coal text-gray-400 py-10 px-6">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <div class="font-display text-base font-semibold text-paper">Efficiency Labs</div>
+      <p class="text-xs">Need help? Reply to your receipt email or contact <a href="mailto:support@efficiencylabs.com" class="text-rose">support@efficiencylabs.com</a>.</p>
+    </div>
+    <div class="text-xs">&copy; 2026 Efficiency Labs · Order #EL-2026-08-31-A02</div>
+  </div>
+</footer>
+
+<script>
+function copyCode(id){
+  var body = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(body).then(function(){
+    var btn = event.target; var orig = btn.innerText;
+    btn.innerText = '✓ Copied';
+    setTimeout(function(){ btn.innerText = orig; }, 1200);
+  });
+}
+</script>
+</body>
+</html>

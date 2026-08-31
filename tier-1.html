@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tier 1 · Prompt Architecture Suite | Efficiency Labs</title>
+<meta name="description" content="Production-ready system prompts, JSON schemas, and Lambda handlers for autonomous business workflows. One-time $97.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#38332F', coal: '#2A2622', paper: '#FDFBF7',
+        cream: '#F5F4F2', sand: '#E0DDD8', taupe: '#A39B8B',
+        rose: '#CB997E', olive: '#6B705C',
+        emerald: '#5B7A52', amber: '#C68B3F'
+      },
+      fontFamily: {
+        display: ['"Source Serif 4"', 'Georgia', 'serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color:#FDFBF7; color:#38332F;
+ font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
+  ::selection { background:#6B705C; color:#FDFBF7; }
+  ::-webkit-scrollbar { width:8px; height:8px; }
+  ::-webkit-scrollbar-track { background:#FDFBF7; }
+  ::-webkit-scrollbar-thumb { background:#A39B8B; border-radius:4px; }
+
+  .hairline { border-color:rgba(56,51,47,.14); }
+  .kicker { display:flex; align-items:center; gap:14px;
+ font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+            font-weight:600; color:#A39B8B; }
+  .kicker::before { content:""; width:28px; height:1px; background:#CB997E; }
+
+  /* Code block */
+  .code-block { background:#1E1E1E; border-radius:10px; overflow:hidden;
+ border:1px solid #2A2622; }
+  .code-head { background:#2A2622; border-bottom:1px solid #1A1714;
+ padding:10px 16px; display:flex; align-items:center; gap:10px; }
+  .code-dot { width:10px; height:10px; border-radius:99px; }
+  .code-dot.r { background:#E07856; }
+  .code-dot.y { background:#E0B884; }
+  .code-dot.g { background:#A8B89B; }
+  .code-file { font-family:'JetBrains Mono',monospace; font-size:11px;
+ color:#A39B8B; margin-left:8px; }
+  .code-body { padding:18px 20px; overflow-x:auto;
+ font-family:'JetBrains Mono',monospace; font-size:12.5px;
+ color:#E8EAE3; line-height:1.7; }
+  .code-body .k { color:#CB997E; font-weight:600; }
+  .code-body .c { color:#A8B89B; }
+  .code-body .s { color:#E0B884; }
+  .code-body .v { color:#A8B89B; }
+  .code-body .n { color:#C8C2B5; }
+  .code-body .h { color:#6B705C; }
+
+ .token-chip { display:inline-flex; align-items:center; gap:4px;
+                padding:2px 8px; border-radius:99px;
+ font-size:10px; font-weight:700; letter-spacing:.12em;
+                text-transform:uppercase; }
+  .token-chip.olive { background:rgba(107,112,92,.18); color:#6B705C; }
+  .token-chip.rose { background:rgba(203,153,126,.18); color:#CB997E; }
+  .token-chip.amber { background:rgba(198,139,63,.18); color:#C68B3F; }
+
+  .file-card { background:#FFF; border:1px solid rgba(56,51,47,.14);
+ border-radius:10px; padding:14px 16px; transition:all .2s;
+ cursor:pointer; }
+  .file-card:hover { border-color:#6B705C; transform:translateY(-2px);
+ box-shadow:0 6px 18px rgba(56,51,47,.08); }
+
+  .step-num { width:32px; height:32px; border-radius:99px;
+              background:#6B705C; color:#FDFBF7;
+ display:flex; align-items:center; justify-content:center;
+              font-family:'Source Serif 4',serif; font-weight:600;
+ font-size:15px; flex-shrink:0; }
+
+  .download-btn { display:inline-flex; align-items:center; gap:10px;
+                  padding:14px 24px; background:#38332F; color:#FDFBF7;
+                  border-radius:8px; font-size:12px; font-weight:700;
+                  letter-spacing:.16em; text-transform:uppercase;
+ text-decoration:none; transition:all .2s; }
+  .download-btn:hover { background:#2A2622; transform:translateY(-1px); }
+  .download-btn.olive { background:#6B705C; }
+  .download-btn.olive:hover { background:#5D6350; }
+
+  .tier-tab { padding:14px 20px; font-size:11px; font-weight:700;
+              letter-spacing:.16em; text-transform:uppercase;
+              cursor:pointer; transition:all .2s; border-bottom:2px solid transparent;
+              color:#A39B8B; background:transparent; border:none; }
+  .tier-tab:hover { color:#38332F; }
+  .tier-tab.active { color:#38332F; border-bottom-color:#6B705C; background:#F5F4F2; }
+</style>
+</head>
+<body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
+
+<!-- POST-PURCHASE BANNER -->
+<div class="bg-olive text-paper py-3 px-6 text-center text-xs">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2">
+    <span class="font-bold uppercase tracking-[0.14em]">✓ Payment Confirmed</span>
+    <span class="opacity-90">Order #EL-2026-08-31-A01 · Receipt sent to your email · Tier 1 unlocked</span>
+ </div>
+</div>
+
+<!-- NAV -->
+<nav class="bg-paper/95 backdrop-blur border-b hairline sticky top-0 z-50 w-full">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <div class="w-3.5 h-3.5 bg-olive"></div>
+      <div>
+        <a href="index.html" class="font-display text-xl font-semibold tracking-tight text-ink">Efficiency Labs</a>
+        <div class="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-semibold mt-0.5">Your Library · Member Access</div>
+      </div>
+    </div>
+    <div class="hidden md:flex gap-8 items-center">
+      <a href="#blueprints" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Your Blueprints</a>
+      <a href="#prompts" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Prompts</a>
+      <a href="#schemas" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Schemas</a>
+      <a href="#deploy" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Deploy</a>
+      <span class="text-xs text-gray-500 font-mono">Tier 1 · Prompt Architecture Suite</span>
+    </div>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<header class="pt-14 pb-10 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col lg:flex-row justify-between gap-8 items-start">
+      <div class="flex-1">
+        <div class="kicker mb-4">Your Delivery · Tier 1 · $97 Paid</div>
+        <h1 class="font-display text-4xl md:text-5xl font-semibold text-ink tracking-tight leading-[1.08] mb-4">
+          Prompt Architecture Suite
+ </h1>
+        <p class="text-base text-gray-600 leading-relaxed max-w-2xl mb-6">
+          Five production system prompts, deterministic JSON schemas, and zero-hallucination grounding rules — engineered for autonomous business workflows. Deploy today on your own infrastructure.
+        </p>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="token-chip olive">5 system prompts</span>
+          <span class="token-chip rose">JSON schemas</span>
+          <span class="token-chip amber">Grounding rules</span>
+          <span class="token-chip olive">Notion vault</span>
+          <span class="token-chip olive">Markdown vault</span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="#deploy" class="download-btn olive">▼ Download Full Bundle (.zip ·412 KB)</a>
+          <a href="#notion" class="download-btn">📓 Open Notion Vault</a>
+        </div>
+      </div>
+      <div class="bg-cream border hairline rounded-xl p-5 w-full lg:w-80">
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-olive mb-3">What's Inside</div>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>5 production-ready<code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">sys_prompt.md</code> files</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>5 deterministic JSON schemas</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Grounding rule library (32 patterns)</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Notion vault (linked)</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Markdown vault (downloadable)</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>1-page deploy playbook</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TIER SWITCHER (so user sees upgrade path) -->
+<section class="bg-cream border-b hairline px-6">
+  <div class="max-w-6xl mx-auto flex overflow-x-auto">
+    <a href="tier-1.html" class="tier-tab active">Tier 1 · $97 · Prompt Suite</a>
+    <a href="tier-2.html" class="tier-tab">Tier 2 · $149 · Data Vault Bridge</a>
+    <a href="tier-3.html" class="tier-tab">Tier 3 · $297 · Complete Bundle</a>
+  </div>
+</section>
+
+<!-- YOUR BLUEPRINTS (file index) -->
+<section id="blueprints" class="py-14 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">01 · Your Blueprints</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Five production workflows</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">Each blueprint ships a system prompt, a JSON contract, and a grounding rule set. Click any card to preview.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+ <!-- Workflow 1: Customer Support Triage -->
+    <div class="file-card" onclick="previewPrompt(1)">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">WF-01</span>
+        <span class="token-chip olive">Tier 1</span>
+      </div>
+      <h3 class="font-display text-lg font-semibold text-ink mb-1">Customer Support Triage</h3>
+      <p class="text-xs text-gray-600 leading-relaxed mb-3">Routes inbound tickets to the right human team. Returns severity, category, and routing decision as deterministic JSON.</p>
+      <div class="flex items-center justify-between text-[10px] font-mono text-gray-500">
+        <span>3 files ·28 KB</span>
+        <span class="text-olive font-bold">PREVIEW →</span>
+      </div>
+    </div>
+
+    <!-- Workflow 2: Lead Enrichment -->
+    <div class="file-card" onclick="previewPrompt(2)">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">WF-02</span>
+        <span class="token-chip olive">Tier 1</span>
+      </div>
+      <h3 class="font-display text-lg font-semibold text-ink mb-1">Lead Enrichment &amp; Scoring</h3>
+      <p class="text-xs text-gray-600 leading-relaxed mb-3">Takes a raw inbound lead and produces enriched CRM record + viability score.</p>
+      <div class="flex items-center justify-between text-[10px] font-mono text-gray-500">
+        <span>3 files · 31 KB</span>
+        <span class="text-olive font-bold">PREVIEW →</span>
+      </div>
+    </div>
+
+    <!-- Workflow 3: Meeting Notes -->
+    <div class="file-card" onclick="previewPrompt(3)">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">WF-03</span>
+        <span class="token-chip rose">Tier 1</span>
+      </div>
+      <h3 class="font-display text-lg font-semibold text-ink mb-1">Meeting Notes &amp; Action Items</h3>
+      <p class="text-xs text-gray-600 leading-relaxed mb-3">Transcripts → structured action items + owners + deadlines. Outputs JSON your task tracker ingests.</p>
+      <div class="flex items-center justify-between text-[10px] font-mono text-gray-500">
+        <span>3 files · 24 KB</span>
+        <span class="text-olive font-bold">PREVIEW →</span>
+      </div>
+    </div>
+
+    <!-- Workflow 4: Contract Review -->
+    <div class="file-card" onclick="previewPrompt(4)">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">WF-04</span>
+        <span class="token-chip rose">Tier 1</span>
+      </div>
+      <h3 class="font-display text-lg font-semibold text-ink mb-1">Contract Clause Extraction</h3>
+      <p class="text-xs text-gray-600 leading-relaxed mb-3">Parses legal PDFs and surfaces non-standard clauses as a JSON diff against your playbook.</p>
+      <div class="flex items-center justify-between text-[10px] font-mono text-gray-500">
+        <span>3 files · 38 KB</span>
+        <span class="text-olive font-bold">PREVIEW →</span>
+      </div>
+    </div>
+
+    <!-- Workflow 5: Security Alert Triage -->
+    <div class="file-card" onclick="previewPrompt(5)">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-mono text-[10px] uppercase tracking-[0.16em] text-olive">WF-05</span>
+        <span class="token-chip amber">Tier 2 ready</span>
+      </div>
+      <h3 class="font-display text-lg font-semibold text-ink mb-1">Security Alert Triage</h3>
+      <p class="text-xs text-gray-600 leading-relaxed mb-3">Triage GuardDuty/Sentinel alerts to severity tiers with recommended response. Pairs with The Guardian in Tier 2.</p>
+      <div class="flex items-center justify-between text-[10px] font-mono text-gray-500">
+        <span>3 files · 42 KB</span>
+        <span class="text-olive font-bold">PREVIEW →</span>
+      </div>
+    </div>
+
+ </div>
+</section>
+
+<!-- PROMPT PREVIEW (interactive) -->
+<section id="prompts" class="py-14 px-6 bg-cream border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">02 · Live Preview</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">See exactly what you're shipping</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">This is production code, not pseudo-code. Each prompt enforces strict grounding rules and outputs schema-validated JSON every call.</p>
+
+    <div id="promptPreview" class="code-block">
+      <div class="code-head">
+        <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+        <span class="code-file" id="previewFile">wf-01-triage/sys_prompt.md</span>
+        <button onclick="copyCode()" class="ml-auto px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-paper bg-olive rounded hover:bg-[#5D6350] transition-colors">Copy</button>
+      </div>
+      <pre class="code-body" id="previewBody"></pre>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEMAS PREVIEW -->
+<section id="schemas" class="py-14 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">03 · Schemas</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Deterministic contracts</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">Every output lands in this exact JSON shape. No free-text parsing, no "interpret the model's intent."</p>
+
+    <div class="code-block">
+      <div class="code-head">
+        <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+        <span class="code-file">wf-01-triage/schema.json</span>
+        <button onclick="copyCode2()" class="ml-auto px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-paper bg-olive rounded hover:bg-[#5D6350] transition-colors">Copy</button>
+      </div>
+<pre class="code-body"><span class="h">// Deterministic contract for triage output</span>
+<span class="k">{</span>
+  <span class="n">"$schema"</span>: <span class="s">"https://json-schema.org/draft/2020-12/schema"</span>,
+  <span class="n">"title"</span>: <span class="s">"TriageDecision"</span>,
+  <span class="n">"type"</span>: <span class="s">"object"</span>,
+  <span class="n">"required"</span>: <span class="k">[</span><span class="s">"ticket_id"</span>, <span class="s">"severity"</span>, <span class="s">"category"</span>, <span class="s">"routing"</span>, <span class="s">"confidence"</span><span class="k">]</span>,
+  <span class="n">"properties"</span>: <span class="k">{</span>
+    <span class="n">"ticket_id"</span>:    <span class="k">{</span> <span class="n">"type"</span>: <span class="s">"string"</span>, <span class="n">"pattern"</span>: <span class="s">"^[A-Z]{3}-[0-9]{4,6}$"</span> <span class="k">}</span>,
+    <span class="n">"severity"</span>:    <span class="k">{</span> <span class="n">"type"</span>: <span class="s">"string"</span>, <span class="n">"enum"</span>: <span class="k">[</span><span class="s">"P1"</span>,<span class="s">"P2"</span>,<span class="s">"P3"</span>,<span class="s">"P4"</span><span class="k">]</span> <span class="k">}</span>,
+    <span class="n">"category"</span>:    <span class="k">{</span> <span class="n">"type"</span>: <span class="s">"string"</span>, <span class="n">"enum"</span>: <span class="k">[</span><span class="s">"billing"</span>,<span class="s">"bug"</span>,<span class="s">"how-to"</span>,<span class="s">"security"</span>,<span class="s">"other"</span><span class="k">]</span> <span class="k">}</span>,
+    <span class="n">"routing"</span>:     <span class="k">{</span> <span class="n">"type"</span>: <span class="s">"string"</span>, <span class="n">"enum"</span>: <span class="k">[</span><span class="s">"team-billing"</span>,<span class="s">"team-eng"</span>,<span class="s">"team-cs"</span>,<span class="s">"team-sec"</span><span class="k">]</span> <span class="k">}</span>,
+    <span class="n">"confidence"</span>:  <span class="k">{</span> <span class="n">"type"</span>: <span class="s">"number"</span>, <span class="n">"minimum"</span>: <span class="v">0</span>, <span class="n">"maximum"</span>: <span class="v">1</span> <span class="k">}</span>,
+    <span class="n">"needs_human"</span>: <span class="k">{</span> <span class="n">"type"</span>: <span class="s">"boolean"</span><span class="k">}</span>
+  <span class="k">}</span>,
+  <span class="n">"additionalProperties"</span>: <span class="v">false</span>
+<span class="k">}</span></pre>
+    </div>
+
+ <p class="text-xs text-gray-500 mt-4 font-mono">All5 workflows ship a matching JSON schema. Enforced via Zod-equivalent runtime check in the included Lambda handler.</p>
+  </div>
+</section>
+
+<!-- DEPLOY -->
+<section id="deploy" class="py-14 px-6 bg-ink text-paper border-b border-black/20">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4" style="color:#A39B8B">04 · Deploy in10 minutes</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight mb-8">From download to running in your infrastructure</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+      <div>
+        <div class="step-num mb-4">1</div>
+        <h4 class="font-display text-lg font-semibold mb-2">Unzip the bundle</h4>
+        <p class="text-xs text-gray-300 leading-relaxed">Extract to your repo. Five folders, each with prompt + schema + handler.</p>
+      </div>
+      <div>
+        <div class="step-num mb-4">2</div>
+        <h4 class="font-display text-lg font-semibold mb-2">Set 3 env vars</h4>
+        <p class="text-xs text-gray-300 leading-relaxed">Your model API key, vault endpoint, and webhook URL. Detailed in the README.</p>
+      </div>
+      <div>
+        <div class="step-num mb-4">3</div>
+        <h4 class="font-display text-lg font-semibold mb-2">Deploy the handler</h4>
+        <p class="text-xs text-gray-300 leading-relaxed"><code class="font-mono text-[11px] bg-coal px-1.5 py-0.5 rounded">sls deploy</code> or push to your platform. Runs in any Node18+ environment.</p>
+      </div>
+      <div>
+        <div class="step-num mb-4">4</div>
+        <h4 class="font-display text-lg font-semibold mb-2">Test &amp; promote</h4>
+        <p class="text-xs text-gray-300 leading-relaxed">Hit the test endpoint, confirm JSON shape, flip to production traffic.</p>
+      </div>
+    </div>
+
+    <div class="bg-coal border border-white/10 rounded-xl p-5 font-mono text-sm overflow-x-auto">
+      <div class="text-[10px] text-gray-500 uppercase tracking-[0.16em] mb-3">terminal</div>
+<div class="text-emerald-400">$</div> <span class="text-paper">unzip prompt-architecture-suite-v1.zip && cd prompt-architecture-suite</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">export ANTHROPIC_API_KEY=sk-ant-… && export VAULT_URL=https://… && export WEBHOOK_URL=https://…</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">npm install && npm run deploy</span>
+<div class="text-amber-400 mt-2">→ Deploying wf-01-triage · wf-02-enrichment · wf-03-meetings · wf-04-contracts · wf-05-secops</div>
+<div class="text-amber-400">✓ 5 functions live · endpoints at https://api.yourcompany.com/triage, /enrich, /meetings, /contracts, /secops</div>
+<div class="text-paper mt-1">5 endpoints ready · p99 latency <span class="text-rose">142ms</span> · cost per1k calls <span class="text-rose">$0.43</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- UPGRADE PATH -->
+<section id="notion" class="py-14 px-6 bg-rose-50 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">05 · Want more?</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Upgrade to Tier 2 · Data Vault Bridge — $149</h2>
+    <p class="text-gray-600 mb-6 max-w-2xl">Tier 2 unlocks<strong>The Vault Keeper</strong> +<strong>The Guardian</strong>. Adds PII scrubbing, the Lambda data-scrubber, DLQ protocol, and webhook plumbing for Stripe/Jira/Slack.</p>
+    <div class="flex flex-wrap gap-3">
+      <a href="https://buy.stripe.com/8x2dR88oafI17cIfo40sU00" class="download-btn olive">▲ Upgrade to Tier 2 · $149</a>
+      <a href="https://buy.stripe.com/00w3cufQC9jDaoU8ZG0sU02" class="download-btn">★ Get the Complete Bundle · $297</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-coal text-gray-400 py-10 px-6">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <div class="font-display text-base font-semibold text-paper">Efficiency Labs</div>
+      <p class="text-xs">Need help? Reply to your receipt email or contact <a href="mailto:support@efficiencylabs.com" class="text-rose">support@efficiencylabs.com</a>.</p>
+    </div>
+    <div class="text-xs">&copy; 2026 Efficiency Labs · Order #EL-2026-08-31-A01</div>
+  </div>
+</footer>
+
+<script>
+var PROMPTS = {
+1: {
+    file: 'wf-01-triage/sys_prompt.md',
+    body: `<span class="h"># WF-01 · Customer Support Triage · Tier1</span>
+<span class="h"># Stack: Anthropic Claude 3.5 Sonnet · output: JSON Schema TriageDecision</span>
+
+<span class="k"># CORE DIRECTIVE</span>
+You are a Tier-1 customer support triage agent for {{COMPANY_NAME}}. Your job is to
+classify inbound support tickets and route them to the right human team. You do not
+respond to customers — you only classify and route.
+
+<span class="k"># ZERO-HALLUCINATION CONSTRAINTS</span>
+1. <span class="c">STRICT GROUNDING:</span> Base every classification ONLY on the ticket
+   text in \`{{TICKET_BODY}}\`. If info is missing, set \`confidence < 0.5\`.
+2. <span class="c">NO ASSUMPTIONS:</span> Never guess product names, plan tiers, or
+   customer identities. Use \`null\` and flag \`needs_human: true\`.
+3. <span class="c">NO CUSTOMER REPLIES:</span> Output JSON only. Never write a customer-
+   facing message. The downstream tool handles replies.
+
+<span class="k"># SEVERITY RUBRIC</span>
+- <span class="v">P1:</span> Production outage, data loss, security incident
+- <span class="v">P2:</span> Major feature broken, billing dispute > $500
+- <span class="v">P3:</span> Minor bug, how-to question, account question
+- <span class="v">P4:</span> Feature request, general feedback
+
+<span class="k"># DETERMINISTIC SCHEMA</span>
+You MUST return valid JSON matching the schema in \`schema.json\`. No prose. No
+markdown fences. Raw JSON only. The runtime validator will reject anything else.
+
+<span class="k"># ROUTING MATRIX</span>
+- <span class="v">billing</span>  → team-billing (Zendesk queue)
+- <span class="v">bug</span>      → team-eng   (Jira auto-create)
+- <span class="v">how-to</span>   → team-cs    (Intercom reply)
+- <span class="v">security</span> → team-sec   (PagerDuty P2)
+- <span class="v">other</span>    → team-cs    (human review)
+
+<span class="k"># INPUT</span>
+\`\`\`
+ticket_id: {{TICKET_ID}}
+ticket_body: {{TICKET_BODY}}
+\`\`\`
+
+<span class="k"># OUTPUT</span>
+Return JSON only. Validated against TriageDecision schema. No commentary.`
+  },
+2: {
+    file: 'wf-02-enrichment/sys_prompt.md',
+    body: `<span class="h"># WF-02 · Lead Enrichment &amp; Scoring · Tier 1</span>
+
+<span class="k"># CORE DIRECTIVE</span>
+You are a B2B lead enrichment agent. Take a raw inbound lead and produce a scored
+CRM record. You DO NOT write to the CRM — you produce the JSON payload that
+The Operator (Tier 2) writes.
+
+<span class="k"># ZERO-HALLUCINATION CONSTRAINTS</span>
+1. <span class="c">ONLY USE PROVIDED DATA:</span> Email domain, name, company string.
+   Do not invent phone numbers, job titles, or LinkedIn URLs.
+2. <span class="c">NO ENRICHMENT LOOKUPS:</span> No external scraping. Tier 1 is
+   read-only by design. Leave fields as \`null\` if unknown.
+3. <span class="c">EXPLAINABLE SCORING:</span> Every \`score\` field MUST include
+   the \`factors\` array showing which signals contributed.
+
+<span class="k"># SCORING RUBRIC (0–100)</span>
+- <span class="v">+30</span> if email domain matches your ICP list (free-tier excluded)
+- <span class="v">+25</span> if company name contains target vertical keyword
+- <span class="v">+20</span> if job title contains "VP", "Director", "Head", "C-"
+- <span class="v">+15</span> if email is not a freemail provider- <span class="v">+10</span> if company size hint present (e.g. "Inc", "Corp")
+
+<span class="k"># OUTPUT</span>
+JSON matching LeadEnrichment schema. Validated by Zod equivalent.
+\`\`\`json
+{
+  "lead_id": "string",
+  "email": "string",
+  "company": {"name": "string|null", "domain": "string|null"},
+  "person":  {"name": "string|null", "title": "string|null"},
+  "score":   {"value":": 0-100", "factors": ["string"]},
+  "lifecycle_stage": "subscriber|lead|marketingqualifiedlead|opportunity|null",
+  "needs_human_review": "boolean"
+}
+\`\`\``
+ },
+  3: {
+    file: 'wf-03-meetings/sys_prompt.md',
+    body: `<span class="h"># WF-03 · Meeting Notes &amp; Action Items · Tier 1</span>
+
+<span class="k"># CORE DIRECTIVE</span>
+Convert a meeting transcript into structured action items your task tracker
+(Linear, Jira, Asana) ingests. Output JSON, not prose.
+
+<span class="k"># ZERO-HALLUCINATION CONSTRAINTS</span>
+1. <span class="c">ONLY EXTRACT WHAT WAS SAID:</span> Action items must be explicitly
+   stated or strongly implied. Never invent deadlines or owners.
+2. <span class="c">NO HALLUCINATED OWNERS:</span> If the owner wasn't named, use
+   \`null\` and set \`needs_human_review: true\`.
+3. <span class="c">DEADLINES:</span> If no explicit date, return \`null\` and add
+   \`"deadline_inferred": false\`.
+
+<span class="k"># ACTION ITEM SHAPE</span>
+Each action item: { id, summary, owner, deadline, source_quote, priority }
+
+<span class="k"># OUTPUT</span>
+JSON matching MeetingActions schema. Validated against the contract.`
+  },
+  4: {
+    file: 'wf-04-contracts/sys_prompt.md',
+    body: `<span class="h"># WF-04 · Contract Clause Extraction · Tier 1</span>
+
+<span class="k"># CORE DIRECTIVE</span>
+Parse a contract PDF (text-extracted) and identify any clause that DEVIATES from
+your standard playbook. Return a JSON diff the legal team reviews.
+
+<span class="k"># ZERO-HALLUCINATION CONSTRAINTS</span>
+1. <span class="c">QUOTE THE SOURCE:</span> Every flagged deviation must include the
+   exact clause text and page number.
+2. <span class="c">NO LEGAL ADVICE:</span> You flag, you do not advise. Never write
+   "this is risky" or "you should reject." Just identify the deviation.
+3. <span class="c">PLAYBOOK GROUNDING:</span> \`{{PLAYBOOK}}\` is authoritative.
+   Anything in the contract matching the playbook is NOT a deviation.`
+  },
+  5: {
+    file: 'wf-05-secops/sys_prompt.md',
+    body: `<span class="h"># WF-05 · Security Alert Triage · Tier 2 Ready</span>
+
+<span class="k"># CORE DIRECTIVE</span>
+Triage AWS GuardDuty / Azure Sentinel / Datadog security alerts into severity
+tiers with a recommended response. Pairs with The Guardian in Tier 2 for action
+gating.
+
+<span class="k"># ZERO-HALLUCINATION CONSTRAINTS</span>
+1. <span class="c">GROUNDED ON ALERT PAYLOAD ONLY:</span> Cite the alert field you used.
+2. <span class="c">NEVER INVENT IPs:</span> Only use IPs in \`{{ALERT_PAYLOAD}}\`.
+3. <span class="c">NEVER INVENT USERNAMES:</span> Same rule.
+4. <span class="c">RECOMMEND, DON'T ACT:</span> Tier 1 returns \`recommended_action\`
+   as a string. Tier 2's Guardian gates the execution.
+
+<span class="k"># TIERS</span>
+- <span class="v">T1:</span> Informational — auto-resolve, async log
+- <span class="v">T2:</span> Low — async human review within24h
+- <span class="v">T3:</span> High — Guardian halt + 1-click approve
+- <span class="v">T4:</span> Critical — CTO MFA required before any action`
+  }
+};
+
+function previewPrompt(id){
+  var p = PROMPTS[id];
+  document.getElementById('previewFile').innerText = p.file;
+  document.getElementById('previewBody').innerHTML = p.body;
+  document.getElementById('prompts').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function copyCode(){
+  var body = document.getElementById('previewBody').innerText;
+  navigator.clipboard.writeText(body).then(function(){
+    var btn = document.querySelector('#promptPreview .code-head button');
+    var orig = btn.innerText;
+    btn.innerText = '✓ Copied';
+    setTimeout(function(){ btn.innerText = orig; }, 1200);
+  });
+}
+function copyCode2(){
+  var body = document.querySelector('#schemas .code-body').innerText;
+  navigator.clipboard.writeText(body).then(function(){
+    var btn = document.querySelector('#schemas .code-head button');
+    var orig = btn.innerText;
+    btn.innerText = '✓ Copied';
+    setTimeout(function(){ btn.innerText = orig; }, 1200);
+  });
+}
+
+// Initialize with WF-01 visible
+previewPrompt(1);
+</script>
+</body>
+</html>

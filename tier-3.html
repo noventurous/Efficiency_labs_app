@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tier 3 · Complete Architecture Bundle | Efficiency Labs</title>
+<meta name="description" content="Full OpenMAIC runtime, transition playbook, viability matrix, board deck. The complete package. One-time $297.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#38332F', coal: '#2A2622', paper: '#FDFBF7',
+        cream: '#F5F4F2', sand: '#E0DDD8', taupe: '#A39B8B',
+        rose: '#CB997E', olive: '#6B705C',
+        emerald: '#5B7A52', amber: '#C68B3F'
+      },
+      fontFamily: {
+        display: ['"Source Serif 4"', 'Georgia', 'serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color:#FDFBF7; color:#38332F;
+ font-family:'Inter',ui-sans-serif,system-ui,sans-serif; }
+  ::selection { background:#6B705C; color:#FDFBF7; }
+  .hairline { border-color:rgba(56,51,47,.14); }
+  .kicker { display:flex; align-items:center; gap:14px;
+            font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+            font-weight:600; color:#A39B8B; }
+  .kicker::before { content:""; width:28px; height:1px; background:#CB997E; }
+
+  .code-block { background:#1E1E1E; border-radius:10px; overflow:hidden;
+ border:1px solid #2A2622; }
+  .code-head { background:#2A2622; border-bottom:1px solid #1A1714;
+               padding:10px 16px; display:flex; align-items:center; gap:10px; }
+  .code-dot { width:10px; height:10px; border-radius:99px; }
+  .code-dot.r { background:#E07856; } .code-dot.y { background:#E0B884; } .code-dot.g { background:#A8B89B; }
+  .code-file { font-family:'JetBrains Mono',monospace; font-size:11px;
+ color:#A39B8B; margin-left:8px; }
+  .code-body { padding:18px 20px; overflow-x:auto;
+ font-family:'JetBrains Mono',monospace; font-size:12.5px;
+ color:#E8EAE3; line-height:1.7; white-space:pre-wrap; }
+  .code-body .k { color:#CB997E; font-weight:600; }
+  .code-body .c { color:#A8B89B; }
+  .code-body .s { color:#E0B884; }
+  .code-body .v { color:#A8B89B; }
+  .code-body .n { color:#C8C2B5; }
+  .code-body .h { color:#6B705C; }
+
+  .token-chip { display:inline-flex; align-items:center; gap:4px;
+                padding:2px 8px; border-radius:99px;
+ font-size:10px; font-weight:700; letter-spacing:.12em;
+                text-transform:uppercase; }
+  .token-chip.olive { background:rgba(107,112,92,.18); color:#6B705C; }
+  .token-chip.rose  { background:rgba(203,153,126,.18); color:#CB997E; }
+  .token-chip.amber { background:rgba(198,139,63,.18); color:#C68B3F; }
+
+  .step-num { width:32px; height:32px; border-radius:99px;
+              background:#6B705C; color:#FDFBF7;
+ display:flex; align-items:center; justify-content:center;
+              font-family:'Source Serif 4',serif; font-weight:600;
+ font-size:15px; flex-shrink:0; }
+
+  .download-btn { display:inline-flex; align-items:center; gap:10px;
+                  padding:14px 24px; background:#38332F; color:#FDFBF7;
+                  border-radius:8px; font-size:12px; font-weight:700;
+                  letter-spacing:.16em; text-transform:uppercase;
+ text-decoration:none; transition:all .2s; }
+  .download-btn:hover { background:#2A2622; transform:translateY(-1px); }
+  .download-btn.olive { background:#6B705C; }
+  .download-btn.olive:hover { background:#5D6350; }
+
+  .tier-tab { padding:14px 20px; font-size:11px; font-weight:700;
+              letter-spacing:.16em; text-transform:uppercase;
+              cursor:pointer; transition:all .2s; border-bottom:2px solid transparent;
+              color:#A39B8B; background:transparent; border:none; }
+  .tier-tab:hover { color:#38332F; }
+  .tier-tab.active { color:#38332F; border-bottom-color:#6B705C; background:#F5F4F2; }
+
+  .score-cell { padding:10px; text-align:center; border:1px solid rgba(56,51,47,.18);
+ font-size:11px; }
+  .score-cell.high { background:rgba(168,184,155,.25); color:#5B7A52; font-weight:600; }
+  .score-cell.med  { background:rgba(224,184,132,.18); color:#C68B3F; font-weight:600; }
+  .score-cell.low  { background:rgba(224,120,86,.15);  color:#E07856; font-weight:600; }
+</style>
+</head>
+<body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
+
+<div class="bg-olive text-paper py-3 px-6 text-center text-xs">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2">
+    <span class="font-bold uppercase tracking-[0.14em]">✓ Payment Confirmed</span>
+    <span class="opacity-90">Order #EL-2026-08-31-A03 · Receipt sent to your email · Full OpenMAIC bundle unlocked</span>
+  </div>
+</div>
+
+<nav class="bg-paper/95 backdrop-blur border-b hairline sticky top-0 z-50 w-full">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <div class="w-3.5 h-3.5 bg-olive"></div>
+      <div>
+        <a href="index.html" class="font-display text-xl font-semibold tracking-tight text-ink">Efficiency Labs</a>
+        <div class="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-semibold mt-0.5">Your Library · Member Access</div>
+      </div>
+    </div>
+    <div class="hidden md:flex gap-8 items-center">
+ <a href="#bundle" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Bundle Contents</a>
+      <a href="#runtime" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Runtime</a>
+      <a href="#playbook" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Playbook</a>
+      <a href="#viability" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Viability Matrix</a>
+      <a href="#board" class="text-[13px] font-medium text-gray-600 hover:text-ink transition-colors">Board Deck</a>
+   </div>
+  </div>
+</nav>
+
+<header class="pt-14 pb-10 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col lg:flex-row justify-between gap-8 items-start">
+      <div class="flex-1">
+        <div class="kicker mb-4">Your Delivery · Tier 3 · $297 Paid · Best Value</div>
+        <h1 class="font-display text-4xl md:text-5xl font-semibold text-ink tracking-tight leading-[1.08] mb-4">
+          Complete OpenMAIC Bundle
+        </h1>
+        <p class="text-base text-gray-600 leading-relaxed max-w-2xl mb-6">
+          Everything in Tier 1 + Tier 2, plus the full OpenMAIC runtime canvas, the zero-manual transition playbook, the task viability scoring matrix, and a board-ready deck outline. The complete package — six specialist agents, fully orchestrated.
+        </p>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="token-chip olive">All Tier 1 files</span>
+          <span class="token-chip olive">All Tier 2 files</span>
+          <span class="token-chip rose">+ OpenMAIC runtime</span>
+          <span class="token-chip rose">+ Transition playbook</span>
+          <span class="token-chip amber">+ Viability matrix</span>
+          <span class="token-chip amber">+ Board deck</span>
+       </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="#bundle" class="download-btn olive">▼ Download Complete Bundle (.zip · 4.2 MB)</a>
+          <a href="#playbook" class="download-btn">📘 View Transition Playbook</a>
+        </div>
+      </div>
+      <div class="bg-cream border hairline rounded-xl p-5 w-full lg:w-80">
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-olive mb-3">Everything Inside</div>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span><strong>Every Tier 1 file</strong> — 5 prompts, schemas, handlers</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span><strong>Every Tier 2 file</strong> — vault, guardian, webhooks, blueprint</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span><code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">openmaic/runtime/</code> — full canvas + composer</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Operator conversation shell (HTML/JS)</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Zero-manual transition playbook (62 pages)</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Task viability scoring matrix (interactive)</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Board deck outline + KPI auto-population</span></li>
+          <li class="flex items-start gap-2"><span class="text-olive font-bold">✓</span><span>Cap-table justification memo template</span></li>
+       </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="bg-cream border-b hairline px-6">
+  <div class="max-w-6xl mx-auto flex overflow-x-auto">
+    <a href="tier-1.html" class="tier-tab">Tier 1 · $97 · Prompt Suite</a>
+    <a href="tier-2.html" class="tier-tab">Tier 2 · $149 · Data Vault Bridge</a>
+    <a href="tier-3.html" class="tier-tab active">Tier 3 · $297 · Complete Bundle</a>
+  </div>
+</section>
+
+<section id="bundle" class="py-14 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">01 · Bundle Manifest</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Every file in your archive</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">Verified file tree. Every entry is production-ready code, not documentation.</p>
+
+    <div class="code-block">
+      <div class="code-head">
+        <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+        <span class="code-file">openmaic-bundle/</span>
+     </div>
+<pre class="code-body">openmaic-bundle/
+├── <span class="c"># ─── TIER 1 ─────────────────────────────────────</span>
+├── <span class="hl">wf-01-triage/</span>            sys_prompt.md · schema.json · handler.js
+├── <span class="hl">wf-02-enrichment/</span>       sys_prompt.md · schema.json · handler.js
+├── <span class="hl">wf-03-meetings/</span>         sys_prompt.md · schema.json · handler.js
+├── <span class="hl">wf-04-contracts/</span>        sys_prompt.md · schema.json · handler.js
+├── <span class="hl">wf-05-secops/</span>           sys_prompt.md · schema.json · handler.js
+│
+├── <span class="c"># ─── TIER 2 ─────────────────────────────────────</span>
+├── <span class="hl">vault/</span>
+│   ├── <span class="n">scrubber.js</span>            18 PII patterns · Lambda handler
+│   ├── <span class="n">keeper.js</span>               Schema enforcement layer
+│   ├── <span class="n">lake-writer.js</span>         Parquet serialization│   └── <span class="n">dlq.js</span>                  Dead Letter Queue protocol
+├── <span class="hl">guardian/</span>
+│   ├── <span class="n">rbac-matrix.json</span>        4-tier policy table
+│   ├── <span class="n">guardian.js</span>             RBAC sidecar process
+│   └── <span class="n">halt-handler.js</span>         T3+ halt &amp; approval flow
+├── <span class="hl">webhooks/</span>
+│   ├── <span class="n">stripe-adapter.js</span>
+│   ├── <span class="n">jira-adapter.js</span>
+│   ├── <span class="n">slack-adapter.js</span>
+│   └── <span class="n">hubspot-adapter.js</span>
+├── <span class="hl">blueprint.pdf</span>             40-page architecture spec
+│
+├── <span class="c"># ─── TIER 3 (this tier) ───────────────────────────</span>
+├── <span class="hl">runtime/</span>
+│   ├── <span class="n">canvas.html</span>             Live operator console (the page you're on, self-hosted)
+│   ├── <span class="n">composer.js</span>             Message router + agent dispatcher
+│   ├── <span class="n">mesh.js</span>                 Six-agent orchestrator
+│   ├── <span class="n">audit.js</span>                Hash-chained audit logger
+│   └── <span class="n">assets/</span>                 Icons, fonts, styling
+├── <span class="hl">playbook/</span>
+│   ├── <span class="n">transition-playbook.pdf</span> 62-page zero-manual migration guide
+│   ├── <span class="n">checklists/</span>             18 markdown checklists per workflow
+│   └── <span class="n">templates/</span>              Email, ticket, runbook templates
+├── <span class="hl">viability/</span>
+│   ├── <span class="n">scoring-matrix.html</span>     Interactive scoring tool
+│   ├── <span class="n">task-catalog.json</span>       80 pre-scored common automation tasks
+│   └── <span class="n">scoring-engine.js</span>
+├── <span class="hl">board/</span>
+│   ├── <span class="n">deck-outline.md</span>         14-slide AI operations deck
+│   ├── <span class="n">kpi-collector.js</span>       Auto-populates deck from audit log
+│   └── <span class="n">cap-table-memo.md</span>      Justification template for board approval
+├── <span class="hl">README.md</span>
+├── <span class="hl">LICENSE.md</span>
+└── <span class="hl">CHANGELOG.md</span></pre>
+    </div>
+  </div>
+</section>
+
+<section id="runtime" class="py-14 px-6 bg-cream border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">02 · The OpenMAIC Runtime</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">The same canvas, self-hosted</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">Drop<code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">runtime/canvas.html</code> on any static host (S3 + CloudFront, Vercel, Netlify). It runs the six-agent mesh with your data.</p>
+
+    <div class="code-block">
+      <div class="code-head">
+        <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+        <span class="code-file">runtime/composer.js</span>
+        <button onclick="copyCode('composerCode')" class="ml-auto px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-paper bg-olive rounded hover:bg-[#5D6350] transition-colors">Copy</button>
+      </div>
+<pre class="code-body" id="composerCode"><span class="h">/**
+ * Efficiency Labs · Tier 3 — composer.js
+ * The OpenMAIC message router. Routes operator messages to the right agent(s),
+ * enforces Guardian RBAC, and renders the conversation.
+ */</span>
+<span class="k">import</span> { <span class="n">mesh</span> }<span class="k">from</span> <span class="s">"./mesh.js"</span>;
+<span class="k">import</span> { <span class="n">guardian</span> } <span class="k">from</span> <span class="s">"./../guardian/guardian.js"</span>;
+<span class="k">import</span> { <span class="n">audit</span> } <span class="k">from</span> <span class="s">"./audit.js"</span>;
+
+<span class="k">const</span> <span class="n">ROUTING</span> = <span class="k">[</span>
+  { <span class="n">match</span>: <span class="v">/diagnostic|readiness|assess/i</span>, <span class="n">agents</span>: <span class="k">[</span><span class="s">"diagnostician"</span><span class="k">]</span>, <span class="n">tier</span>: <span class="v">1</span> },
+  { <span class="n">match</span>: <span class="v">/architect|prompt|schema/i</span>,      <span class="n">agents</span>: <span class="k">[</span><span class="s">"architect"</span><span class="k">]</span>,     <span class="n">tier</span>: <span class="v">1</span> },
+  { <span class="n">match</span>: <span class="v">/vault|payload|pii|scrub/i</span>,     <span class="n">agents</span>: <span class="k">[</span><span class="s">"vault"</span><span class="k">]</span>,       <span class="n">tier</span>: <span class="v">1</span> },
+  { <span class="n">match</span>: <span class="v">/block|isolate|remedi|guardduty/i</span>, <span class="n">agents</span>: <span class="k">[</span><span class="s">"operator"</span><span class="k">]</span>, <span class="n">tier</span>: <span class="v">3</span> },
+  { <span class="n">match</span>: <span class="v">/stripe|charge|jira|ticket/i</span>,    <span class="n">agents</span>: <span class="k">[</span><span class="s">"operator"</span><span class="k">]</span>,    <span class="n">tier</span>: <span class="v">2</span> },
+  { <span class="n">match</span>: <span class="v">/board|brief|report|audit/i</span>,      <span class="n">agents</span>: <span class="k">[</span><span class="s">"scribe"</span><span class="k">]</span>,     <span class="n">tier</span>: <span class="v">1</span> },
+<span class="k">]</span>;
+
+<span class="k">export async function</span> <span class="n">route</span>(<span class="n">operatorMessage</span>) {
+  <span class="k">const</span> <span class="n">pattern</span> = <span class="n">ROUTING</span>.<span class="n">find</span>(<span class="n">r</span> => <span class="n">r</span>.<span class="n">match</span>.<span class="n">test</span>(<span class="n">operatorMessage</span>)) || <span class="n">ROUTING</span>[<span class="v">0</span>];
+
+  <span class="k">const</span> <span class="n">assessment</span> = <span class="k">await</span> <span class="n">guardian</span>.<span class="n">evaluate</span>({
+    <span class="n">message</span>: <span class="n">operatorMessage</span>,
+    <span class="n">proposed_agents</span>: <span class="n">pattern</span>.<span class="n">agents</span>,
+    <span class="n">proposed_tier</span>: <span class="n">pattern</span>.<span class="n">tier</span>
+  });
+
+  <span class="k">await</span> <span class="n">audit</span>.<span class="n">append</span>({ <span class="n">event</span>: <span class="s">"route.match"</span>, <span class="n">pattern</span>: <span class="n">pattern</span>.<span class="n">match</span>.<span class="n">source</span>, <span class="n">tier</span>: <span class="n">pattern</span>.<span class="n">tier</span> });
+
+  <span class="k">if</span> (<span class="n">assessment</span>.<span class="n">tier</span> >= <span class="v">3</span>) {
+    <span class="k">return</span> <span class="k">await</span> <span class="n">haltForApproval</span>(<span class="n">operatorMessage</span>, <span class="n">pattern</span>, <span class="n">assessment</span>);
+  }
+
+  <span class="k">const</span> <span class="n">results</span> = [];
+ <span class="k">for</span> (<span class="k">const</span> <span class="n">agentId</span> <span class="k">of</span> <span class="n">pattern</span>.<span class="n">agents</span>) {
+    <span class="k">const</span> <span class="n">out</span> = <span class="k">await</span> <span class="n">mesh</span>.<span class="n">dispatch</span>(<span class="n">agentId</span>, <span class="n">operatorMessage</span>);
+ <span class="n">results</span>.<span class="n">push</span>(<span class="n">out</span>);
+    <span class="k">await</span> <span class="n">audit</span>.<span class="n">append</span>({ <span class="n">event</span>: <span class="s">"agent.execute"</span>, <span class="n">agent</span>: <span class="n">agentId</span>, <span class="n">result</span>: <span class="n">out</span>.<span class="n">summary</span> });
+  }
+  <span class="k">return</span> { <span class="n">tier</span>: <span class="n">pattern</span>.<span class="n">tier</span>, <span class="n">halted</span>: <span class="v">false</span>, <span class="n">results</span> };
+}
+
+<span class="k">async function</span> <span class="n">haltForApproval</span>(<span class="n">msg</span>, <span class="n">pattern</span>, <span class="n">assessment</span>) {
+  <span class="c">// Wait for operator 1-click approve/reject in the UI banner</span>
+  <span class="k">const</span> <span class="n">decision</span> = <span class="k">await</span> <span class="k">new</span> <span class="n">Promise</span>(<span class="n">resolve</span> => {
+ <span class="n">window</span>.<span class="n">openmaicAwaitApproval</span> = <span class="n">resolve</span>;
+  });
+  <span class="k">await</span> <span class="n">audit</span>.<span class="n">append</span>({ <span class="n">event</span>: <span class="s">"halt.decision"</span>, <span class="n">decision</span>, <span class="n">tier</span>: <span class="n">assessment</span>.<span class="n">tier</span> });
+  <span class="k">if</span> (!<span class="n">decision</span>)<span class="k">return</span> { <span class="n">tier</span>: <span class="n">assessment</span>.<span class="n">tier</span>, <span class="n">halted</span>: <span class="v">true</span>, <span class="n">approved</span>: <span class="v">false</span> };
+  <span class="k">return</span> <span class="k">await</span> <span class="n">route</span>(<span class="n">msg</span>); <span class="c">// retry at reduced tier if approved</span>
+}</pre>
+    </div>
+  </div>
+</section>
+
+<section id="viability" class="py-14 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">03 · Task Viability Matrix</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">Score any automation candidate in60 seconds</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">Use this matrix to decide which workflows are ready for autonomous deployment. The scoring engine ships as <code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">viability/scoring-engine.js</code>.</p>
+
+    <div class="bg-white border hairline rounded-xl p-6 mb-6">
+      <h4 class="font-display text-lg font-semibold text-ink mb-4">Sample:80 pre-scored common tasks</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-xs">
+          <thead>
+            <tr>
+              <th class="score-cell bg-ink text-paper">Task</th>
+              <th class="score-cell bg-ink text-paper">Volume / mo</th>
+              <th class="score-cell bg-ink text-paper">Reversibility</th>
+              <th class="score-cell bg-ink text-paper">Schema-able</th>
+              <th class="score-cell bg-ink text-paper">Tier</th>
+              <th class="score-cell bg-ink text-paper">Auto OK?</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            <tr><td class="score-cell text-left">Stripe refund &lt; $100</td><td class="score-cell">420</td><td class="score-cell high">REVERSIBLE</td><td class="score-cell high">YES</td><td class="score-cell">T1</td><td class="score-cell high">✓ AUTO</td></tr>
+            <tr><td class="score-cell text-left">Jira ticket from alert</td><td class="score-cell">280</td><td class="score-cell high">REVERSIBLE</td><td class="score-cell high">YES</td><td class="score-cell">T1</td><td class="score-cell high">✓ AUTO</td></tr>
+            <tr><td class="score-cell text-left">Send renewal reminder</td><td class="score-cell">95</td><td class="score-cell med">SOFT</td><td class="score-cell high">YES</td><td class="score-cell">T2</td><td class="score-cell med">ASYNC</td></tr>
+            <tr><td class="score-cell text-left">Block IP (GuardDuty HIGH)</td><td class="score-cell">12</td><td class="score-cell med">SOFT</td><td class="score-cell high">YES</td><td class="score-cell">T3</td><td class="score-cell low">1-CLICK</td></tr>
+            <tr><td class="score-cell text-left">Approve customer refund &gt; $500</td><td class="score-cell">38</td><td class="score-cell low">IRREVERSIBLE</td><td class="score-cell med">PARTIAL</td><td class="score-cell">T3</td><td class="score-cell low">1-CLICK</td></tr>
+            <tr><td class="score-cell text-left">Isolate production EC2</td><td class="score-cell">2</td><td class="score-cell low">IRREVERSIBLE</td><td class="score-cell high">YES</td><td class="score-cell">T4</td><td class="score-cell low">CTO MFA</td></tr>
+           <tr><td class="score-cell text-left">Update contract terms</td><td class="score-cell">5</td><td class="score-cell low">IRREVERSIBLE</td><td class="score-cell low">NO</td><td class="score-cell">T4</td><td class="score-cell low">CTO MFA</td></tr>
+         </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-gray-500 mt-3 font-mono">+73 more pre-scored tasks in viability/task-catalog.json</p>
+    </div>
+  </div>
+</section>
+
+<section id="playbook" class="py-14 px-6 bg-cream border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">04 · Transition Playbook</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">62 pages · zero-manual migration</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">The playbook that takes you from "we use ChatGPT for some stuff" to "we have a governed agent mesh in production." Read once, execute in order.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-white border hairline rounded-xl p-5">
+        <div class="flex items-start gap-3">
+          <div class="step-num">1</div>
+          <div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-2">Inventory &amp; baseline</h4>
+            <p class="text-xs text-gray-600">Inventory every shadow-AI use case. Score each on the viability matrix. Identify the top 3 quick wins.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white border hairline rounded-xl p-5">
+        <div class="flex items-start gap-3">
+          <div class="step-num">2</div>
+          <div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-2">Install Tier 1</h4>
+            <p class="text-xs text-gray-600">Deploy5 prompt workflows. No vault yet. Read-only everywhere. Prove the value in week1.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white border hairline rounded-xl p-5">
+        <div class="flex items-start gap-3">
+          <div class="step-num">3</div>
+          <div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-2">Add Tier 2 vault</h4>
+            <p class="text-xs text-gray-600">Wire up the scrubber, Guardian, and webhooks. First production write-action gets gated.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white border hairline rounded-xl p-5">
+        <div class="flex items-start gap-3">
+          <div class="step-num">4</div>
+          <div>
+            <h4 class="font-display text-lg font-semibold text-ink mb-2">Deploy Tier 3 canvas</h4>
+            <p class="text-xs text-gray-600">Roll out the OpenMAIC runtime to your team. Onboard auditors via the board deck. Operate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+ <div class="mt-8 bg-white border hairline rounded-xl p-5">
+      <h4 class="font-display text-lg font-semibold text-ink mb-3">Includes 18 implementation checklists</h4>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-600 font-mono">
+        <div>☐ Inventory shadow AI use cases</div>
+        <div>☐ Score viability of each</div>
+        <div>☐ Provision AWS / GCP / Azure</div>
+        <div>☐ Create IAM roles &amp; secrets</div>
+        <div>☐ Configure S3 audit bucket</div>
+        <div>☐ Set up CloudFront / Vercel</div>
+        <div>☐ Deploy Tier 1 to staging</div>
+        <div>☐ Run schema validation suite</div>
+        <div>☐ Promote to production traffic</div>
+        <div>☐ Wire up Stripe / Jira / Slack</div>
+        <div>☐ Configure DLQ alerts</div>
+        <div>☐ Set up PagerDuty for T4 events</div>
+        <div>☐ Roll out canvas to operators</div>
+        <div>☐ Schedule board brief weekly</div>
+        <div>☐ Annual re-take of readiness</div>
+        <div>☐ Train team on halt-trigger pattern</div>
+        <div>☐ Document custom workflows</div>
+        <div>☐ Quarterly compliance review</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="board" class="py-14 px-6 border-b hairline">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4">05 · Board Deck</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-3">14 slides · auto-populated from your audit log</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl">The board deck outline ships as <code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">board/deck-outline.md</code>. <code class="font-mono text-xs bg-white px-1.5 py-0.5 rounded">kpi-collector.js</code> auto-populates KPIs from the Scribe's audit log.</p>
+
+    <div class="bg-white border hairline rounded-xl p-6">
+      <h4 class="font-display text-lg font-semibold text-ink mb-4">Deck outline</h4>
+      <ol class="text-sm text-gray-700 space-y-2 list-decimal pl-5">
+        <li>Title — "AI Operations · Q3 2026"</li>
+        <li>The principle — "Measure first. Automate second. Approve always."</li>
+        <li>OpenMAIC mesh overview — 6 agents,1 canvas</li>
+        <li>Quarterly KPI scorecard (auto-populated)</li>
+        <li>Top5 workflows — request volume, success rate, cost</li>
+        <li>Halts summary — how many T3+ approvals, response time</li>
+        <li>Audit log integrity — hash chain verification status</li>
+        <li>Cost vs. SaaS wrapper — what we saved this quarter</li>
+        <li>Readiness score trend</li>
+        <li>Risk-tier distribution — how much is T1 vs T3+</li>
+        <li>Security incidents — 0, with the controls that prevented them</li>
+        <li>Customer trust signals — uptime, response time</li>
+        <li>Roadmap next quarter</li>
+        <li>Appendix — full audit sample, RBAC matrix, schema catalog</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="deploy" class="py-14 px-6 bg-ink text-paper border-b border-black/20">
+  <div class="max-w-6xl mx-auto">
+    <div class="kicker mb-4" style="color:#A39B8B">06 · Deploy</div>
+    <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight mb-8">From download to governed production</h2>
+
+    <div class="bg-coal border border-white/10 rounded-xl p-5 font-mono text-sm overflow-x-auto mb-8">
+      <div class="text-[10px] text-gray-500 uppercase tracking-[0.16em] mb-3">terminal</div>
+<div class="text-emerald-400">$</div> <span class="text-paper">unzip openmaic-bundle-v1.zip && cd openmaic-bundle</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">cp .env.example .env && $EDITOR .env # add API keys, vault URL, webhook URLs</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">npm install</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">npm run deploy:tier1   # 5 prompt workflows</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">npm run deploy:tier2   # vault, guardian, webhooks</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">npm run deploy:tier3   # openmaic runtime + canvas</span>
+<div class="text-emerald-400">$</div> <span class="text-paper">npm run canvas:serve # localhost:3000</span>
+<div class="text-amber-400 mt-2">→ Tier 1: 5 endpoints live · p99 142ms · $0.43/1k calls</div>
+<div class="text-amber-400">→ Tier 2: 4 functions live ·18 PII patterns active · DLQ armed</div>
+<div class="text-amber-400">→ Tier 3: canvas served ·6 agents ready · audit chain writing</div>
+<div class="text-paper mt-1">OpenMAIC mesh operational · total monthly cost: <span class="text-rose">$8.40</span> · vs. SaaS wrapper equivalent: <span class="text-rose">$5,000</span></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="border border-white/10 rounded-xl p-5">
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-rose mb-2">Total monthly API</div>
+        <div class="font-display text-3xl mb-2">$8.40</div>
+        <div class="text-xs text-gray-400">Pure token cost · no wrapper markup · no per-seat fee</div>
+      </div>
+      <div class="border border-white/10 rounded-xl p-5">
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-rose mb-2">vs. SaaS wrapper</div>
+        <div class="font-display text-3xl mb-2">−99.8%</div>
+        <div class="text-xs text-gray-400">$5,000/mo Zapier-style wrapper · you keep $59,904/yr</div>
+      </div>
+      <div class="border border-white/10 rounded-xl p-5">
+        <div class="text-[10px] font-bold uppercase tracking-[0.16em] text-rose mb-2">vs. consulting</div>
+        <div class="font-display text-3xl mb-2">−99.93%</div>
+        <div class="text-xs text-gray-400">$400,000 Big-4 equivalent engagement · you keep $399,703</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-14 px-6 bg-paper border-b hairline">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mb-4">Your complete OpenMAIC bundle is ready</h2>
+    <p class="text-gray-600 mb-8 max-w-2xl mx-auto">Reply to your receipt email if you need help with deployment, custom workflows, or enterprise licensing. We typically respond within 2 hours during business days.</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href="mailto:support@efficiencylabs.com" class="download-btn olive">✉ Contact Support</a>
+      <a href="https://cal.com/efficiencylabs/enterprise" class="download-btn">📞 Book a 30-min Setup Call</a>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-coal text-gray-400 py-10 px-6">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <div class="font-display text-base font-semibold text-paper">Efficiency Labs</div>
+      <p class="text-xs">Need help? Reply to your receipt email or contact <a href="mailto:support@efficiencylabs.com" class="text-rose">support@efficiencylabs.com</a>.</p>
+    </div>
+    <div class="text-xs">&copy; 2026 Efficiency Labs · Order #EL-2026-08-31-A03</div>
+  </div>
+</footer>
+
+<script>
+function copyCode(id){
+  var body = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(body).then(function(){
+    var btn = event.target; var orig = btn.innerText;
+    btn.innerText = '✓ Copied';
+    setTimeout(function(){ btn.innerText = orig; }, 1200);
+  });
+}
+</script>
+</body>
+</html>
