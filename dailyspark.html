@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sarah's Daily Command Center</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1.5rem; line-height: 1.6; color: #24292f; }
+  h1 { border-bottom: 1px solid #d0d7de; padding-bottom: 0.5rem; }
+  .phase { font-size: 1.25rem; font-weight: bold; margin: 1.5rem 0; padding: 1rem; border-radius: 6px; background: #ddf4ff; border: 1px solid #54aeff; text-align: center; }
+  .timer { font-size: 4rem; font-weight: bold; color: #0969da; text-align: center; margin: 1rem 0; font-variant-numeric: tabular-nums; }
+  .checklist { margin: 1.5rem 0; }
+  .checklist label { display: block; margin: 0.5rem 0; cursor: pointer; }
+  .checklist input[type="checkbox"] { margin-right: 10px; width: 16px; height: 16px; cursor: pointer; }
+  .reframe { margin-top: 2.5rem; padding: 1.5rem; background: #f6f8fa; border-left: 4px solid #2da44e; border-radius: 0 6px 6px 0; }
+  button { background: #2da44e; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 1.1rem; font-weight: 600; display: block; width: 100%; transition: background 0.2s; }
+  button:hover { background: #2c974b; }
+</style>
+</head>
+<body>
+
+  <h1>Daily Command Center</h1>
+  
+  <div class="checklist">
+    <h3>1. Kanban Sync (GitHub Projects)</h3>
+    <label><input type="checkbox"> Review <b>This Week</b> (max 5 cards)</label>
+    <label><input type="checkbox"> Move max 3 cards to <b>Today</b></label>
+  </div>
+
+  <div class="phase" id="currentPhase">Ready to start 45-minute block</div>
+  <div class="timer" id="timeDisplay">45:00</div>
+  <button onclick="startTimer()" id="startBtn">Start Daily Rhythm</button>
+
+  <div class="checklist">
+    <h3>2. Execution Rhythm</h3>
+    <label><input type="checkbox"> <b>0:00 - 15:00:</b> Create content (LinkedIn post, YouTube script)</label>
+    <label><input type="checkbox"> <b>15:00 - 30:00:</b> Build or fix one thing on the site</label>
+    <label><input type="checkbox"> <b>30:00 - 45:00:</b> Engage (reply to comments, DM 3 people)</label>
+    <label><input type="checkbox"> <b>Done:</b> Stop working & update GitHub Kanban</label>
+  </div>
+
+  <div class="reframe">
+    <strong>The Emotional Reframe</strong><br><br>
+    You are not behind. You are early.<br>
+    You don’t need a perfect business. You need a minimum lovable launch.<br>
+    Done is better than perfect.<br>
+    One product. One page. One payment link. One post per day.<br>
+    That’s how this gets built — not in a weekend, but in small, consistent steps.
+  </div>
+
+<script>
+  let timeLeft = 45 * 60;
+  let timerId = null;
+
+  function startTimer() {
+    if (timerId) return;
+    document.getElementById('startBtn').style.display = 'none';
+    updateDisplay();
+    
+    timerId = setInterval(() => {
+      timeLeft--;
+      updateDisplay();
+      
+      if (timeLeft <= 0) {
+        clearInterval(timerId);
+        document.getElementById('currentPhase').textContent = "Time's up. Stop working and celebrate.";
+        document.getElementById('currentPhase').style.backgroundColor = "#dafbe1";
+        document.getElementById('currentPhase').style.borderColor = "#2da44e";
+      }
+    }, 1000);
+  }
+
+  function updateDisplay() {
+    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const s = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timeDisplay').textContent = `${m}:${s}`;
+    
+    const phaseEl = document.getElementById('currentPhase');
+    if (timeLeft > 30 * 60 && timeLeft <= 45 * 60) {
+      phaseEl.textContent = "Phase 1: Create Content";
+    } else if (timeLeft > 15 * 60 && timeLeft <= 30 * 60) {
+      phaseEl.textContent = "Phase 2: Build or Fix";
+    } else if (timeLeft > 0 && timeLeft <= 15 * 60) {
+      phaseEl.textContent = "Phase 3: Engage";
+    }
+  }
+</script>
+</body>
+</html>
